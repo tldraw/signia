@@ -8,6 +8,12 @@ A tiny, fast, and simple state management library for JavaScript and TypeScript.
 npm install @tldraw/tlstate
 ```
 
+_or_
+
+```yarn
+yarn add @tldraw/tlstate
+```
+
 ## Usage
 
 **Atoms** are used to store and update state. They are the most basic building block of state management in TLState. Atoms are useful for storing bits of state in ways that may be tracked by derivations and reactors.
