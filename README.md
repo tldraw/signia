@@ -106,32 +106,32 @@ counts // [3]
 
 ## API
 
-## `Atom`
+### `Atom`
 
-## `Reactor`
+### `Reactor`
 
-## `reactor`
+### `reactor`
 
-## `react`
+### `react`
 
-## `Derivation`
+### `Derivation`
 
-## `derivation`
+### `derivation`
 
-## `buildIncrementalDerivation`
+### `buildIncrementalDerivation`
 
-## `transact`
+### `transact`
 
-## `transaction`
+### `transaction`
 
-## `decorator`
+### `decorator`
 
-## `withDiff`
+### `withDiff`
 
-## `whyAmIRunning`
+### `whyAmIRunning`
 
-## `EMPTY_ARRAY`
+### `EMPTY_ARRAY`
 
-## `RESET_VALUE`
+### `RESET_VALUE`
 
-## `UNINITIALIZED`
+### `UNINITIALIZED`
