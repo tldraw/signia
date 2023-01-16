@@ -1,6 +1,6 @@
 {
 	"name": "@tldraw/tlstate",
-	"private": true,
+	"private": false,
 	"description": "A tiny little drawing app (reactive state management).",
 	"version": "0.0.0",
 	"author": "tldraw GB Limited",
@@ -12,7 +12,20 @@
 	"bugs": {
 		"url": "https://github.com/tldraw/tlstate/issues"
 	},
-	"main": "./src/index.ts",
+	"keywords": [
+		"react",
+		"atomic",
+		"state",
+		"derived",
+		"tldraw"
+	],
+	"files": [
+		"dist/**/*"
+	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"source": "./dist/index.ts",
 	"scripts": {
 		"test": "jest",
 		"test:coverage": "jest --coverage",
@@ -20,13 +33,11 @@
 		"typecheck": "tsc --build",
 		"build": "tsup --config tsup.config.js"
 	},
-	"files": [
-		"dist/**"
-	],
 	"dependencies": {
 		"lodash.isequal": "^4.5.0"
 	},
 	"devDependencies": {
+		"@changesets/cli": "^2.26.0",
 		"@swc/core": "^1.2.204",
 		"@swc/jest": "^0.2.21",
 		"@types/jest": "^29.2.5",
