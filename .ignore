@@ -1,0 +1,7 @@
+dist
+yarn.lock
+**/*.tsbuildinfo
+**/*.d.ts
+**/*.d.ts.map
+**/*.js.map
+**/*.css.map

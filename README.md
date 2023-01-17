@@ -1,5 +1,9 @@
 # @tldraw/tlstate
 
+<div style="text-align: center; transform: scale(.5);">
+  <img src="https://github.com/tldraw/tldraw/raw/main/assets/card-repo.png"/>
+</div>
+
 A tiny, fast, and simple state management library for JavaScript and TypeScript.
 
 ## Installation
@@ -114,23 +118,55 @@ counts // [3]
 
 #### `Atom`
 
+> Todo
+
 #### `Reactor`
+
+> Todo
 
 #### `reactor`
 
+> Todo
+
 #### `react`
+
+> Todo
 
 #### `Derivation`
 
+> Todo
+
 #### `derivation`
+
+A class decorator used to mark methods as derivations.
+
+```ts
+class Form {
+	email = new Atom('user@domain.com')
+
+	@derivation get isEmailValid() {
+		return validateEmail(this.email.get())
+	}
+}
+
+const form = new Form()
+
+form.isEmailValid.get() // true
+
+email.set('invalid')
+
+form.isEmailValid.get() // false
+```
 
 #### `buildIncrementalDerivation`
 
+> Todo
+
 #### `transact`
 
-#### `transaction`
+> Todo
 
-#### `decorator`
+#### `transaction`
 
 #### `withDiff`
 

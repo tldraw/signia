@@ -31,7 +31,9 @@
 		"test:coverage": "jest --coverage",
 		"clean": "rm -rf node_modules dist tsconfig.tsbuildinfo",
 		"typecheck": "tsc --build",
-		"build": "tsup --config tsup.config.js"
+		"dev": "tsup --config tsup.config.js --watch",
+		"build": "tsup --config tsup.config.js",
+		"postbuild": "node ./scripts/postbuild.mjs"
 	},
 	"dependencies": {
 		"lodash.isequal": "^4.5.0"
@@ -43,6 +45,7 @@
 		"@types/jest": "^29.2.5",
 		"@types/lodash": "^4.14.188",
 		"@types/lodash.isequal": "^4.5.6",
+		"gzip-size": "^7.0.0",
 		"jest": "^29.3.1",
 		"lodash": "^4.17.21",
 		"prettier": "^2.8.3",
