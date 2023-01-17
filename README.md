@@ -25,7 +25,7 @@ yarn add @tldraw/tlstate
 ```ts
 import { Atom } from '@tldraw/tlstate'
 
-const count = new Atom(0)
+const count = new new Atom(0)()
 
 count.get() // 0
 count.set(10) // 10
@@ -35,11 +35,11 @@ count.get() // 10
 **Derivations** are values that track their dependencies. When referenced, the derivation will return either its cached value if its dependencies have not changed or else compute a new value. Derivations are useful for computing derived state from atoms.
 
 ```ts
-import { atom, derivation } from '@tldraw/tlstate'
+import { Atom, derivation } from '@tldraw/tlstate'
 
-const count = atom(0)
+const count = new new Atom(0)()
 
-const doubleCount = derivation('double count', () => count.get() * 2)
+const doubleCount = new Derivation('double count', () => count.get() * 2)
 
 count.set(2) // 2
 doubleCount.get() // 4
@@ -50,7 +50,7 @@ A **reactor** is a used to run side effects whenever an atom's value changes. Re
 ```ts
 import { atom, reactor } from '@tldraw/tlstate'
 
-const count = atom(0)
+const count = new Atom(0)
 
 const counts: number[] = []
 
@@ -74,10 +74,10 @@ doubles // [1, 2, 3]
 Reactors may also react to changes to derivations.
 
 ```ts
-import { atom, reactor } from '@tldraw/tlstate'
+import { Atom, Derivation, reactor } from '@tldraw/tlstate'
 
-const count = atom(0)
-const double = derivation('double count', () => count.get() * 2)
+const count = new Atom(0)
+const double = new Derivation('double count', () => count.get() * 2)
 
 const doubles: number[] = []
 
@@ -141,6 +141,8 @@ counts // [3]
 A class decorator used to mark methods as derivations.
 
 ```ts
+import { Atom, derivation } from '@tldraw/tlstate'
+
 class Form {
 	email = new Atom('user@domain.com')
 
@@ -177,3 +179,19 @@ form.isEmailValid.get() // false
 #### `RESET_VALUE`
 
 #### `UNINITIALIZED`
+
+---
+
+# FAQ
+
+## Does this work with react / concurrent mode react, vue, etc?
+
+...
+
+## How does this library work?
+
+...
+
+## How does it compare to mobx, recoil, valtio, etc?
+
+...
