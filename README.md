@@ -1,7 +1,7 @@
 # @tldraw/tlstate
 
 <div style="text-align: center; transform: scale(.5);">
-  <img src="https://github.com/tldraw/tldraw/raw/main/assets/card-repo.png"/>
+  <img src="https://github.com/tldraw/store/raw/main/assets/tlstate-github.png"/>
 </div>
 
 A tiny, fast, and simple state management library for JavaScript and TypeScript.
