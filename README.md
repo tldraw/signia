@@ -194,4 +194,4 @@ form.isEmailValid.get() // false
 
 ## How does it compare to mobx, recoil, valtio, etc?
 
-...
+Transactions, incremental updates, listener-free caching, capture—schedule—execute decoupling for effects.
