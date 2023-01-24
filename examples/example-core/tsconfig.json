@@ -15,5 +15,6 @@
 		"noImplicitReturns": true,
 		"skipLibCheck": true
 	},
-	"include": ["src"]
+	"include": ["src"],
+	"references": [{ "path": "../../packages/core" }, { "path": "../../packages/core" }]
 }
