@@ -9,5 +9,6 @@ export default defineConfig((options) => {
 		dts: true,
 		format: ['esm', 'cjs'],
 		minify: !options.watch,
+		tsconfig: 'tsconfig.build.json',
 	}
 })

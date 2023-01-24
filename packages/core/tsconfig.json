@@ -4,7 +4,7 @@
 	"exclude": ["node_modules", "dist"],
 	"display": "Default",
 	"compilerOptions": {
-		"outDir": "./dist",
+		"outDir": "dist",
 		"rootDir": "src",
 		"composite": true,
 		"declaration": true,

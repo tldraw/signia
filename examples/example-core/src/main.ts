@@ -1,5 +1,5 @@
 import './style.css'
-import { Atom, Derivation, reactor } from '../../src'
+import { Atom, Derivation, reactor } from '@tldraw/tlstate-core'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>

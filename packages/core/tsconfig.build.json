@@ -1,0 +1,43 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"],
+	"display": "Default",
+	"compilerOptions": {
+		"outDir": "dist",
+		"rootDir": "src",
+		"composite": false,
+		"declaration": true,
+		"declarationMap": true,
+		"emitDeclarationOnly": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"importHelpers": true,
+		"resolveJsonModule": true,
+		"jsx": "react-jsx",
+		"lib": ["dom", "DOM.Iterable", "esnext"],
+		"experimentalDecorators": true,
+		"module": "esnext",
+		"target": "esnext",
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"skipLibCheck": true,
+		"strict": true,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"stripInternal": true,
+		"useDefineForClassFields": true,
+		"noImplicitOverride": true,
+		"types": ["node", "@types/jest"]
+	},
+	"references": [
+		{
+			"path": "../core"
+		}
+	]
+}

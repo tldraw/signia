@@ -1,0 +1,10 @@
+**/node_modules/*
+**/out/*
+**/dist/*
+**/.next/*
+*.md
+**/_archive/*
+**/*.css.map
+**/*.js.map
+**/*.d.ts
+**/*.test.ts

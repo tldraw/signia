@@ -4,9 +4,9 @@
 	"exclude": ["node_modules", "dist"],
 	"display": "Default",
 	"compilerOptions": {
-		"outDir": "./dist",
+		"outDir": "dist",
 		"rootDir": "src",
-		"composite": false,
+		"composite": true,
 		"declaration": true,
 		"declarationMap": true,
 		"emitDeclarationOnly": true,
@@ -34,5 +34,10 @@
 		"useDefineForClassFields": true,
 		"noImplicitOverride": true,
 		"types": ["node", "@types/jest"]
-	}
+	},
+	"references": [
+		{
+			"path": "../core"
+		}
+	]
 }
