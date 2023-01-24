@@ -1,6 +1,6 @@
 {
 	"name": "@tldraw/tlstate",
-	"private": true,
+	"private": false,
 	"description": "A tiny little drawing app (reactive state management).",
 	"version": "0.0.0",
 	"author": "tldraw GB Limited",
@@ -12,10 +12,6 @@
 	"bugs": {
 		"url": "https://github.com/tldraw/tlstate/issues"
 	},
-	"workspaces": [
-		"examples/*",
-		"packages/*"
-	],
 	"keywords": [
 		"react",
 		"atomic",
@@ -23,18 +19,24 @@
 		"derived",
 		"tldraw"
 	],
+	"files": [
+		"dist/**/*"
+	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"source": "./dist/index.ts",
 	"scripts": {
-		"test": "turbo run test",
-		"test:coverage": "turbo run test:coverage",
-		"clean": "turbo run clean",
-		"typecheck": "turbo run typecheck",
-		"dev": "turbo run dev",
-		"build": "turbo run build",
-		"postbuild": "node ./packages/core/postbuild.mjs && node ./packages/react/postbuild.mjs"
+		"test": "jest",
+		"test:coverage": "jest --coverage",
+		"clean": "rm -rf node_modules dist tsconfig.tsbuildinfo",
+		"typecheck": "tsc --build",
+		"dev": "tsup --config tsup.config.js --watch",
+		"build": "tsup --config tsup.config.js",
+		"postbuild": "node ./scripts/postbuild.mjs"
 	},
 	"dependencies": {
-		"lodash.isequal": "^4.5.0",
-		"turbo": "^1.7.0"
+		"lodash.isequal": "^4.5.0"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.26.0",

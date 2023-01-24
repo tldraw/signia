@@ -1,8 +1,8 @@
-import * as React from 'react'
-import { EffectScheduler, EMPTY_ARRAY } from '@tldraw/tlstate-core'
+import { useEffect, useMemo } from 'react'
+import { EffectScheduler, EMPTY_ARRAY } from '../../src'
 
 export function useReactor(reactFn: () => void, name?: string, deps?: any[]) {
-	const scheduler = React.useMemo(
+	const scheduler = useMemo(
 		() =>
 			new EffectScheduler(name || 'anonymous useReactor', reactFn, (cb) =>
 				requestAnimationFrame(cb)
@@ -11,7 +11,7 @@ export function useReactor(reactFn: () => void, name?: string, deps?: any[]) {
 		deps ?? EMPTY_ARRAY
 	)
 
-	React.useEffect(() => {
+	useEffect(() => {
 		scheduler.attach()
 		scheduler.execute()
 		return () => scheduler.detach()
