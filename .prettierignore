@@ -1,2 +1,6 @@
 **/node_modules/*
+**/out/*
 **/dist/*
+**/.next/*
+*.mdx
+**/_archive/*

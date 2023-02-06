@@ -1,0 +1,34 @@
+{
+	"name": "@tldraw/tlstate",
+	"private": false,
+	"description": "A tiny little drawing app (reactive state management).",
+	"version": "0.0.1-alpha.4",
+	"author": "tldraw GB Ltd.",
+	"homepage": "https://tldraw.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tldraw/tldraw"
+	},
+	"bugs": {
+		"url": "https://github.com/tldraw/tldraw/issues"
+	},
+	"main": "./src/index.ts",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"./dist/**"
+	],
+	"scripts": {
+		"test": "jest",
+		"test:coverage": "jest --coverage",
+		"clean": "rm -rf .turbo node_modules dist tsconfig.tsbuildinfo",
+		"typecheck": "tsc --build",
+		"typecheck:force": "tsc --build --force",
+		"prepack": "../../scripts/build-package.mjs"
+	},
+	"devDependencies": {
+		"@swc/core": "^1.2.204",
+		"@swc/jest": "^0.2.21",
+		"@types/lodash": "^4.14.188",
+		"lodash": "^4.17.21"
+	}
+}

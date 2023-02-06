@@ -1,6 +1,6 @@
 module.exports = {
 	extends: ['prettier', 'eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-	ignorePatterns: ['**/*.js', '**/*.test.ts'],
+	ignorePatterns: ['**/*.js', '**/*.mjs', '**/*.test.ts'],
 	rules: {
 		'no-non-null-assertion': 'off',
 		'no-fallthrough': 'off',
