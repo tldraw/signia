@@ -33,3 +33,7 @@ coverage
 
 # packages
 *.tgz
+
+# typscript builds
+.tsbuild
+*.tsbuildinfo

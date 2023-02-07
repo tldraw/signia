@@ -7,14 +7,13 @@
 	"homepage": "https://tldraw.dev",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/tldraw/tldraw"
+		"url": "https://github.com/tldraw/tlstate"
 	},
 	"bugs": {
-		"url": "https://github.com/tldraw/tldraw/issues"
+		"url": "https://github.com/tldraw/tlstate/issues"
 	},
 	"main": "./src/index.ts",
 	"types": "./dist/index.d.ts",
-	"module": "./dist/index.mjs",
 	"files": [
 		"./dist/**"
 	],

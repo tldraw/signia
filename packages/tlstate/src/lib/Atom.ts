@@ -9,6 +9,9 @@ import { Child, ComputeDiff, Parent, RESET_VALUE } from './types'
 export type AtomOptions<Value, Diff> = {
 	historyLength?: number
 	computeDiff?: ComputeDiff<Value, Diff>
+	/**
+	 * @private
+	 */
 	isEqual?: (a: any, b: any) => boolean
 }
 
@@ -46,28 +49,28 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 	/**
 	 * (optional) A method used to compute a diff between the atom's old and new values.
 	 *
-	 * @public
+	 * @private
 	 */
 	computeDiff?: ComputeDiff<Value, Diff>
 
 	/**
 	 * The epoch when this atom was last changed.
 	 *
-	 * @public
+	 * @private
 	 */
 	lastChangedEpoch = globalEpoch
 
 	/**
 	 * A collection containing the atom's children.
 	 *
-	 * @public
+	 * @private
 	 */
 	children = new ArraySet<Child>()
 
 	/**
 	 * A buffer of diffs describing the accumulated history of this atom's value.
 	 *
-	 * @public
+	 * @private
 	 */
 	historyBuffer?: HistoryBuffer<Diff>
 
