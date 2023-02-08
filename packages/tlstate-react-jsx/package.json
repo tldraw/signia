@@ -31,16 +31,7 @@
 		"@types/react": "*"
 	},
 	"jest": {
-		"preset": "config/jest/node",
-		"setupFilesAfterEnv": [
-			"./setupJest.js"
-		],
-		"moduleNameMapper": {
-			"^~(.*)": "<rootDir>/src/$1"
-		},
-		"transformIgnorePatterns": [
-			"node_modules/(?!(nanoid)/)"
-		]
+		"preset": "../../jest-preset.js"
 	},
 	"peerDependencies": {
 		"react": "^18"

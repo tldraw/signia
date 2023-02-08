@@ -1,1 +1,0 @@
-global.React = require('react')

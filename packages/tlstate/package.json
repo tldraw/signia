@@ -20,6 +20,9 @@
 		"typecheck": "tsc --build",
 		"build": "tsx ../../scripts/build-package.ts"
 	},
+	"jest": {
+		"preset": "../../jest-preset.js"
+	},
 	"devDependencies": {
 		"@swc/core": "^1.2.204",
 		"@swc/jest": "^0.2.21",
