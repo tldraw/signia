@@ -4,7 +4,7 @@
 	"version": "0.0.1-alpha.4",
 	"type": "module",
 	"scripts": {
-		"dev:tlstate": "vite",
+		"dev": "vite",
 		"build": "tsc && vite build",
 		"preview": "vite preview"
 	},

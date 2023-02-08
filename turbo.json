@@ -1,12 +1,8 @@
 {
 	"$schema": "https://turborepo.org/schema.json",
 	"pipeline": {
-		"clean": {},
-		"dev": {},
 		"test": {},
-		"lint": {
-			"outputs": ["**/*lo"]
-		},
+		"lint": {},
 		"typecheck": {
 			"outputs": ["dist/**.d.ts"]
 		}
