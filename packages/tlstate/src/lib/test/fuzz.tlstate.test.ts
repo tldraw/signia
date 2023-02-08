@@ -63,7 +63,7 @@ class RandomSource {
 }
 
 const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f'] as const
-type Letter = typeof LETTERS[number]
+type Letter = (typeof LETTERS)[number]
 
 const unpack = (value: unknown): Letter => {
 	if (isComputed(value) || isAtom(value)) {
