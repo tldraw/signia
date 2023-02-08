@@ -1,16 +1,16 @@
-#!/usr/bin/env node
+#!npx tsx
 /* eslint-disable no-console */
 
 import Arborist from '@npmcli/arborist'
-import { execSync } from 'child_process'
 import { build } from 'esbuild'
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import glob from 'glob'
 import kleur from 'kleur'
 import pacote, { Manifest } from 'pacote'
 import path from 'path'
-import rimraf from 'rimraf'
 import tmp from 'tmp'
+import { pathToFileURL } from 'url'
+import { buildApi } from './build-api'
 
 /**
  * Builds the package in the given dir, returning the tarball (in memory) and a filename for
@@ -32,7 +32,7 @@ export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: str
 	const packageVersion = manifest.version
 
 	// first build the public .d.ts file
-	await buildTypes({ sourcePackageDir })
+	await buildApi({ sourcePackageDir })
 	copyFileSync(
 		path.join(sourcePackageDir, `api/public.d.ts`),
 		path.join(destPackageDir, 'index.d.ts')
@@ -114,29 +114,6 @@ function replaceSiblingPackageVersions({
 }
 
 /**
- * Builds the typescript types for the given package.
- * This means first running tsc to build the typescript, then running api-extractor to generate the
- * public types, then copying the public types to the root of the destination package.
- */
-async function buildTypes({ sourcePackageDir }: { sourcePackageDir: string }) {
-	// clear typecsript build files
-	rimraf.sync(path.join(sourcePackageDir, '.tsbuild'))
-	rimraf.sync(glob.sync(path.join(sourcePackageDir, '*.tsbuildinfo')))
-	// build typescript again
-	execSync('../../node_modules/.bin/tsc --build tsconfig.build.json', {
-		stdio: 'inherit',
-		cwd: sourcePackageDir,
-	})
-	// clear api-extractor build files
-	rimraf.sync(glob.sync(path.join(sourcePackageDir, 'api')))
-	// extract public api
-	execSync('../../node_modules/.bin/api-extractor run --local', {
-		stdio: 'inherit',
-		cwd: sourcePackageDir,
-	})
-}
-
-/**
  * This just copies all the src typescript files to the destination package
  */
 async function copySourceFilesToDest({
@@ -214,8 +191,6 @@ async function buildCjs({
 async function buildTarball({ destPackageDir }: { destPackageDir: string }) {
 	return await pacote.tarball('file:' + destPackageDir, { Arborist })
 }
-
-import { pathToFileURL } from 'url'
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 	// module was called directly

@@ -2,7 +2,7 @@
 	"name": "@tldraw/tlstate-react-jsx",
 	"private": false,
 	"description": "A tiny little drawing app (reactive state management).",
-	"version": "0.0.1-alpha.4",
+	"version": "0.0.1-prerelease.0",
 	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {
@@ -24,8 +24,8 @@
 		"prepack": "../../scripts/build-package-for-public-release"
 	},
 	"dependencies": {
-		"@tldraw/tlstate": "0.0.1-alpha.4",
-		"@tldraw/tlstate-react": "0.0.1-alpha.4"
+		"@tldraw/tlstate": "workspace:*",
+		"@tldraw/tlstate-react": "workspace:*"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.204",

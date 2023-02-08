@@ -2,7 +2,7 @@
 	"name": "@tldraw/tlstate-react",
 	"private": false,
 	"description": "Tiny little react bindings for tlstate.",
-	"version": "0.0.1-alpha.4",
+	"version": "0.0.1-prerelease.0",
 	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {
@@ -23,7 +23,7 @@
 		"prepack": "../../scripts/build-package.mjs"
 	},
 	"dependencies": {
-		"@tldraw/tlstate": "0.0.1-alpha.4"
+		"@tldraw/tlstate": "workspace:*"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.204",
