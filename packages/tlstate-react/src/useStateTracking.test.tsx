@@ -1,4 +1,4 @@
-import { atom } from '@tldraw/tlstate'
+import { atom } from 'tlstate'
 import * as React from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
 import { useStateTracking } from './useStateTracking'

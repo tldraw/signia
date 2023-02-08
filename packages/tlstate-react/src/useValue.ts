@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { computed, react, ReactiveValue } from '@tldraw/tlstate'
+import { computed, react, ReactiveValue } from 'tlstate'
 import { useMemo, useSyncExternalStore } from 'react'
 
 /** @public */

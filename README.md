@@ -23,7 +23,7 @@ yarn add @tldraw/tlstate
 **Atoms** are used to store and update state. They are the most basic building block of state management in TLState. Atoms are useful for storing bits of state in ways that may be tracked by derivations and reactors.
 
 ```ts
-import { Atom } from '@tldraw/tlstate'
+import { Atom } from 'tlstate'
 
 const count = new new Atom(0)()
 
@@ -35,7 +35,7 @@ count.get() // 10
 **Derivations** are values that track their dependencies. When referenced, the derivation will return either its cached value if its dependencies have not changed or else compute a new value. Derivations are useful for computing derived state from atoms.
 
 ```ts
-import { Atom, derivation } from '@tldraw/tlstate'
+import { Atom, derivation } from 'tlstate'
 
 const count = new new Atom(0)()
 
@@ -48,7 +48,7 @@ doubleCount.get() // 4
 A **reactor** is a used to run side effects whenever an atom's value changes. Reactors are useful for updating the UI when state changes. They may be started and stopped.
 
 ```ts
-import { atom, reactor } from '@tldraw/tlstate'
+import { atom, reactor } from 'tlstate'
 
 const count = new Atom(0)
 
@@ -74,7 +74,7 @@ doubles // [1, 2, 3]
 Reactors may also react to changes to derivations.
 
 ```ts
-import { Atom, Derivation, reactor } from '@tldraw/tlstate'
+import { Atom, Derivation, reactor } from 'tlstate'
 
 const count = new Atom(0)
 const double = new Derivation('double count', () => count.get() * 2)
@@ -95,7 +95,7 @@ doubles // [2, 4, 6]
 Atoms may be set using a **transaction**. Transactions are useful for batching multiple state updates together to improve the efficiency of reactors.
 
 ```ts
-import { atom, reactor, transact } from '@tldraw/tlstate'
+import { atom, reactor, transact } from 'tlstate'
 
 const counts: number[] = []
 
@@ -141,7 +141,7 @@ counts // [3]
 A class decorator used to mark methods as derivations.
 
 ```ts
-import { Atom, derivation } from '@tldraw/tlstate'
+import { Atom, derivation } from 'tlstate'
 
 class Form {
 	email = new Atom('user@domain.com')

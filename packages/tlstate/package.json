@@ -1,5 +1,5 @@
 {
-	"name": "@tldraw/tlstate",
+	"name": "tlstate",
 	"private": false,
 	"description": "A tiny little drawing reactive state management library.",
 	"version": "0.0.1-prerelease.0",

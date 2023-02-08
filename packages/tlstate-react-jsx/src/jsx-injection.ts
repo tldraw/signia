@@ -23,7 +23,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { useStateTracking } from '@tldraw/tlstate-react'
+import { useStateTracking } from 'tlstate-react'
 import React, { Component, type FunctionComponent } from 'react'
 import jsxRuntimeDev from 'react/jsx-dev-runtime'
 import jsxRuntime from 'react/jsx-runtime'

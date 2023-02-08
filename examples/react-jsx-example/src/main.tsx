@@ -1,4 +1,4 @@
-import '@tldraw/tlstate-react-jsx'
+import 'tlstate-react-jsx'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'

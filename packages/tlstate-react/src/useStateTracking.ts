@@ -1,4 +1,4 @@
-import { EffectScheduler } from '@tldraw/tlstate'
+import { EffectScheduler } from 'tlstate'
 import React from 'react'
 
 /** @internal */

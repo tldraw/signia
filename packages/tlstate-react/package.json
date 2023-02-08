@@ -1,5 +1,5 @@
 {
-	"name": "@tldraw/tlstate-react",
+	"name": "tlstate-react",
 	"private": false,
 	"description": "Tiny little react bindings for tlstate.",
 	"version": "0.0.1-prerelease.0",
@@ -23,7 +23,7 @@
 		"prepack": "../../scripts/build-package.mjs"
 	},
 	"dependencies": {
-		"@tldraw/tlstate": "workspace:*"
+		"tlstate": "workspace:*"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.204",

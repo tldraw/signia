@@ -1,4 +1,4 @@
-import { atom, Atom, AtomOptions } from '@tldraw/tlstate'
+import { atom, Atom, AtomOptions } from 'tlstate'
 import { useMemo } from 'react'
 
 /** @public */

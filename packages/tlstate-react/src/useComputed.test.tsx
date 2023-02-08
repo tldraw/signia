@@ -1,4 +1,4 @@
-import { Atom, Computed } from '@tldraw/tlstate'
+import { Atom, Computed } from 'tlstate'
 import { useState } from 'react'
 import ReactTestRenderer from 'react-test-renderer'
 import { useAtom } from './useAtom'

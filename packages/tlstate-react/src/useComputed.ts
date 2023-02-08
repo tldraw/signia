@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { Computed, computed, ComputedOptions } from '@tldraw/tlstate'
+import { Computed, computed, ComputedOptions } from 'tlstate'
 import { useMemo } from 'react'
 
 /** @public */

@@ -1,5 +1,5 @@
 {
-	"name": "@tldraw/tlstate-react-jsx",
+	"name": "tlstate-react-jsx",
 	"private": false,
 	"description": "A tiny little drawing app (reactive state management).",
 	"version": "0.0.1-prerelease.0",
@@ -24,8 +24,8 @@
 		"prepack": "../../scripts/build-package-for-public-release"
 	},
 	"dependencies": {
-		"@tldraw/tlstate": "workspace:*",
-		"@tldraw/tlstate-react": "workspace:*"
+		"tlstate": "workspace:*",
+		"tlstate-react": "workspace:*"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.204",

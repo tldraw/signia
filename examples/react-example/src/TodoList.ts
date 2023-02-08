@@ -1,4 +1,4 @@
-import { atom, computed } from '@tldraw/tlstate'
+import { atom, computed } from 'tlstate'
 
 interface Todo {
 	id: number
