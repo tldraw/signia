@@ -1,7 +1,9 @@
 import { execSync } from 'child_process'
+import { readFileSync, writeFileSync } from 'fs'
 import glob from 'glob'
 import path from 'path'
 import { rimraf } from 'rimraf'
+import isCI from 'is-ci'
 
 /**
  * Builds the typescript types for the given package.
@@ -9,10 +11,24 @@ import { rimraf } from 'rimraf'
  * public types, then copying the public types to the root of the destination package.
  */
 export async function buildApi({ sourcePackageDir }: { sourcePackageDir: string }) {
-	// clear typecsript build files
-	rimraf.sync(path.join(sourcePackageDir, '.tsbuild'))
-	rimraf.sync(glob.sync(path.join(sourcePackageDir, '*.tsbuildinfo')))
+	// clear typecsript build files if running locally
+	if (!isCI) {
+		rimraf.sync(path.join(sourcePackageDir, '.tsbuild'))
+		rimraf.sync(glob.sync(path.join(sourcePackageDir, '*.tsbuildinfo')))
+	}
 	// build typescript again
+	writeFileSync(
+		path.join(sourcePackageDir, 'tsconfig.build.json'),
+		JSON.stringify(
+			{
+				...JSON.parse(readFileSync(path.join(sourcePackageDir, 'tsconfig.json'), 'utf8')),
+				extends: './tsconfig.json',
+				exclude: ['node_modules', 'src/**/*.test.ts', '__tests__', '.tsbuild'],
+			},
+			null,
+			2
+		)
+	)
 	execSync('../../node_modules/.bin/tsc --build tsconfig.build.json', {
 		stdio: 'inherit',
 		cwd: sourcePackageDir,
@@ -24,4 +40,6 @@ export async function buildApi({ sourcePackageDir }: { sourcePackageDir: string 
 		stdio: 'inherit',
 		cwd: sourcePackageDir,
 	})
+
+	rimraf.sync(path.join(sourcePackageDir, 'tsconfig.build.json'))
 }

@@ -2,9 +2,11 @@
 	"$schema": "https://turborepo.org/schema.json",
 	"pipeline": {
 		"test": {},
+		"dev": {},
 		"lint": {},
+		"build": {},
 		"typecheck": {
-			"outputs": ["dist/**.d.ts"]
+			"outputs": [".tsbuild/**"]
 		}
 	}
 }

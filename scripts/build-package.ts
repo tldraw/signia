@@ -1,4 +1,3 @@
-#!npx tsx
 /* eslint-disable no-console */
 
 import Arborist from '@npmcli/arborist'
@@ -78,7 +77,7 @@ export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: str
  *
  * e.g.
  *
- *   "@tldraw/tlstate": "*"
+ *   "@tldraw/tlstate": "workspace:*"
  *
  * becomes
  *

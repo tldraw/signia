@@ -3,7 +3,7 @@
 	"include": ["src"],
 	"exclude": ["node_modules"],
 	"compilerOptions": {
-		"outFile": "./index.d.ts",
+		"outDir": ".tsbuild",
 		"rootDir": "src"
 	}
 }

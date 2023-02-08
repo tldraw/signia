@@ -18,8 +18,7 @@
 		"test": "jest",
 		"test:coverage": "jest --coverage",
 		"typecheck": "tsc --build",
-		"typecheck:force": "tsc --build --force",
-		"prepack": "../../scripts/build-package.mjs"
+		"build": "tsx ../../scripts/build-package.ts"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.2.204",

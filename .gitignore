@@ -37,6 +37,7 @@ coverage
 # typscript builds
 .tsbuild
 *.tsbuildinfo
+tsconfig.build.json
 
 # api-extractor output
 api
