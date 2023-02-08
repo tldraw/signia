@@ -13,14 +13,10 @@
 		"url": "https://github.com/tldraw/tlstate/issues"
 	},
 	"main": "./src/index.ts",
-	"types": "./dist/index.d.ts",
-	"files": [
-		"./dist/**"
-	],
+	"types": ".tsbuild/index.d.ts",
 	"scripts": {
 		"test": "jest",
 		"test:coverage": "jest --coverage",
-		"clean": "rm -rf .turbo node_modules dist tsconfig.tsbuildinfo",
 		"typecheck": "tsc --build",
 		"typecheck:force": "tsc --build --force",
 		"prepack": "../../scripts/build-package.mjs"

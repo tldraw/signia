@@ -19,7 +19,6 @@ import tmp from 'tmp'
  * @returns
  */
 export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: string }) {
-	// sanity chekcs
 	if (!existsSync(path.join(sourcePackageDir, 'src/index.ts'))) {
 		throw new Error(`No src/index.ts file found in '${sourcePackageDir}'!`)
 	}
@@ -32,38 +31,43 @@ export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: str
 	const packageName = path.basename(manifest.name)
 	const packageVersion = manifest.version
 
+	// first build the public .d.ts file
+	await buildTypes({ sourcePackageDir })
+	copyFileSync(
+		path.join(sourcePackageDir, `api/public.d.ts`),
+		path.join(destPackageDir, 'index.d.ts')
+	)
+
+	// then copy over the source .ts files
 	const sourceFiles = glob
 		.sync(path.join(sourcePackageDir, 'src/**/*.ts?(x)'))
 		// ignore test files
 		.filter((file) => !(file.includes('__tests__') || file.includes('.test.ts')))
-
-	await buildTypes({ sourcePackageDir, destPackageDir })
-
 	copySourceFilesToDest({ sourcePackageDir, sourceFiles, destPackageDir })
 
-	copyFileSync(path.join(sourcePackageDir, 'README.md'), path.join(destPackageDir, `README.md`))
-
+	// build js files
 	await buildEsm({ sourceFiles, destPackageDir })
 	await buildCjs({ sourceFiles, destPackageDir })
 
+	// construct the final package.json
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { scripts, devDependencies, ...others } = manifest
-
 	const newManifest = structuredClone({
-		...others,
-		main: 'cjs/index.js',
-		module: 'esm/index.mjs',
+		...manifest,
+		main: 'src/index.js',
+		module: 'src/index.mjs',
 		source: 'src/index.ts',
 		types: 'index.d.ts',
 		files: ['src', 'index.d.ts'],
 	})
-
 	replaceSiblingPackageVersions({ manifest: newManifest, sourcePackageDir })
-
 	writeFileSync(path.join(destPackageDir, 'package.json'), JSON.stringify(newManifest, null, 2))
 
-	const tarball = await buildTarball({ destPackageDir })
+	// copy over the readme
+	copyFileSync(path.join(sourcePackageDir, 'README.md'), path.join(destPackageDir, `README.md`))
+	// TODO: add license
 
+	// build the tarball
+	const tarball = await buildTarball({ destPackageDir })
 	const tarballName = `${packageName}-${packageVersion}.tgz`
 
 	return { tarball, tarballName }
@@ -114,14 +118,8 @@ function replaceSiblingPackageVersions({
  * This means first running tsc to build the typescript, then running api-extractor to generate the
  * public types, then copying the public types to the root of the destination package.
  */
-async function buildTypes({
-	sourcePackageDir,
-	destPackageDir,
-}: {
-	sourcePackageDir: string
-	destPackageDir: string
-}) {
-	// clear typecsript build cache
+async function buildTypes({ sourcePackageDir }: { sourcePackageDir: string }) {
+	// clear typecsript build files
 	rimraf.sync(path.join(sourcePackageDir, '.tsbuild'))
 	rimraf.sync(glob.sync(path.join(sourcePackageDir, '*.tsbuildinfo')))
 	// build typescript again
@@ -129,14 +127,13 @@ async function buildTypes({
 		stdio: 'inherit',
 		cwd: sourcePackageDir,
 	})
+	// clear api-extractor build files
+	rimraf.sync(glob.sync(path.join(sourcePackageDir, 'api')))
+	// extract public api
 	execSync('../../node_modules/.bin/api-extractor run --local', {
 		stdio: 'inherit',
 		cwd: sourcePackageDir,
 	})
-	copyFileSync(
-		path.join(sourcePackageDir, `api/public.d.ts`),
-		path.join(destPackageDir, 'index.d.ts')
-	)
 }
 
 /**
@@ -173,7 +170,7 @@ async function buildEsm({
 }) {
 	const res = await build({
 		entryPoints: sourceFiles,
-		outdir: path.join(destPackageDir, 'esm'),
+		outdir: path.join(destPackageDir, 'src'),
 		bundle: false,
 		platform: 'neutral',
 		sourcemap: true,
@@ -200,7 +197,7 @@ async function buildCjs({
 }) {
 	const res = await build({
 		entryPoints: sourceFiles,
-		outdir: path.join(destPackageDir, 'cjs'),
+		outdir: path.join(destPackageDir, 'src'),
 		bundle: false,
 		platform: 'neutral',
 		sourcemap: true,

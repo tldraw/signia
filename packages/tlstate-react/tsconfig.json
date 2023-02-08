@@ -6,5 +6,5 @@
 		"outDir": "./dist",
 		"rootDir": "src"
 	},
-	"references": [{ "path": "../tlstate/tsconfig.json" }]
+	"references": [{ "path": "../tlstate" }]
 }
