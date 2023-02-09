@@ -13,22 +13,7 @@ jobs:
     runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
 
       - name: Check formatting
         run: pnpm format:check

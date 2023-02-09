@@ -12,29 +12,14 @@ on:
 jobs:
   deploy:
     name: 'Deploy'
+    environment: auto deploy
     timeout-minutes: 15
     runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
+      - uses: ./.github/actions/setup
       - name: Deploy
-        run: pnpm deploy
-
-      # - name: Check API declarations and docs work as intended
-      #   run: pnpm api:check
+        run: pnpm auto shipit
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
