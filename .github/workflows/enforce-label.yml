@@ -2,7 +2,7 @@ name: Checks
 
 on:
   pull_request:
-    types: [opened, reopened, labeled, unlabeled]
+    types: [opened, reopened, labeled, unlabeled, synchronize]
     branches: [main]
 
 jobs:
