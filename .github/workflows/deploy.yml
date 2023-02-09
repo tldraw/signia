@@ -19,7 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          # Ensure that git uses your token with admin access to the repo
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Prepare repository
+        # Fetch full git history and tags
+        run: git fetch --unshallow --tags
+
       - uses: ./.github/actions/setup
 
       - name: Deploy Final
