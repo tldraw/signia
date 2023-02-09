@@ -1,18 +1,9 @@
 /* eslint-disable no-console */
 
-import { execSync } from 'child_process'
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs'
-import kleur from 'kleur'
 import path from 'path'
 import { pathToFileURL } from 'url'
 import { buildPackage } from './build-package'
-
-function isPackageJsonClean({ sourcePackageDir }: { sourcePackageDir: string }) {
-	const gitStatus = execSync('git status --porcelain package.json', { cwd: sourcePackageDir })
-		.toString()
-		.trim()
-	return !gitStatus
-}
 
 /**
  * Prepares the package for publishing. the tarball in case it will be written to disk.
@@ -25,16 +16,11 @@ export async function preparePackage({ sourcePackageDir }: { sourcePackageDir: s
 		throw new Error(`No src/index.ts file found in '${sourcePackageDir}'!`)
 	}
 
-	if (process.env.ALLOW_DIRTY_PACK !== 'true' && !isPackageJsonClean({ sourcePackageDir })) {
-		console.error(kleur.red(`File '${sourcePackageDir}/package.json' is not clean!`))
-		console.error()
-		console.error(kleur.red('Please commit all changes before publishing, or set'))
-		console.error()
-		console.error(kleur.bold('   ALLOW_DIRTY_PACK=true'))
-		console.error()
-		process.exit(1)
-	}
-
+	// save package.json and reinstate it in postpack
+	copyFileSync(
+		path.join(sourcePackageDir, 'package.json'),
+		path.join(sourcePackageDir, 'package.json.bak')
+	)
 	const manifest = JSON.parse(readFileSync(path.join(sourcePackageDir, 'package.json'), 'utf8'))
 
 	await buildPackage({ sourcePackageDir })
