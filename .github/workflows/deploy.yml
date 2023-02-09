@@ -37,7 +37,7 @@ jobs:
 
       - name: Deploy Prerelease
         if: ${{ inputs.prerelease }}
-        run: pnpm auto shipit --prerelease -vv
+        run: pnpm auto next -vv
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

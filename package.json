@@ -77,6 +77,9 @@
 		"typescript": "^4.9.4"
 	},
 	"auto": {
+		"prereleaseBranches": [
+			"prerelease"
+		],
 		"plugins": [
 			[
 				"npm",
