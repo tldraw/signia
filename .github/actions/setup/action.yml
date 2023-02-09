@@ -4,11 +4,6 @@ description: Setup action
 runs:
   using: "composite"
   steps:
-    - name: Check out code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
     - name: Install pnpm
       uses: pnpm/action-setup@v2
 

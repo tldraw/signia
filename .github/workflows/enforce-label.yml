@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
 
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup
 
       - uses: 8BitJonny/gh-get-current-pr@2.2.0
