@@ -1,6 +1,6 @@
-import { atom } from 'tlstate'
 import { createRef, forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
+import { atom } from 'tlstate'
 import { track } from './track'
 
 test("tracked components are memo'd", async () => {

@@ -1,5 +1,5 @@
-import { Atom } from 'tlstate'
 import ReactTestRenderer from 'react-test-renderer'
+import { Atom } from 'tlstate'
 import { useAtom } from './useAtom'
 import { useValue } from './useValue'
 

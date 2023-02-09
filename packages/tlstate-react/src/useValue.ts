@@ -1,6 +1,6 @@
 /* eslint-disable prefer-rest-params */
-import { computed, react, ReactiveValue } from 'tlstate'
 import { useMemo, useSyncExternalStore } from 'react'
+import { computed, react, ReactiveValue } from 'tlstate'
 
 /** @public */
 export function useValue<Value>(value: ReactiveValue<Value>): Value

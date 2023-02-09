@@ -1,6 +1,6 @@
 /* eslint-disable prefer-rest-params */
-import { Computed, computed, ComputedOptions } from 'tlstate'
 import { useMemo } from 'react'
+import { Computed, computed, ComputedOptions } from 'tlstate'
 
 /** @public */
 export function useComputed<Value>(name: string, compute: () => Value, deps: any[]): Computed<Value>

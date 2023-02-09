@@ -1,5 +1,5 @@
-import { EffectScheduler } from 'tlstate'
 import React from 'react'
+import { EffectScheduler } from 'tlstate'
 
 /** @internal */
 export function useStateTracking<T>(name: string, render: () => T): T {

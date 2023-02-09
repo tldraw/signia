@@ -1,14 +1,14 @@
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync } from 'fs'
 import glob from 'glob'
+import isCI from 'is-ci'
 import path from 'path'
 import { rimraf } from 'rimraf'
-import isCI from 'is-ci'
 
 /**
- * Builds the typescript types for the given package.
- * This means first running tsc to build the typescript, then running api-extractor to generate the
- * public types, then copying the public types to the root of the destination package.
+ * Builds the typescript types for the given package. This means first running tsc to build the
+ * typescript, then running api-extractor to generate the public types, then copying the public
+ * types to the root of the destination package.
  */
 export async function buildApi({ sourcePackageDir }: { sourcePackageDir: string }) {
 	// clear typecsript build files if running locally

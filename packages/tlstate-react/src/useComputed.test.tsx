@@ -1,6 +1,6 @@
-import { Atom, Computed } from 'tlstate'
 import { useState } from 'react'
 import ReactTestRenderer from 'react-test-renderer'
+import { Atom, Computed } from 'tlstate'
 import { useAtom } from './useAtom'
 import { useComputed } from './useComputed'
 import { useValue } from './useValue'

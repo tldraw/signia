@@ -244,7 +244,9 @@ function computedAnnotation(
 }
 
 /**
- * Retrieves the underlying computed instance for a given property created with the `@computed` decorator.
+ * Retrieves the underlying computed instance for a given property created with the `@computed`
+ * decorator.
+ *
  * ```ts
  * class Counter {
  *   max = 100
@@ -298,7 +300,6 @@ export function getComputedInstance<Obj extends object, Prop extends keyof Obj>(
  * @param _target
  * @param key The name of the property.
  * @param descriptor The descriptor of the property.
- *
  * @public
  */
 export function computed(

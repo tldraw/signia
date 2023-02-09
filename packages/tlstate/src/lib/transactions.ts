@@ -169,8 +169,9 @@ export function transaction<T>(fn: (rollback: () => void) => T) {
 }
 
 /**
- * Runs a function inside the current transaction, or creates a new transaction if there
- * is not already one in progress
+ * Runs a function inside the current transaction, or creates a new transaction if there is not
+ * already one in progress
+ *
  * @param fn
  * @public
  */

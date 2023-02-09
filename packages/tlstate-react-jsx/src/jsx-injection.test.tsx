@@ -1,6 +1,6 @@
-import { atom } from 'tlstate'
 import { createRef, forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
+import { atom } from 'tlstate'
 import './jsx-injection'
 
 test('components can use refs', async () => {

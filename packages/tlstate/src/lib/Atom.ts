@@ -9,16 +9,13 @@ import { Child, ComputeDiff, Parent, RESET_VALUE } from './types'
 export type AtomOptions<Value, Diff> = {
 	historyLength?: number
 	computeDiff?: ComputeDiff<Value, Diff>
-	/**
-	 * @private
-	 */
+	/** @private */
 	isEqual?: (a: any, b: any) => boolean
 }
 
 /**
- * An atom is a reactive pointer to any runtime value.
- * Updating an atom to point to a new value advances the global epoch.
- * It can keep a history of diffs describing how its value has changed.
+ * An atom is a reactive pointer to any runtime value. Updating an atom to point to a new value
+ * advances the global epoch. It can keep a history of diffs describing how its value has changed.
  *
  * @public
  */

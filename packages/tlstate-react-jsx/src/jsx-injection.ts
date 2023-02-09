@@ -23,10 +23,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { useStateTracking } from 'tlstate-react'
 import React, { Component, type FunctionComponent } from 'react'
 import jsxRuntimeDev from 'react/jsx-dev-runtime'
 import jsxRuntime from 'react/jsx-runtime'
+import { useStateTracking } from 'tlstate-react'
 
 export interface JsxRuntimeModule {
 	jsx?(type: any, ...rest: any[]): unknown
@@ -41,13 +41,13 @@ const SupportsProxy = typeof Proxy === 'function'
 
 const ProxyHandlers = {
 	/**
-	 * This is a function call trap for functional components.
-	 * When this is called, we know it means React did run 'Component()',
-	 * that means we can use any hooks here to setup our effect and store.
+	 * This is a function call trap for functional components. When this is called, we know it means
+	 * React did run 'Component()', that means we can use any hooks here to setup our effect and
+	 * store.
 	 *
-	 * With the native Proxy, all other calls such as access/setting to/of properties will
-	 * be forwarded to the target Component, so we don't need to copy the Component's
-	 * own or inherited properties.
+	 * With the native Proxy, all other calls such as access/setting to/of properties will be
+	 * forwarded to the target Component, so we don't need to copy the Component's own or inherited
+	 * properties.
 	 *
 	 * @see https://github.com/facebook/react/blob/2d80a0cd690bb5650b6c8a6c079a87b5dc42bd15/packages/react-reconciler/src/ReactFiberHooks.old.js#L460
 	 */
@@ -75,16 +75,16 @@ function WrapWithProxy(Component: FunctionComponent<any>) {
 	/**
 	 * Emulate a Proxy if environment doesn't support it.
 	 *
-	 * @TODO - unlike Proxy, it's not possible to access the type/Component's
-	 * static properties this way. Not sure if we want to copy all statics here.
-	 * Omitting this for now.
+	 * @example
+	 * 	- works with Proxy, doesn't with wrapped function.
+	 * 	```
+	 * 	const el = <SomeFunctionalComponent />
+	 * 	el.type.someOwnOrInheritedProperty;
+	 * 	el.type.defaultProps;
+	 * 	```
 	 *
-	 * @example - works with Proxy, doesn't with wrapped function.
-	 * ```
-	 * const el = <SomeFunctionalComponent />
-	 * el.type.someOwnOrInheritedProperty;
-	 * el.type.defaultProps;
-	 * ```
+	 * @todo - Unlike Proxy, it's not possible to access the type/Component's static properties this
+	 *   way. Not sure if we want to copy all statics here. Omitting this for now.
 	 */
 	const WrappedComponent = function () {
 		// eslint-disable-next-line prefer-rest-params
@@ -120,16 +120,16 @@ const JsxPro: JsxRuntimeModule = jsxRuntime
 const JsxDev: JsxRuntimeModule = jsxRuntimeDev
 
 /**
- * createElement _may_ be called by jsx runtime as a fallback in certain cases,
- * so we need to wrap it regardless.
+ * CreateElement _may_ be called by jsx runtime as a fallback in certain cases, so we need to wrap
+ * it regardless.
  *
- * The jsx exports depend on the `NODE_ENV` var to ensure the users' bundler doesn't
- * include both, so one of them will be set with `undefined` values.
+ * The jsx exports depend on the `NODE_ENV` var to ensure the users' bundler doesn't include both,
+ * so one of them will be set with `undefined` values.
  */
 React.createElement = WrapJsx(React.createElement)
 JsxDev.jsx && /*   */ (JsxDev.jsx = WrapJsx(JsxDev.jsx))
 JsxPro.jsx && /*   */ (JsxPro.jsx = WrapJsx(JsxPro.jsx))
 JsxDev.jsxs && /*  */ (JsxDev.jsxs = WrapJsx(JsxDev.jsxs))
 JsxPro.jsxs && /*  */ (JsxPro.jsxs = WrapJsx(JsxPro.jsxs))
-JsxDev.jsxDEV && /**/ (JsxDev.jsxDEV = WrapJsx(JsxDev.jsxDEV))
-JsxPro.jsxDEV && /**/ (JsxPro.jsxDEV = WrapJsx(JsxPro.jsxDEV))
+JsxDev.jsxDEV && (JsxDev.jsxDEV = WrapJsx(JsxDev.jsxDEV))
+JsxPro.jsxDEV && (JsxPro.jsxDEV = WrapJsx(JsxPro.jsxDEV))

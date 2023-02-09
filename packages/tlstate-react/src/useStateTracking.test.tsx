@@ -1,6 +1,6 @@
-import { atom } from 'tlstate'
 import * as React from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
+import { atom } from 'tlstate'
 import { useStateTracking } from './useStateTracking'
 
 describe('useStateTracking', () => {

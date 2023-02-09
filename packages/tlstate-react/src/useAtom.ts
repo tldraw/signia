@@ -1,5 +1,5 @@
-import { atom, Atom, AtomOptions } from 'tlstate'
 import { useMemo } from 'react'
+import { atom, Atom, AtomOptions } from 'tlstate'
 
 /** @public */
 export function useAtom<Value, Diff = unknown>(

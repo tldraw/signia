@@ -3,13 +3,13 @@ import { useStateTracking } from './useStateTracking'
 
 const ProxyHandlers = {
 	/**
-	 * This is a function call trap for functional components.
-	 * When this is called, we know it means React did run 'Component()',
-	 * that means we can use any hooks here to setup our effect and store.
+	 * This is a function call trap for functional components. When this is called, we know it means
+	 * React did run 'Component()', that means we can use any hooks here to setup our effect and
+	 * store.
 	 *
-	 * With the native Proxy, all other calls such as access/setting to/of properties will
-	 * be forwarded to the target Component, so we don't need to copy the Component's
-	 * own or inherited properties.
+	 * With the native Proxy, all other calls such as access/setting to/of properties will be
+	 * forwarded to the target Component, so we don't need to copy the Component's own or inherited
+	 * properties.
 	 *
 	 * @see https://github.com/facebook/react/blob/2d80a0cd690bb5650b6c8a6c079a87b5dc42bd15/packages/react-reconciler/src/ReactFiberHooks.old.js#L460
 	 */
@@ -24,8 +24,9 @@ const ProxyHandlers = {
 const ReactMemoSymbol = Symbol.for('react.memo')
 
 /**
- * Returns a tracked version of the given component. Any synchronous state dereferences during render
- * will allow tlstate to trigger a rerender when the dereferenced state changes.
+ * Returns a tracked version of the given component. Any synchronous state dereferences during
+ * render will allow tlstate to trigger a rerender when the dereferenced state changes.
+ *
  * @param baseComponent
  * @public
  */
