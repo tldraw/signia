@@ -25,6 +25,7 @@
 		"clean": "./scripts/clean.sh",
 		"test": "turbo run test",
 		"deploy": "./scripts/deploy.sh",
+		"check-pr-label": "./scripts/check-pr-label.sh",
 		"typecheck": "turbo run typecheck --concurrency=1"
 	},
 	"engines": {
