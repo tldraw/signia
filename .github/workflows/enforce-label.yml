@@ -30,4 +30,4 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Check PR
-        run: pnpm auto pr-check
+        run: pnpm auto pr-check --pr $PR --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
