@@ -1,0 +1,34 @@
+{
+	"name": "tlstate",
+	"private": false,
+	"description": "A tiny little drawing reactive state management library.",
+	"version": "0.0.1-prerelease.0",
+	"author": "tldraw GB Ltd.",
+	"homepage": "https://tldraw.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tldraw/tlstate"
+	},
+	"bugs": {
+		"url": "https://github.com/tldraw/tlstate/issues"
+	},
+	"main": "./src/index.ts",
+	"types": ".tsbuild/index.d.ts",
+	"scripts": {
+		"test": "jest",
+		"test:coverage": "jest --coverage",
+		"typecheck": "tsc --build",
+		"prepack": "tsx ../../scripts/prepack.ts",
+		"postpack": "../../scripts/postpack.sh",
+		"build": "tsx ../../scripts/build-package.ts"
+	},
+	"jest": {
+		"preset": "../../jest-preset.js"
+	},
+	"devDependencies": {
+		"@swc/core": "^1.2.204",
+		"@swc/jest": "^0.2.21",
+		"@types/lodash": "^4.14.188",
+		"lodash": "^4.17.21"
+	}
+}

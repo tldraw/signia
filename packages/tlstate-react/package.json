@@ -1,0 +1,40 @@
+{
+	"name": "tlstate-react",
+	"private": false,
+	"description": "Tiny little react bindings for tlstate.",
+	"version": "0.0.1-prerelease.0",
+	"author": "tldraw GB Ltd.",
+	"homepage": "https://tldraw.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tldraw/tlstate"
+	},
+	"bugs": {
+		"url": "https://github.com/tldraw/tlstate/issues"
+	},
+	"main": "./src/index.ts",
+	"types": ".tsbuild/index.d.ts",
+	"scripts": {
+		"test": "jest --passWithNoTests",
+		"test:coverage": "jest --coverage",
+		"typecheck": "tsc --build",
+		"api:build": "api-extractor run --local",
+		"prepack": "tsx ../../scripts/prepack.ts",
+		"postpack": "../../scripts/postpack.sh",
+		"build": "tsx ../../scripts/build-package.ts"
+	},
+	"dependencies": {
+		"tlstate": "workspace:*"
+	},
+	"devDependencies": {
+		"@swc/core": "^1.2.204",
+		"@swc/jest": "^0.2.21",
+		"@types/react": "^18.0.24"
+	},
+	"jest": {
+		"preset": "../../jest-preset.js"
+	},
+	"peerDependencies": {
+		"react": "^18"
+	}
+}

@@ -1,0 +1,27 @@
+name: Checks
+
+on:
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+    branches: [main]
+
+jobs:
+  build:
+    environment: auto deploy
+    name: 'Enforce label'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+
+      - uses: 8BitJonny/gh-get-current-pr@2.2.0
+        id: PR
+
+      - run: yarn auto pr-check --pr $PR --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+        env:
+          PR: ${{ steps.PR.outputs.number }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}

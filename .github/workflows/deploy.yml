@@ -1,0 +1,28 @@
+name: Deploy
+
+# Deploys are manually triggered
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Deploy as prerelease'
+        required: true
+        type: boolean
+
+jobs:
+  deploy:
+    name: 'Deploy'
+    environment: auto deploy
+    timeout-minutes: 15
+    runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: Deploy
+        run: pnpm auto shipit
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

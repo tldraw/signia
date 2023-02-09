@@ -1,9 +1,9 @@
 {
-	"name": "@tldraw/tlstate",
-	"private": false,
-	"description": "A tiny little drawing app (reactive state management).",
+	"name": "@tldraw/tlstate-monorepo",
+	"private": true,
+	"description": "A tiny little state managment library (monorepo).",
 	"version": "0.0.0",
-	"author": "tldraw GB Limited",
+	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {
 		"type": "git",
@@ -12,46 +12,80 @@
 	"bugs": {
 		"url": "https://github.com/tldraw/tlstate/issues"
 	},
-	"keywords": [
-		"react",
-		"atomic",
-		"state",
-		"derived",
-		"tldraw"
+	"workspaces": [
+		"examples/*",
+		"packages/*"
 	],
-	"files": [
-		"dist/**/*"
-	],
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
-	"source": "./dist/index.ts",
 	"scripts": {
-		"test": "jest",
-		"test:coverage": "jest --coverage",
-		"clean": "rm -rf node_modules dist tsconfig.tsbuildinfo",
-		"typecheck": "tsc --build",
-		"dev": "tsup --config tsup.config.js --watch",
-		"build": "tsup --config tsup.config.js",
-		"postbuild": "node ./scripts/postbuild.mjs"
+		"build": "cross-env FORCE_COLOR=1 turbo run build --concurrency=1",
+		"dev": "cross-env FORCE_COLOR=1 turbo run dev",
+		"lint": "turbo run lint",
+		"format": "prettier --write \"**/*.{ts,tsx}\"",
+		"format:check": "prettier --check \"**/*.{ts,tsx}\"",
+		"clean": "./scripts/clean.sh",
+		"test": "turbo run test",
+		"deploy": "./scripts/deploy.sh",
+		"typecheck": "turbo run typecheck --concurrency=1"
 	},
-	"dependencies": {
-		"lodash.isequal": "^4.5.0"
+	"engines": {
+		"npm": ">=7.0.0"
+	},
+	"packageManager": "pnpm@7.27.0",
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx,json}": [
+			"prettier --write",
+			"eslint"
+		]
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.26.0",
-		"@swc/core": "^1.2.204",
-		"@swc/jest": "^0.2.21",
-		"@types/jest": "^29.2.5",
-		"@types/lodash": "^4.14.188",
-		"@types/lodash.isequal": "^4.5.6",
+		"@auto-it/all-contributors": "^10.40.0",
+		"@microsoft/api-extractor": "^7.34.3",
+		"@types/glob": "^8.0.1",
+		"@types/is-ci": "^3.0.0",
+		"@types/jest": "^29.4.0",
+		"@types/node": "18.7.3",
+		"@types/npmcli__arborist": "^5.6.1",
+		"@types/pacote": "^11.1.5",
+		"@types/react": "^18.0.24",
+		"@types/react-dom": "^18.0.6",
+		"@types/react-test-renderer": "^18.0.0",
+		"@types/tmp": "^0.2.3",
+		"@typescript-eslint/eslint-plugin": "^5.38.0",
+		"@typescript-eslint/parser": "^5.38.0",
+		"auto": "^10.38.5",
+		"cross-env": "^7.0.3",
+		"esbuild": "^0.17.5",
+		"eslint": "8.22.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-no-only-tests": "^2.6.0",
+		"eslint-plugin-react": "7.28.0",
+		"glob": "^8.1.0",
 		"gzip-size": "^7.0.0",
-		"jest": "^29.3.1",
-		"lodash": "^4.17.21",
-		"prettier": "^2.8.3",
+		"is-ci": "^3.0.1",
+		"jest": "^29.4.1",
+		"kleur": "^4.1.5",
+		"lerna": "^6.4.1",
+		"prettier": "^2.7.1",
 		"prettier-plugin-jsdoc": "^0.4.2",
-		"ts-node-dev": "^1.1.8",
-		"tsup": "^6.5.0",
+		"prettier-plugin-organize-imports": "^3.1.1",
+		"react": "^18.2.0",
+		"react-test-renderer": "^18.2.0",
+		"rimraf": "^4.1.2",
+		"tslib": "^2.5.0",
+		"tsx": "^3.12.3",
+		"turbo": "^1.7.4",
 		"typescript": "^4.9.4"
+	},
+	"auto": {
+		"plugins": [
+			[
+				"npm",
+				{
+					"subPackageChangelogs": true
+				}
+			],
+			"all-contributors"
+		],
+		"onlyPublishWithReleaseLabel": true
 	}
 }

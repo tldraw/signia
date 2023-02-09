@@ -1,0 +1,41 @@
+{
+	"name": "tlstate-react-jsx",
+	"private": false,
+	"description": "A tiny little drawing app (reactive state management).",
+	"version": "0.0.1-prerelease.0",
+	"author": "tldraw GB Ltd.",
+	"homepage": "https://tldraw.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tldraw/tlstate"
+	},
+	"bugs": {
+		"url": "https://github.com/tldraw/tlstate/issues"
+	},
+	"main": "./src/index.ts",
+	"types": ".tsbuild/index.d.ts",
+	"scripts": {
+		"test": "jest --passWithNoTests",
+		"test:coverage": "jest --coverage",
+		"typecheck": "tsc --build",
+		"api:build": "api-extractor run --local",
+		"prepack": "tsx ../../scripts/prepack.ts",
+		"postpack": "../../scripts/postpack.sh",
+		"build": "tsx ../../scripts/build-package.ts"
+	},
+	"dependencies": {
+		"tlstate": "workspace:*",
+		"tlstate-react": "workspace:*"
+	},
+	"devDependencies": {
+		"@swc/core": "^1.2.204",
+		"@swc/jest": "^0.2.21",
+		"@types/react": "*"
+	},
+	"jest": {
+		"preset": "../../jest-preset.js"
+	},
+	"peerDependencies": {
+		"react": "^18"
+	}
+}

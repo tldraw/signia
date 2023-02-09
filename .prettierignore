@@ -1,2 +1,6 @@
 **/node_modules/*
-**/dist/*
+**/out/*
+**/.tsbuild/*
+**/.next/*
+*.mdx
+**/_archive/*
