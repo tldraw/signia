@@ -1,7 +1,7 @@
 {
 	"name": "tlstate-react-example",
 	"private": true,
-	"version": "0.0.1-prerelease.0",
+	"version": "0.0.2",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
@@ -9,10 +9,10 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"tlstate": "workspace:*",
-		"tlstate-react": "workspace:*",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"tlstate": "workspace:*",
+		"tlstate-react": "workspace:*",
 		"todomvc-app-css": "^2.4.2"
 	},
 	"devDependencies": {
