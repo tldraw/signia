@@ -1,0 +1,27 @@
+name: Checks
+
+on:
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled]
+    branches: [main]
+
+jobs:
+  build:
+    name: 'Enforce label'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Require label
+        run: ./scripts/check-pr-label.sh
