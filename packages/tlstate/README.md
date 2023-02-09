@@ -2,6 +2,8 @@
 
 ## `Atom`
 
+An atomic value
+
 ## `Reactor`
 
 ## `Derivation`
