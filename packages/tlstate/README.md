@@ -2,7 +2,7 @@
 
 ## `Atom`
 
-An atomic value
+An atomic value, another.
 
 ## `Reactor`
 
