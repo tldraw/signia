@@ -39,5 +39,8 @@ coverage
 *.tsbuildinfo
 tsconfig.build.json
 
+# public index.d.ts generated during pack operation
+packages/*/index.d.ts
+
 # api-extractor output
 api

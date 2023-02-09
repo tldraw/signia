@@ -18,6 +18,8 @@
 		"test": "jest",
 		"test:coverage": "jest --coverage",
 		"typecheck": "tsc --build",
+		"prepack": "tsx ../../scripts/prepack.ts",
+		"postpack": "../../scripts/postpack.sh",
 		"build": "tsx ../../scripts/build-package.ts"
 	},
 	"jest": {
