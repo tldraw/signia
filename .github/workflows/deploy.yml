@@ -21,8 +21,17 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup
-      - name: Deploy
+
+      - name: Deploy Final
+        if: !inputs.prerelease
         run: pnpm auto shipit
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Deploy Prerelease
+        if: inputs.prerelease
+        run: pnpm auto shipit --prerelease
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
