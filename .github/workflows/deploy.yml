@@ -24,14 +24,14 @@ jobs:
 
       - name: Deploy Final
         if: ${{ ! inputs.prerelease }}
-        run: pnpm auto shipit
+        run: pnpm auto shipit -vv
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Deploy Prerelease
         if: ${{ inputs.prerelease }}
-        run: pnpm auto shipit --prerelease
+        run: pnpm auto shipit --prerelease -vv
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -85,7 +85,6 @@
 				}
 			],
 			"all-contributors"
-		],
-		"onlyPublishWithReleaseLabel": true
+		]
 	}
 }
