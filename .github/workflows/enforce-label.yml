@@ -29,5 +29,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Require label
-        run: pnpm check-pr-label
+      - name: Check PR
+        run: pnpm auto pr-check
