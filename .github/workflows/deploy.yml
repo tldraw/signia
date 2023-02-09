@@ -23,14 +23,14 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Deploy Final
-        if: !inputs.prerelease
+        if: ${{ ! inputs.prerelease }}
         run: pnpm auto shipit
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Deploy Prerelease
-        if: inputs.prerelease
+        if: ${{ inputs.prerelease }}
         run: pnpm auto shipit --prerelease
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
