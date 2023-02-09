@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    environment: auto deploy
     name: 'Enforce label'
     timeout-minutes: 15
     runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
@@ -29,5 +30,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Check PR
-        run: pnpm auto pr-check --pr $PR --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - uses: 8BitJonny/gh-get-current-pr@2.2.0
+        id: PR
+
+      - run: yarn auto pr-check --pr $PR --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+        env:
+          PR: ${{ steps.PR.outputs.number }}
