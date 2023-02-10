@@ -26,7 +26,18 @@ jobs:
         # Fetch full git history and tags
         run: git fetch --unshallow --tags
 
-      - uses: ./.github/actions/setup
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        shell: bash
 
       - name: Deploy Final
         if: ${{ ! inputs.prerelease }}
