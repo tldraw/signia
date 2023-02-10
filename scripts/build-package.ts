@@ -5,6 +5,7 @@ import { copyFileSync, existsSync, mkdirSync } from 'fs'
 import glob from 'glob'
 import kleur from 'kleur'
 import path from 'path'
+import rimraf from 'rimraf'
 import { pathToFileURL } from 'url'
 import { buildApi } from './build-api'
 
@@ -18,6 +19,8 @@ export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: str
 	if (!existsSync(path.join(sourcePackageDir, 'lib/index.ts'))) {
 		throw new Error(`No lib/index.ts file found in '${sourcePackageDir}'!`)
 	}
+
+	rimraf.sync(path.join(sourcePackageDir, 'dist'))
 
 	// first build the public .d.ts file
 	await buildApi({ sourcePackageDir })

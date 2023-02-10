@@ -28,8 +28,6 @@
 		"tlstate": "workspace:*"
 	},
 	"devDependencies": {
-		"@swc/core": "^1.2.204",
-		"@swc/jest": "^0.2.21",
 		"@types/react": "^18.0.24"
 	},
 	"jest": {

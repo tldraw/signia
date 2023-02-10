@@ -27,8 +27,6 @@
 		"preset": "../../jest-preset.js"
 	},
 	"devDependencies": {
-		"@swc/core": "^1.2.204",
-		"@swc/jest": "^0.2.21",
 		"@types/lodash": "^4.14.188",
 		"lodash": "^4.17.21"
 	}
