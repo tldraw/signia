@@ -2,7 +2,7 @@
 	"name": "tlstate-react-jsx",
 	"private": false,
 	"description": "A tiny little drawing app (reactive state management).",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {

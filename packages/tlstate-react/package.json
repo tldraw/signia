@@ -2,7 +2,7 @@
 	"name": "tlstate-react",
 	"private": false,
 	"description": "Tiny little react bindings for tlstate.",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {
