@@ -15,8 +15,8 @@ import { buildApi } from './build-api'
  * @returns
  */
 export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: string }) {
-	if (!existsSync(path.join(sourcePackageDir, 'src/index.ts'))) {
-		throw new Error(`No src/index.ts file found in '${sourcePackageDir}'!`)
+	if (!existsSync(path.join(sourcePackageDir, 'lib/index.ts'))) {
+		throw new Error(`No lib/index.ts file found in '${sourcePackageDir}'!`)
 	}
 
 	// first build the public .d.ts file
@@ -24,7 +24,7 @@ export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: str
 
 	// then copy over the source .ts files
 	const sourceFiles = glob
-		.sync(path.join(sourcePackageDir, 'src/**/*.ts?(x)'))
+		.sync(path.join(sourcePackageDir, 'lib/**/*.ts?(x)'))
 		// ignore test files
 		.filter((file) => !(file.includes('__tests__') || file.includes('.test.ts')))
 
@@ -35,10 +35,10 @@ export async function buildPackage({ sourcePackageDir }: { sourcePackageDir: str
 	await buildCjs({ sourceFiles, sourcePackageDir })
 }
 
-/** This just copies all the src typescript files to the destination package */
+/** This just copies all the lib typescript files to the dist dir */
 async function copySourceFilesToDist({ sourceFiles }: { sourceFiles: string[] }) {
 	for (const file of sourceFiles) {
-		const dest = file.replace('/src/', '/dist/')
+		const dest = file.replace('/lib/', '/dist/')
 		const destDir = path.dirname(dest)
 		if (!existsSync(destDir)) {
 			mkdirSync(destDir, { recursive: true })

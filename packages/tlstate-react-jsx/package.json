@@ -12,7 +12,8 @@
 	"bugs": {
 		"url": "https://github.com/tldraw/tlstate/issues"
 	},
-	"main": "./src/index.ts",
+	"/* NOTE */": "These `main` and `types` fields are rewritten by the build script. They are not the actual values we publish",
+	"main": "./lib/index.ts",
 	"types": ".tsbuild/index.d.ts",
 	"scripts": {
 		"test": "jest --passWithNoTests",

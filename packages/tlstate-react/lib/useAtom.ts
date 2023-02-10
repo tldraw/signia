@@ -12,6 +12,5 @@ export function useAtom<Value, Diff = unknown>(
 			typeof valueOrInitialiser === 'function' ? (valueOrInitialiser as any)() : valueOrInitialiser
 
 		return atom(`useAtom(${name})`, initialValue, opts)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 }

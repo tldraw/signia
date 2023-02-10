@@ -1,5 +1,5 @@
 module.exports = {
-	roots: ['<rootDir>/src'],
+	roots: ['<rootDir>/lib'],
 	transform: {
 		'^.+\\.(tsx|jsx|ts|js|mjs)?$': [
 			'@swc/jest',
@@ -20,7 +20,7 @@ module.exports = {
 	},
 	setupFilesAfterEnv: [__dirname + '/jest-setup.js'],
 	moduleNameMapper: {
-		'^~(.*)': '<rootDir>/src/$1',
+		'^~(.*)': '<rootDir>/lib/$1',
 	},
 	testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
@@ -30,5 +30,5 @@ module.exports = {
 		'<rootDir>/dist',
 	],
 	transformIgnorePatterns: ['node_modules/(?!(nanoid)/)'],
-	collectCoverageFrom: ['<rootDir>/src/**/*.{ts,tsx}'],
+	collectCoverageFrom: ['<rootDir>/lib/**/*.{ts,tsx}'],
 }

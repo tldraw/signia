@@ -17,7 +17,6 @@ export function useValue() {
 			return args[0]
 		}
 		return computed(name, args[1])
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, deps)
 
 	const { subscribe, getSnapshot } = useMemo(() => {
@@ -30,7 +29,6 @@ export function useValue() {
 			},
 			getSnapshot: () => $val.value,
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [$val])
 
 	return useSyncExternalStore(subscribe, getSnapshot)
