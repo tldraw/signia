@@ -14,7 +14,6 @@ const ProxyHandlers = {
 	 * @see https://github.com/facebook/react/blob/2d80a0cd690bb5650b6c8a6c079a87b5dc42bd15/packages/react-reconciler/src/ReactFiberHooks.old.js#L460
 	 */
 	apply(Component: FunctionComponent, thisArg: any, argumentsList: any) {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
 		return useStateTracking(Component.displayName ?? Component.name ?? 'tracked(???)', () =>
 			Component.apply(thisArg, argumentsList)
 		)

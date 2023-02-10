@@ -4,7 +4,9 @@
 		"test": {},
 		"dev": {},
 		"lint": {},
-		"build": {},
+		"build": {
+			"outputs": [".tsbuild/**", "dist/**", "api/**"]
+		},
 		"typecheck": {
 			"outputs": [".tsbuild/**"]
 		}

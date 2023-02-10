@@ -23,7 +23,7 @@
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"format:check": "prettier --check \"**/*.{ts,tsx}\"",
 		"clean": "./scripts/clean.sh",
-		"test": "turbo run test",
+		"test": "turbo run test --concurrency=1",
 		"deploy": "./scripts/deploy.sh",
 		"typecheck": "turbo run typecheck --concurrency=1"
 	},
@@ -52,6 +52,8 @@
 		"@types/tmp": "^0.2.3",
 		"@typescript-eslint/eslint-plugin": "^5.38.0",
 		"@typescript-eslint/parser": "^5.38.0",
+		"@swc/core": "^1.2.204",
+		"@swc/jest": "^0.2.21",
 		"auto": "^10.38.5",
 		"cross-env": "^7.0.3",
 		"esbuild": "^0.17.5",
@@ -71,7 +73,6 @@
 		"react": "^18.2.0",
 		"react-test-renderer": "^18.2.0",
 		"rimraf": "^4.1.2",
-		"tslib": "^2.5.0",
 		"tsx": "^3.12.3",
 		"turbo": "^1.7.4",
 		"typescript": "^4.9.4"

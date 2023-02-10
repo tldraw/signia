@@ -1,0 +1,19 @@
+{
+	"name": "package-build",
+	"version": "1.0.0",
+	"description": "tests for our package build scripts",
+	"private": true,
+	"scripts": {
+		"test": "jest"
+	},
+	"keywords": [],
+	"author": "",
+	"jest": {
+		"preset": "../../jest-preset.js"
+	},
+	"license": "ISC",
+	"devDependencies": {
+		"@types/tmp": "^0.2.3",
+		"tmp": "^0.2.1"
+	}
+}

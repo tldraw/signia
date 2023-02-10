@@ -23,7 +23,7 @@ export async function buildApi({ sourcePackageDir }: { sourcePackageDir: string 
 			{
 				...JSON.parse(readFileSync(path.join(sourcePackageDir, 'tsconfig.json'), 'utf8')),
 				extends: './tsconfig.json',
-				exclude: ['node_modules', 'src/**/*.test.ts', '__tests__', '.tsbuild'],
+				exclude: ['node_modules', 'lib/**/*.test.ts', '**/__tests__/**', '.tsbuild'],
 			},
 			null,
 			2

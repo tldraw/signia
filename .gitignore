@@ -42,8 +42,8 @@ tsconfig.build.json
 # public index.d.ts generated during prepack operation
 packages/*/index.d.ts
 
-# package.json backup generated during prepack operation
-package.json.bak
+# backups generated during prepack operation
+*.bak
 
 # api-extractor output
 api

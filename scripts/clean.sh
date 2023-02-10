@@ -8,4 +8,6 @@ rm -rf **/*/tsconfig.build.json
 rm -rf **/*/.turbo
 rm -rf **/*/*.tsbuildinfo
 rm -rf packages/*/api
+rm -rf packages/*/dist
+rm -rf packages/*/*.tgz
 pnpm install

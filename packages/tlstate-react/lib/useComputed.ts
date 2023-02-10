@@ -17,10 +17,5 @@ export function useComputed() {
 	const compute = arguments[1]
 	const opts = arguments.length === 3 ? undefined : arguments[2]
 	const deps = arguments.length === 3 ? arguments[2] : arguments[3]
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	return useMemo(
-		() => computed(`useComputed(${name})`, compute, opts),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		deps
-	)
+	return useMemo(() => computed(`useComputed(${name})`, compute, opts), deps)
 }
