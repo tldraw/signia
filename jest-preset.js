@@ -19,10 +19,7 @@ module.exports = {
 		],
 	},
 	setupFilesAfterEnv: [__dirname + '/jest-setup.js'],
-	moduleNameMapper: {
-		'^~(.*)': '<rootDir>/lib/$1',
-	},
-	testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
+	testRegex: '.*.test.(ts|tsx)$',
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 	modulePathIgnorePatterns: [
 		'<rootDir>/test/__fixtures__',
