@@ -1,5 +1,5 @@
 module.exports = {
-	roots: ['<rootDir>/lib'],
+	roots: ['<rootDir>/src'],
 	transform: {
 		'^.+\\.(tsx|jsx|ts|js|mjs)?$': [
 			'@swc/jest',
@@ -27,5 +27,5 @@ module.exports = {
 		'<rootDir>/dist',
 	],
 	transformIgnorePatterns: ['node_modules/(?!(nanoid)/)'],
-	collectCoverageFrom: ['<rootDir>/lib/**/*.{ts,tsx}'],
+	collectCoverageFrom: ['<rootDir>/src/**/*.{ts,tsx}'],
 }
