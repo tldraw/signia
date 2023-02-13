@@ -26,7 +26,7 @@
 import React, { Component, type FunctionComponent } from 'react'
 import jsxRuntimeDev from 'react/jsx-dev-runtime'
 import jsxRuntime from 'react/jsx-runtime'
-import { useStateTracking } from 'tlstate-react/lib'
+import { useStateTracking } from 'tlstate-react'
 
 export interface JsxRuntimeModule {
 	jsx?(type: any, ...rest: any[]): unknown
