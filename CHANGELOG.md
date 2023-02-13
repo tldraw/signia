@@ -1,3 +1,20 @@
+# v0.0.4 (Mon Feb 13 2023)
+
+#### 🐛 Bug Fix
+
+- `tlstate-react-jsx`, `tlstate-react`, `tlstate`
+  - [chore] go back to src/dist folders [#19](https://github.com/tldraw/tlstate/pull/19) ([@ds300](https://github.com/ds300))
+
+#### ⚠️ Pushed to `main`
+
+- fix deploy script maybe ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.3 (Fri Feb 10 2023)
 
 #### 🐛 Bug Fix

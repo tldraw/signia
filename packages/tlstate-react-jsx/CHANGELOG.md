@@ -1,3 +1,15 @@
+# v0.0.4 (Mon Feb 13 2023)
+
+#### 🐛 Bug Fix
+
+- [chore] go back to src/dist folders [#19](https://github.com/tldraw/tlstate/pull/19) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.3 (Fri Feb 10 2023)
 
 #### 🐛 Bug Fix
