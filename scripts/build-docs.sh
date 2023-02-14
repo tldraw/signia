@@ -2,7 +2,7 @@
 set -eux
 
 ## Build docs report
-pnpm run api:build
+pnpm build
 
 ## Pull out all docs
 mkdir -p docs/api-input

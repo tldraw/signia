@@ -19,7 +19,6 @@
 		"test": "jest --passWithNoTests",
 		"test:coverage": "jest --coverage",
 		"typecheck": "tsc --build",
-		"api:build": "api-extractor run --local",
 		"prepack": "tsx ../../scripts/prepack.ts",
 		"postpack": "../../scripts/postpack.sh",
 		"build": "tsx ../../scripts/build-package.ts"
