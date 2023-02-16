@@ -5,11 +5,12 @@ set -eux
 pnpm build
 
 ## Pull out all docs
-mkdir -p docs/api-input
-cp packages/*/api/*.api.json docs/api-input
+mkdir -p .api-docs-input
+cp packages/*/api/*.api.json .api-docs-input
 
 ## Build docs
-pnpm run api-documenter markdown --input docs/api-input --output-folder docs/api
+mkdir -p docs/docs/api
+pnpm api-documenter markdown --input .api-docs-input --output-folder docs/docs/api
 
 ## Clean up
-rm -rf docs/api-input
+rm -rf .api-docs-input
