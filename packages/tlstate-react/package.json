@@ -21,6 +21,7 @@
 		"typecheck": "tsc --build",
 		"prepack": "tsx ../../scripts/prepack.ts",
 		"postpack": "../../scripts/postpack.sh",
+		"build-docs": "typedoc --plugin typedoc-plugin-markdown --out docs src/index.ts --excludePrivate --excludeInternal --readme none  --githubPages false --entryDocument index.md",
 		"build": "tsx ../../scripts/build-package.ts"
 	},
 	"dependencies": {

@@ -5,7 +5,7 @@ type RangeTuple<Diff> = [fromEpoch: number, toEpoch: number, diff: Diff]
 /**
  * A structure that stores diffs between values of an atom.
  *
- * @public
+ * @internal
  */
 export class HistoryBuffer<Diff> {
 	private index = 0
@@ -23,7 +23,6 @@ export class HistoryBuffer<Diff> {
 	 * @param lastComputedEpoch The epoch when the diff was computed.
 	 * @param currentEpoch The current epoch.
 	 * @param diff (optional) The diff to add, or else a reset value.
-	 * @public
 	 */
 	pushEntry(lastComputedEpoch: number, currentEpoch: number, diff: Diff | RESET_VALUE) {
 		if (diff === undefined) {
@@ -44,8 +43,6 @@ export class HistoryBuffer<Diff> {
 
 	/**
 	 * Clear the history buffer.
-	 *
-	 * @public
 	 */
 	clear() {
 		this.index = 0
@@ -57,7 +54,6 @@ export class HistoryBuffer<Diff> {
 	 *
 	 * @param epoch The epoch to get diffs since.
 	 * @returns An array of diffs or a flag to reset the history buffer.
-	 * @public
 	 */
 	getChangesSince(sinceEpoch: number): RESET_VALUE | Diff[] {
 		const { index, capacity, buffer } = this

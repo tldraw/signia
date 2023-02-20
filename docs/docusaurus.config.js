@@ -6,9 +6,9 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-	title: 'My Site',
-	tagline: 'Dinosaurs are cool',
-	favicon: 'img/favicon.ico',
+	title: 'tlstate',
+	tagline: 'Scaleable reactive signals',
+	favicon: 'img/favicon.png',
 
 	// Set the production url of your site here
 	url: 'https://your-docusaurus-test-site.com',
@@ -18,8 +18,8 @@ const config = {
 
 	// GitHub pages deployment config.
 	// If you aren't using GitHub pages, you don't need these.
-	organizationName: 'facebook', // Usually your GitHub org/user name.
-	projectName: 'docusaurus', // Usually your repo name.
+	organizationName: 'tldraw', // Usually your GitHub org/user name.
+	projectName: 'tlstate', // Usually your repo name.
 
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',
@@ -39,17 +39,6 @@ const config = {
 			({
 				docs: {
 					sidebarPath: require.resolve('./sidebars.js'),
-					// Please change this to your repo.
-					// Remove this to remove the "edit this page" links.
-					editUrl:
-						'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-				},
-				blog: {
-					showReadingTime: true,
-					// Please change this to your repo.
-					// Remove this to remove the "edit this page" links.
-					editUrl:
-						'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
 				},
 				theme: {
 					customCss: require.resolve('./src/css/custom.css'),
@@ -66,7 +55,7 @@ const config = {
 			// Replace with your project's social card
 			image: 'img/docusaurus-social-card.jpg',
 			navbar: {
-				title: 'tlstate - Reactive state by tldraw',
+				title: 'tlstate',
 				logo: {
 					alt: 'tlstate logo',
 					src: 'img/logo-small.svg',
@@ -76,9 +65,8 @@ const config = {
 						type: 'doc',
 						docId: 'intro',
 						position: 'left',
-						label: 'Tutorial',
+						label: 'Getting Started',
 					},
-					{ to: '/blog', label: 'Blog', position: 'left' },
 					{
 						href: 'https://github.com/tldraw/tlstate',
 						label: 'GitHub',
@@ -93,7 +81,7 @@ const config = {
 						title: 'Docs',
 						items: [
 							{
-								label: 'Tutorial',
+								label: 'Getting Started',
 								to: '/docs/intro',
 							},
 						],
@@ -102,16 +90,12 @@ const config = {
 						title: 'Community',
 						items: [
 							{
-								label: 'Stack Overflow',
-								href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-							},
-							{
 								label: 'Discord',
-								href: 'https://discordapp.com/invite/docusaurus',
+								href: 'https://discord.com/invite/SBBEVCA4PG',
 							},
 							{
 								label: 'Twitter',
-								href: 'https://twitter.com/docusaurus',
+								href: 'https://twitter.com/tldraw',
 							},
 						],
 					},
@@ -119,12 +103,8 @@ const config = {
 						title: 'More',
 						items: [
 							{
-								label: 'Blog',
-								to: '/blog',
-							},
-							{
 								label: 'GitHub',
-								href: 'https://github.com/facebook/docusaurus',
+								href: 'https://github.com/tldraw/tlstate',
 							},
 						],
 					},

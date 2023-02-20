@@ -1,10 +1,9 @@
 module.exports = {
-	"trailingComma": "es5",
-	"singleQuote": true,
-	"semi": false,
-	"printWidth": 100,
-	"tabWidth": 2,
-	"useTabs": true,
-	"plugins": ["prettier-plugin-organize-imports", "prettier-plugin-jsdoc"],
-
+	trailingComma: 'es5',
+	singleQuote: true,
+	semi: false,
+	printWidth: 100,
+	tabWidth: 2,
+	useTabs: true,
+	plugins: ['prettier-plugin-organize-imports'],
 }

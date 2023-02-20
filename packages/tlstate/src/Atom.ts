@@ -17,6 +17,11 @@ export type AtomOptions<Value, Diff> = {
  * An atom is a reactive pointer to any runtime value. Updating an atom to point to a new value
  * advances the global epoch. It can keep a history of diffs describing how its value has changed.
  *
+ * @example
+ * ```ts
+ * cosnt name = atom('John')
+ * ```
+ *
  * @public
  */
 export interface Atom<Value, Diff = unknown> extends Parent<Value, Diff> {

@@ -47,3 +47,6 @@ packages/*/index.d.ts
 
 # api-extractor output
 api
+
+# docs generated 
+packages/*/docs
