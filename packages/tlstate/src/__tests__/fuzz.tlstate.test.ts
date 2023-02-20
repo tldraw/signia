@@ -3,7 +3,7 @@ import { atom, Atom, isAtom } from '../Atom'
 import { computed, Computed, isComputed } from '../Computed'
 import { reactor } from '../EffectScheduler'
 import { transact } from '../transactions'
-import { ReactiveValue, Reactor } from '../types'
+import { Reactor, Signal } from '../types'
 
 class RandomSource {
 	private seed: number
@@ -78,10 +78,7 @@ type FuzzSystemState = {
 	derivations: Record<string, { derivation: Computed<Letter>; sneakyGet: () => Letter }>
 	derivationsInDerivations: Record<string, Computed<Computed<Letter>>>
 	atomsInDerivations: Record<string, Computed<Atom<Letter>>>
-	reactors: Record<
-		string,
-		{ reactor: Reactor; result: string | null; dependencies: ReactiveValue<any>[] }
-	>
+	reactors: Record<string, { reactor: Reactor; result: string | null; dependencies: Signal<any>[] }>
 }
 
 type Op =
@@ -205,7 +202,7 @@ class Test {
 
 		times(this.source.nextIntInRange(1, MAX_REACTORS), () => {
 			const reactorId = this.source.nextId()
-			const dependencies: ReactiveValue<any>[] = []
+			const dependencies: Signal<any>[] = []
 
 			times(this.source.nextIntInRange(1, MAX_DEPENDENCIES_PER_ATOM), () => {
 				this.source.executeOne({

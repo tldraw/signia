@@ -247,10 +247,12 @@ function computedAnnotation(
  * Retrieves the underlying computed instance for a given property created with the `@computed`
  * decorator.
  *
+ * @example
+ * Here's an example of how to use this function:
  * ```ts
  * class Counter {
  *   max = 100
- *   count = atom<number>(0)
+ *   count = atom(0)
  *
  *   ~@computed get remaining() {
  *     return this.max - this.count.value
@@ -286,6 +288,7 @@ export function getComputedInstance<Obj extends object, Prop extends keyof Obj>(
 /**
  * A decorator for a derivations.
  *
+ * @example
  * ```ts
  * class Counter {
  *   max = 100

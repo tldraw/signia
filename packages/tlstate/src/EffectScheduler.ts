@@ -10,6 +10,9 @@ export class EffectScheduler<Result> implements ReactingChild {
 	lastTraversedEpoch = GLOBAL_START_EPOCH
 	lastReactedEpoch = GLOBAL_START_EPOCH
 	scheduleCount = 0
+	/**
+	 * @private
+	 */
 	parentEpochs: number[] = []
 	parents: Parent<any, any>[] = []
 

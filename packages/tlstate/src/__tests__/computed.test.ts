@@ -3,7 +3,7 @@ import { computed, Computed, getComputedInstance, isUninitialized, _Computed } f
 import { reactor } from '../EffectScheduler'
 import { assertNever } from '../helpers'
 import { advanceGlobalEpoch, globalEpoch, transact, transaction } from '../transactions'
-import { ReactiveValue, RESET_VALUE } from '../types'
+import { RESET_VALUE, Signal } from '../types'
 
 function getLastCheckedEpoch(derivation: Computed<any>): number {
 	return (derivation as any).lastCheckedEpoch
@@ -337,7 +337,7 @@ type Difference =
 	| { type: 'REMOVE'; path: string[]; oldValue: any }
 
 function getIncrementalRecordMapper<In, Out>(
-	obj: ReactiveValue<Record<string, In>, Difference[]>,
+	obj: Signal<Record<string, In>, Difference[]>,
 	mapper: (t: In, k: string) => Out
 ): Computed<Record<string, Out>> {
 	function computeFromScratch() {

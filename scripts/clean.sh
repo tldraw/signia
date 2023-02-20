@@ -9,5 +9,6 @@ rm -rf **/*/.turbo
 rm -rf **/*/*.tsbuildinfo
 rm -rf packages/*/api
 rm -rf packages/*/dist
+rm -rf packages/*/docs
 rm -rf packages/*/*.tgz
 pnpm install

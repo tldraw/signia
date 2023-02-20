@@ -1,9 +1,9 @@
 /* eslint-disable prefer-rest-params */
 import { useMemo, useSyncExternalStore } from 'react'
-import { computed, react, ReactiveValue } from 'tlstate'
+import { computed, react, Signal } from 'tlstate'
 
 /** @public */
-export function useValue<Value>(value: ReactiveValue<Value>): Value
+export function useValue<Value>(value: Signal<Value>): Value
 /** @public */
 export function useValue<Value>(name: string, fn: () => Value, deps: unknown[]): Value
 /** @public */
