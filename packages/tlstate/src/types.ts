@@ -8,7 +8,7 @@ export const RESET_VALUE: unique symbol = Symbol('RESET_VALUE')
 export type RESET_VALUE = typeof RESET_VALUE
 
 /** @public */
-export interface ReactiveValue<Value, Diff = unknown> {
+export interface Signal<Value, Diff = unknown> {
 	name: string
 	readonly value: Value
 	getDiffSince(epoch: number): RESET_VALUE | Diff[]
@@ -34,7 +34,7 @@ export type ComputeDiff<Value, Diff> = (
 	currentEpoch: number
 ) => Diff | RESET_VALUE
 
-export interface Parent<Value, Diff = unknown> extends ReactiveValue<Value, Diff> {
+export interface Parent<Value, Diff = unknown> extends Signal<Value, Diff> {
 	lastChangedEpoch: number
 	children: ArraySet<Child>
 }
