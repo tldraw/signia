@@ -2,7 +2,7 @@ import { startCapturingParents, stopCapturingParents } from './capture'
 import { GLOBAL_START_EPOCH } from './constants'
 import { attach, detach, haveParentsChanged } from './helpers'
 import { globalEpoch } from './transactions'
-import { Parent, ReactingChild, Reactor } from './types'
+import { ReactingChild, Reactor, Signal } from './types'
 
 /** @public */
 export class EffectScheduler<Result> implements ReactingChild {
@@ -14,7 +14,7 @@ export class EffectScheduler<Result> implements ReactingChild {
 	 * @private
 	 */
 	parentEpochs: number[] = []
-	parents: Parent<any, any>[] = []
+	parents: Signal<any, any>[] = []
 
 	constructor(
 		public readonly name: string,

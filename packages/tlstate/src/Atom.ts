@@ -3,7 +3,7 @@ import { maybeCaptureParent } from './capture'
 import { EMPTY_ARRAY, equals } from './helpers'
 import { HistoryBuffer } from './HistoryBuffer'
 import { advanceGlobalEpoch, atomDidChange, globalEpoch } from './transactions'
-import { Child, ComputeDiff, Parent, RESET_VALUE } from './types'
+import { Child, ComputeDiff, RESET_VALUE, Signal } from './types'
 
 /** @public */
 export type AtomOptions<Value, Diff> = {
@@ -24,7 +24,7 @@ export type AtomOptions<Value, Diff> = {
  *
  * @public
  */
-export interface Atom<Value, Diff = unknown> extends Parent<Value, Diff> {
+export interface Atom<Value, Diff = unknown> extends Signal<Value, Diff> {
 	set(value: Value, diff?: Diff): Value
 	update(updater: (value: Value) => Value): Value
 }
