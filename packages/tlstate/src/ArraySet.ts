@@ -4,6 +4,7 @@ export const ARRAY_SIZE_THRESHOLD = 32
 /**
  * An ArraySet operates as an array until it reaches a certain size, after which a Set is used
  * instead. In either case, the same methods are used to get, set, remove, and visit the items.
+ * @internal
  */
 export class ArraySet<T> {
 	private arraySize = 0

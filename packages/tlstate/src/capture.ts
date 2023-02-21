@@ -12,6 +12,39 @@ class CaptureStackFrame {
 
 let stack: CaptureStackFrame | null = null
 
+/**
+ * Executes the given function without capturing any parents in the current capture context.
+ *
+ * This is mainly useful if you want to run an effect only when certain signals change while also
+ * dereferencing other signals which should not cause the effect to rerun on their own.
+ *
+ * @example
+ * ```ts
+ * const name = atom('name', 'Sam')
+ * const time = atom('time', () => new Date().getTime())
+ *
+ * setInterval(() => {
+ *   time.set(new Date().getTime())
+ * })
+ *
+ * react('log name changes', () => {
+ * 	 console.log(name.value, 'was changed at', __unsafe__withoutCapture(() => time.value))
+ * })
+ *
+ * ```
+ *
+ * @public
+ */
+export function __unsafe__withoutCapture<T>(fn: () => T): T {
+	const oldStack = stack
+	stack = null
+	try {
+		return fn()
+	} finally {
+		stack = oldStack
+	}
+}
+
 export function startCapturingParents(child: Child) {
 	stack = new CaptureStackFrame(stack, child)
 }
@@ -81,7 +114,26 @@ export function maybeCaptureParent(p: Signal<any, any>) {
 	}
 }
 
-/** @public */
+/**
+ * A debugging tool that tells you why a computed signal or effect is running.
+ * Call in the body of a computed signal or effect function.
+ *
+ * @example
+ * ```ts
+ * const name = atom('name', 'Bob')
+ * react('greeting', () => {
+ * 	whyAmIRunning()
+ *	console.log('Hello', name.value)
+ * })
+ *
+ * name.set('Alice')
+ *
+ * // 'greeting' is running because:
+ * //     'name' changed => 'Alice'
+ * ```
+ *
+ * @public
+ */
 export function whyAmIRunning() {
 	const child = stack?.child
 	if (!child) {

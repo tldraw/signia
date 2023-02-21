@@ -88,62 +88,23 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 
 	readonly isEqual: null | ((a: any, b: any) => boolean)
 
-	/**
-	 * (optional) A method used to compute a diff between the atom's old and new values.
-	 *
-	 * @private
-	 */
 	computeDiff?: ComputeDiff<Value, Diff>
 
-	/**
-	 * The epoch when this atom was last changed.
-	 *
-	 * @private
-	 */
 	lastChangedEpoch = globalEpoch
 
-	/**
-	 * A collection containing the atom's children.
-	 *
-	 * @private
-	 */
 	children = new ArraySet<Child>()
 
-	/**
-	 * A buffer of diffs describing the accumulated history of this atom's value.
-	 *
-	 * @private
-	 */
 	historyBuffer?: HistoryBuffer<Diff>
 
-	/**
-	 * Get the atom's value without capturing it. Other systems will not know that this was done.
-	 *
-	 * @returns The value of the atom.
-	 * @public
-	 */
 	__unsafe__getWithoutCapture(): Value {
 		return this.current
 	}
 
-	/**
-	 * Get the value of the atom and (maybe) capture its parent.
-	 *
-	 * @returns The value of the atom.
-	 * @public
-	 */
 	get value() {
 		maybeCaptureParent(this)
 		return this.current
 	}
 
-	/**
-	 * Set the value of the atom.
-	 *
-	 * @param value The new value of the atom.
-	 * @param diff (optional) The diff between the old value and the new value, if known.
-	 * @returns The new value of the atom.
-	 */
 	set(value: Value, diff?: Diff): Value {
 		// If the value has not changed, do nothing.
 		if (this.isEqual?.(this.current, value) ?? equals(this.current, value)) {
@@ -176,24 +137,10 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 		return value
 	}
 
-	/**
-	 * Update the value of this atom.
-	 *
-	 * @param updater A function that takes the current value of the atom and returns the new value.
-	 * @returns The new value of the atom.
-	 * @public
-	 */
 	update(updater: (value: Value) => Value): Value {
 		return this.set(updater(this.current))
 	}
 
-	/**
-	 * Get all diffs since the given epoch.
-	 *
-	 * @param epoch The epoch to get diffs since.
-	 * @returns An array of diffs or a flag to reset the history buffer.
-	 * @public
-	 */
 	getDiffSince(epoch: number): RESET_VALUE | Diff[] {
 		maybeCaptureParent(this)
 
@@ -206,7 +153,22 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 	}
 }
 
-/** @public */
+/**
+ * Creates a new [[Atom]].
+ *
+ * @example
+ * ```ts
+ * const name = atom('name', 'John')
+ *
+ * name.value // 'John'
+ *
+ * name.set('Jane')
+ *
+ * name.value // 'Jane'
+ * ```
+ *
+ * @public
+ */
 export function atom<Value, Diff = unknown>(
 	name: string,
 	initialValue: Value,
@@ -215,7 +177,10 @@ export function atom<Value, Diff = unknown>(
 	return new _Atom(name, initialValue, options)
 }
 
-/** @public */
+/**
+ * Returns true if the given value is an [[Atom]].
+ * @public
+ */
 export function isAtom(value: unknown): value is Atom<unknown> {
 	return value instanceof _Atom
 }

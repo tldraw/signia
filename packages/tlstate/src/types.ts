@@ -50,18 +50,36 @@ export interface Signal<Value, Diff = unknown> {
 
 /** @public */
 export interface ComputedChild {
-	/** @internal */
+	/**
+	 * Any signals this computed child dereferenced the last time it was computed.
+	 * @internal
+	 */
 	parents: Signal<any, any>[]
-	/** @internal */
+	/**
+	 * The matching epochs of the parents array when this child was last computed.
+	 * @internal
+	 */
 	parentEpochs: number[]
-	/** @public */
+	/**
+	 * Whether this computed child is involved in an actively-running effect graph.
+	 * @public
+	 */
 	isActivelyListening: boolean
-	/** @internal */
+	/**
+	 * The epoch when this child was last traversed during the 'commit' phase of a transation (or calling [[Atom.set]] outside of a transaction).
+	 * @internal
+	 */
 	lastTraversedEpoch: number
 }
 
-/** @internal */
+/**
+ * A child that can run effects if necessary.
+ * @public
+ */
 export interface ReactingChild extends ComputedChild {
+	/**
+	 * This should check whether the child needs to run any effects, and schedule them if necessary.
+	 */
 	maybeScheduleEffect(): void
 }
 
@@ -70,9 +88,9 @@ export type Child = ReactingChild | ComputedChild
 
 /**
  * Computes the diff between the previous and current value.
- * 
+ *
  * If the diff cannot be computed for whatever reason, it should return [[RESET_VALUE]].
- * 
+ *
  * @public
  */
 export type ComputeDiff<Value, Diff> = (
@@ -82,9 +100,26 @@ export type ComputeDiff<Value, Diff> = (
 	currentEpoch: number
 ) => Diff | RESET_VALUE
 
-/** @public */
+/**
+ * The reactor is a simple interface for starting and stopping an [[EffectScheduler]].
+ *
+ * You can create a reactor with [[reactor]].
+ * @public
+ */
 export interface Reactor<T = unknown> {
+	/**
+	 * The underlying effect scheduler.
+	 * @public
+	 */
 	scheduler: EffectScheduler<T>
+	/**
+	 * Start the scheduler.
+	 * @public
+	 */
 	start(): void
+	/**
+	 * Stop the scheduler.
+	 * @public
+	 */
 	stop(): void
 }
