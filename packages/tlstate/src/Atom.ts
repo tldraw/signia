@@ -3,32 +3,72 @@ import { maybeCaptureParent } from './capture'
 import { EMPTY_ARRAY, equals } from './helpers'
 import { HistoryBuffer } from './HistoryBuffer'
 import { advanceGlobalEpoch, atomDidChange, globalEpoch } from './transactions'
-import { Child, ComputeDiff, Parent, RESET_VALUE } from './types'
+import { Child, ComputeDiff, RESET_VALUE, Signal } from './types'
 
-/** @public */
-export type AtomOptions<Value, Diff> = {
+/**
+ * The options to configure an atom, passed into the [[atom]] function.
+ * @public
+ */
+export interface AtomOptions<Value, Diff> {
+	/**
+	 * The maximum number of diffs to keep in the history buffer.
+	 *
+	 * If you don't need to compute diffs, or if you will supply diffs manually via [[Atom.set]], you can leave this as `undefined` and no history buffer will be created.
+	 *
+	 * If you expect the value to be part of an active effect subscription all the time, and to not change multiple times inside of a single transaction, you can set this to a relatively low number (e.g. 10).
+	 *
+	 * Otherwise, set this to a higher number based on your usage pattern and memory constraints.
+	 *
+	 */
 	historyLength?: number
+	/**
+	 * A method used to compute a diff between the atom's old and new values. If provided, it will not be used unless you also specify [[AtomOptions.historyLength]].
+	 */
 	computeDiff?: ComputeDiff<Value, Diff>
-	/** @private */
+	/**
+	 * If provided, this will be used to compare the old and new values of the atom to determine if the value has changed.
+	 * By default, values are compared using first using strict equality (`===`), then `Object.is`, and finally any `.equals` method present in the object's prototype chain.
+	 * @param a
+	 * @param b
+	 * @returns
+	 */
 	isEqual?: (a: any, b: any) => boolean
 }
 
 /**
- * An atom is a reactive pointer to any runtime value. Updating an atom to point to a new value
- * advances the global epoch. It can keep a history of diffs describing how its value has changed.
+ * An atom is a signal that can be updated directly by calling [[Atom.set]] or [[Atom.update]].
+ *
+ * Atoms are created using the [[atom]] function.
+ *
  *
  * @example
  * ```ts
- * cosnt name = atom('John')
+ * cosnt name = atom('name', 'John')
+ *
+ * console.log(name.value) // 'John'
  * ```
  *
  * @public
  */
-export interface Atom<Value, Diff = unknown> extends Parent<Value, Diff> {
+export interface Atom<Value, Diff = unknown> extends Signal<Value, Diff> {
+	/**
+	 * Sets the value of this atom to the given value. If the value is the same as the current value, this is a no-op.
+	 *
+	 * @param value - The new value to set.
+	 * @param diff - The diff to use for the update. If not provided, the diff will be computed using [[AtomOptions.computeDiff]].
+	 */
 	set(value: Value, diff?: Diff): Value
+	/**
+	 * Updates the value of this atom using the given updater function. If the returned value is the same as the current value, this is a no-op.
+	 *
+	 * @param updater - A function that takes the current value and returns the new value.
+	 */
 	update(updater: (value: Value) => Value): Value
 }
 
+/**
+ * @internal
+ */
 export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 	constructor(
 		public readonly name: string,

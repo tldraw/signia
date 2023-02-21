@@ -1,6 +1,6 @@
 import { _Atom } from './Atom'
 import { GLOBAL_START_EPOCH } from './constants'
-import { Child, Parent, ReactingChild } from './types'
+import { Child, ReactingChild, Signal } from './types'
 
 // The current epoch (global to all atoms).
 export let globalEpoch = GLOBAL_START_EPOCH + 1
@@ -92,7 +92,7 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
 			if ('maybeScheduleEffect' in node) {
 				reactors.add(node)
 			} else {
-				;(node as any as Parent<any>).children.visit(traverse)
+				;(node as any as Signal<any>).children.visit(traverse)
 			}
 		}
 

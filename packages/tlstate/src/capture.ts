@@ -1,11 +1,11 @@
 import { attach, detach } from './helpers'
-import { Child, Parent } from './types'
+import { Child, Signal } from './types'
 
 class CaptureStackFrame {
 	offset = 0
 	numNewParents = 0
 
-	maybeRemoved?: Parent<any>[]
+	maybeRemoved?: Signal<any>[]
 
 	constructor(public readonly below: CaptureStackFrame | null, public readonly child: Child) {}
 }
@@ -48,7 +48,7 @@ export function stopCapturingParents() {
 }
 
 // this must be called after the parent is up to date
-export function maybeCaptureParent(p: Parent<any, any>) {
+export function maybeCaptureParent(p: Signal<any, any>) {
 	if (stack) {
 		const idx = stack.child.parents.indexOf(p)
 		// if the child didn't deref this parent last time it executed, then idx will be -1

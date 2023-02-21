@@ -1,0 +1,26 @@
+diff --git a/dist/resources/helpers/signature-title.js b/dist/resources/helpers/signature-title.js
+index 38ade0bf586ad0c1bea30140b263c7e359cb5d1d..409a2d551741a7be75c1ac51e41d3dd731c77ad5 100644
+--- a/dist/resources/helpers/signature-title.js
++++ b/dist/resources/helpers/signature-title.js
+@@ -14,10 +14,10 @@ function default_1(theme) {
+             md.push(this.parent.flags.map((flag) => `\`${flag}\``).join(' ') + ' ');
+         }
+         if (accessor) {
+-            md.push(`\`${accessor}\` **${this.name}**`);
++            md.push(`\`${accessor}\` **${utils_1.escapeChars(this.name)}**`);
+         }
+         else if (this.name !== '__call' && this.name !== '__type') {
+-            md.push(`**${this.name}**`);
++            md.push(`**${utils_1.escapeChars(this.name)}**`);
+         }
+         if (this.typeParameters) {
+             md.push(`<${this.typeParameters
+@@ -28,7 +28,7 @@ function default_1(theme) {
+         if (this.type && !((_b = this.parent) === null || _b === void 0 ? void 0 : _b.kindOf(typedoc_1.ReflectionKind.Constructor))) {
+             md.push(`: ${Handlebars.helpers.type.call(this.type, 'object')}`);
+         }
+-        return md.join('') + (standalone ? '\n' : '');
++        return md.join('') + (standalone ? '\n' : ''); 
+     });
+ }
+ exports.default = default_1;

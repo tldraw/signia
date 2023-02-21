@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eux
 
+pnpm typecheck
+
 function buildMarkdown {
   pnpm typedoc --plugin typedoc-plugin-markdown --out docs src/index.ts --excludePrivate --excludeInternal --readme none --githubPages false  --entryDocument index.md
 }

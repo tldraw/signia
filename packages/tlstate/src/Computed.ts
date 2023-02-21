@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { Child, ComputedChild, ComputeDiff, Parent, RESET_VALUE } from './types'
+import { Child, ComputedChild, ComputeDiff, RESET_VALUE, Signal } from './types'
 
 import { maybeCaptureParent, startCapturingParents, stopCapturingParents } from './capture'
 
@@ -50,7 +50,7 @@ export type ComputedOptions<Value, Diff> = {
  *
  * @public
  */
-export type Computed<Value, Diff = unknown> = Parent<Value, Diff> & ComputedChild
+export interface Computed<Value, Diff = unknown> extends Signal<Value, Diff>, ComputedChild {}
 
 export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 	/**
@@ -63,7 +63,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 	/**
 	 * The epoch when the reactor was last traversed during a transaction.
 	 *
-	 * @public
+	 * @internal
 	 */
 	lastTraversedEpoch = GLOBAL_START_EPOCH
 
@@ -77,21 +77,21 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 	/**
 	 * An array of parents to which this derivation has been attached.
 	 *
-	 * @public
+	 * @internal
 	 */
-	parents: Parent<any, any>[] = []
+	parents: Signal<any, any>[] = []
 
 	/**
 	 * An array of epochs for each parent.
 	 *
-	 * @private
+	 * @internal
 	 */
 	parentEpochs: number[] = []
 
 	/**
 	 * An array of children that have been attached to this derivation.
 	 *
-	 * @public
+	 * @internal
 	 */
 	children = new ArraySet<Child>()
 
@@ -244,17 +244,16 @@ function computedAnnotation(
 }
 
 /**
- * Retrieves the underlying computed instance for a given property created with the `@computed`
+ * Retrieves the underlying computed instance for a given property created with the [[computed]]
  * decorator.
  *
  * @example
- * Here's an example of how to use this function:
  * ```ts
  * class Counter {
  *   max = 100
  *   count = atom(0)
  *
- *   ~@computed get remaining() {
+ *   @computed get remaining() {
  *     return this.max - this.count.value
  *   }
  * }
@@ -286,7 +285,22 @@ export function getComputedInstance<Obj extends object, Prop extends keyof Obj>(
 }
 
 /**
- * A decorator for a derivations.
+ * Creates a computed signal.
+ * @param name - The name of the signal.
+ * @param compute - The function that computes the value of the signal.
+ * @param options - Options for the signal.
+ */
+export function computed<Value, Diff = unknown>(
+	name: string,
+	compute: (
+		previousValue: Value | typeof UNINITIALIZED,
+		lastComputedEpoch: number
+	) => Value | WithDiff<Value, Diff>,
+	options?: ComputedOptions<Value, Diff>
+): Computed<Value, Diff>
+
+/**
+ * A decorator for creating computed class properties.
  *
  * @example
  * ```ts
@@ -315,14 +329,6 @@ export function computed<Value, Diff = unknown>(
 	options?: ComputedOptions<Value, Diff>
 ): (target: any, key: string, descriptor: PropertyDescriptor) => PropertyDescriptor
 /** @public */
-export function computed<Value, Diff = unknown>(
-	name: string,
-	compute: (
-		previousValue: Value | typeof UNINITIALIZED,
-		lastComputedEpoch: number
-	) => Value | WithDiff<Value, Diff>,
-	options?: ComputedOptions<Value, Diff>
-): Computed<Value, Diff>
 export function computed() {
 	if (arguments.length === 1) {
 		const options = arguments[0]
@@ -335,6 +341,12 @@ export function computed() {
 	}
 }
 
+/**
+ * Returns true iff the given value is a computed signal.
+ * @param value
+ * @returns {value is Computed<any>}
+ * @public
+ */
 export function isComputed(value: any): value is Computed<any> {
 	return value && value instanceof _Computed
 }

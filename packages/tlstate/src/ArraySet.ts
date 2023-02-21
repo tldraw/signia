@@ -34,7 +34,7 @@ export class ArraySet<T> {
 	/**
 	 * Add an item to the ArraySet if it is not already present.
 	 *
-	 * @param elem The element to add.
+	 * @param elem - The element to add.
 	 */
 
 	add(elem: T) {
@@ -92,7 +92,7 @@ export class ArraySet<T> {
 	/**
 	 * Remove an item from the ArraySet if it is present.
 	 *
-	 * @param elem The element to remove
+	 * @param elem - The element to remove
 	 */
 	remove(elem: T) {
 		if (this.array) {
