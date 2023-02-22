@@ -3,7 +3,7 @@ import {
 	maybeCaptureParent,
 	startCapturingParents,
 	stopCapturingParents,
-	__unsafe__withoutCapture,
+	unsafe__withoutCapture,
 } from '../capture'
 import { computed } from '../Computed'
 import { react } from '../EffectScheduler'
@@ -165,14 +165,14 @@ describe('capturing parents', () => {
 	})
 })
 
-describe(__unsafe__withoutCapture, () => {
+describe(unsafe__withoutCapture, () => {
 	it('allows executing comptuer code in a context that short-circuits the current capture frame', () => {
 		const atomA = atom('a', 1)
 		const atomB = atom('b', 1)
 		const atomC = atom('c', 1)
 
 		const child = computed('', () => {
-			return atomA.value + atomB.value + __unsafe__withoutCapture(() => atomC.value)
+			return atomA.value + atomB.value + unsafe__withoutCapture(() => atomC.value)
 		})
 
 		let lastValue: number | undefined
@@ -213,7 +213,7 @@ describe(__unsafe__withoutCapture, () => {
 
 		react('', () => {
 			numReactions++
-			lastValue = atomA.value + atomB.value + __unsafe__withoutCapture(() => atomC.value)
+			lastValue = atomA.value + atomB.value + unsafe__withoutCapture(() => atomC.value)
 		})
 
 		expect(lastValue).toBe(3)

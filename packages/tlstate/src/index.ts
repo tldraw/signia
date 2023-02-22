@@ -30,7 +30,7 @@
 
 export { atom, isAtom } from './Atom'
 export type { Atom, AtomOptions } from './Atom'
-export { whyAmIRunning, __unsafe__withoutCapture } from './capture'
+export { unsafe__withoutCapture, whyAmIRunning } from './capture'
 export { computed, getComputedInstance, isUninitialized, withDiff } from './Computed'
 export type { Computed, ComputedOptions } from './Computed'
 export { EffectScheduler, react, reactor } from './EffectScheduler'

@@ -1,0 +1,100 @@
+diff --git a/dist/partials/member.declaration.def.js b/dist/partials/member.declaration.def.js
+index 5698b82d7b2907e7dd68c62ce7d7a422a63fe802..c79ef3806854938f3ab84dcdc85eadeb9ef3187b 100644
+--- a/dist/partials/member.declaration.def.js
++++ b/dist/partials/member.declaration.def.js
+@@ -16,7 +16,7 @@ function declarationMemberDef(context, reflection) {
+         md.push('...');
+     }
+     if (reflection.typeParameters) {
+-        md.push(`\\<${(_b = reflection.typeParameters) === null || _b === void 0 ? void 0 : _b.map((typeParameter) => (0, els_1.backTicks)(typeParameter.name)).join(', ')}\\>`);
++        md.push(`&lt;${(_b = reflection.typeParameters) === null || _b === void 0 ? void 0 : _b.map((typeParameter) => (0, els_1.backTicks)(typeParameter.name)).join(', ')}&gt;`);
+     }
+     if (reflection.type) {
+         md.push(`${context.partials.someType(reflection.type, 'all')}`);
+diff --git a/dist/partials/member.signature.title.js b/dist/partials/member.signature.title.js
+index db2f7dcaf6d64c4265bef19514d1a98ee00e58a2..dfb466c41bdca754fb6e2d4a170151c4ff380a01 100644
+--- a/dist/partials/member.signature.title.js
++++ b/dist/partials/member.signature.title.js
+@@ -14,9 +14,9 @@ function signatureTitle(context, signature, accessor) {
+         md.push(signature.name);
+     }
+     if (signature.typeParameters) {
+-        md.push(`\\<${signature.typeParameters
++        md.push(`&lt;${signature.typeParameters
+             .map((typeParameter) => typeParameter.name)
+-            .join(', ')}\\>`);
++            .join(', ')}&gt;`);
+     }
+     const getParameters = (parameters = []) => {
+         return parameters
+diff --git a/dist/partials/type.function.js b/dist/partials/type.function.js
+index 1b14d50b144f79af8350dab3cc6ccea48946fd28..78082e966e46a2afd3513a3294d38af90113e45e 100644
+--- a/dist/partials/type.function.js
++++ b/dist/partials/type.function.js
+@@ -4,9 +4,9 @@ exports.functionType = void 0;
+ function functionType(context, modelSignatures) {
+     const functions = modelSignatures.map((fn) => {
+         const typeParams = fn.typeParameters
+-            ? `\\<${fn.typeParameters
++            ? `&lt;${fn.typeParameters
+                 .map((typeParameter) => typeParameter.name)
+-                .join(', ')}\\>`
++                .join(', ')}&gt;`
+             : [];
+         const params = fn.parameters
+             ? fn.parameters.map((param) => {
+diff --git a/dist/partials/type.reference.js b/dist/partials/type.reference.js
+index 56543f8fe0fad8a7d04af9c95b34d8195700bac2..319fdb9d8a2eadbb53766e17063701b7010a9896 100644
+--- a/dist/partials/type.reference.js
++++ b/dist/partials/type.reference.js
+@@ -16,9 +16,9 @@ function referenceType(context, referenceType) {
+                 : (0, els_1.backTicks)(referenceType.name));
+         }
+         if (referenceType.typeArguments && referenceType.typeArguments.length > 0) {
+-            reflection.push(`\\<${referenceType.typeArguments
++            reflection.push(`&lt;${referenceType.typeArguments
+                 .map((typeArgument) => context.partials.someType(typeArgument))
+-                .join(', ')}\\>`);
++                .join(', ')}&gt;`);
+         }
+         return reflection.join('');
+     }
+diff --git a/dist/support/helpers.js b/dist/support/helpers.js
+index ecc82f703ea175f5edf75ecd3ec63f3636c439c7..fd27867326d0385a0cfe91a51768b3706dc24c2d 100644
+--- a/dist/support/helpers.js
++++ b/dist/support/helpers.js
+@@ -68,7 +68,7 @@ function getTypeParameters(reflection) {
+         const typeParameters = reflection.typeParameters
+             .map((typeParameter) => typeParameter.name)
+             .join(', ');
+-        return `\\<${typeParameters}\\>`;
++        return `&lt;${typeParameters}&gt;`;
+     }
+     return '';
+ }
+diff --git a/dist/support/utils.js b/dist/support/utils.js
+index 2099b8b010fd98cb543ae8a5184a1c2d235fcf69..c3dfa4d91976c29fccc29ecfefb200636a280f12 100644
+--- a/dist/support/utils.js
++++ b/dist/support/utils.js
+@@ -9,8 +9,8 @@ function formatContents(contents) {
+ exports.formatContents = formatContents;
+ function escapeChars(str) {
+     return str
+-        .replace(/>/g, '\\>')
+-        .replace(/</g, '\\<')
++        .replace(/>/g, '&gt;')
++        .replace(/</g, '&lt;')
+         .replace(/{/g, '\\{')
+         .replace(/_/g, '\\_')
+         .replace(/`/g, '\\`')
+@@ -19,8 +19,8 @@ function escapeChars(str) {
+ exports.escapeChars = escapeChars;
+ function unEscapeChars(str) {
+     return str
+-        .replace(/\\</g, '<')
+-        .replace(/\\>/g, '>')
++        .replace(/&lt;/g, '<')
++        .replace(/&gt;/g, '>')
+         .replace(/\\_/g, '_')
+         .replace(/`/g, '')
+         .replace(/\*/g, '')

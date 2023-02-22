@@ -28,14 +28,14 @@ let stack: CaptureStackFrame | null = null
  * })
  *
  * react('log name changes', () => {
- * 	 console.log(name.value, 'was changed at', __unsafe__withoutCapture(() => time.value))
+ * 	 console.log(name.value, 'was changed at', unsafe__withoutCapture(() => time.value))
  * })
  *
  * ```
  *
  * @public
  */
-export function __unsafe__withoutCapture<T>(fn: () => T): T {
+export function unsafe__withoutCapture<T>(fn: () => T): T {
 	const oldStack = stack
 	stack = null
 	try {
