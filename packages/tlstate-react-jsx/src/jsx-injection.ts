@@ -119,16 +119,33 @@ const JsxPro: JsxRuntimeModule = jsxRuntime
 const JsxDev: JsxRuntimeModule = jsxRuntimeDev
 
 /**
- * CreateElement _may_ be called by jsx runtime as a fallback in certain cases, so we need to wrap
- * it regardless.
+ * Installs jsx integration for tlstate, causing all functional components to become reactive.
  *
- * The jsx exports depend on the `NODE_ENV` var to ensure the users' bundler doesn't include both,
- * so one of them will be set with `undefined` values.
+ * Any signals that any component reads during its render will be tracked.
+ * This means that if any of those signals change, the component will be re-rendered.
+ *
+ * Beware! This method uses internal React APIs, so it may break in future versions of React.
+ *
+ * Note that, unlike [[tlstate-react.track]], this will not wrap components with React.memo since that may
+ * cause bugs in any 3rd party libraries which use mutable props.
+ *
+ * Also note that this will not work for class components.
+ *
+ * @public
  */
-React.createElement = WrapJsx(React.createElement)
-JsxDev.jsx && /*   */ (JsxDev.jsx = WrapJsx(JsxDev.jsx))
-JsxPro.jsx && /*   */ (JsxPro.jsx = WrapJsx(JsxPro.jsx))
-JsxDev.jsxs && /*  */ (JsxDev.jsxs = WrapJsx(JsxDev.jsxs))
-JsxPro.jsxs && /*  */ (JsxPro.jsxs = WrapJsx(JsxPro.jsxs))
-JsxDev.jsxDEV && (JsxDev.jsxDEV = WrapJsx(JsxDev.jsxDEV))
-JsxPro.jsxDEV && (JsxPro.jsxDEV = WrapJsx(JsxPro.jsxDEV))
+export function install() {
+	/**
+	 * CreateElement _may_ be called by jsx runtime as a fallback in certain cases, so we need to wrap
+	 * it regardless.
+	 *
+	 * The jsx exports depend on the `NODE_ENV` var to ensure the users' bundler doesn't include both,
+	 * so one of them will be set with `undefined` values.
+	 */
+	React.createElement = WrapJsx(React.createElement)
+	JsxDev.jsx && /*   */ (JsxDev.jsx = WrapJsx(JsxDev.jsx))
+	JsxPro.jsx && /*   */ (JsxPro.jsx = WrapJsx(JsxPro.jsx))
+	JsxDev.jsxs && /*  */ (JsxDev.jsxs = WrapJsx(JsxDev.jsxs))
+	JsxPro.jsxs && /*  */ (JsxPro.jsxs = WrapJsx(JsxPro.jsxs))
+	JsxDev.jsxDEV && (JsxDev.jsxDEV = WrapJsx(JsxDev.jsxDEV))
+	JsxPro.jsxDEV && (JsxPro.jsxDEV = WrapJsx(JsxPro.jsxDEV))
+}

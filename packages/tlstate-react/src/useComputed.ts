@@ -2,7 +2,26 @@
 import { useMemo } from 'react'
 import { Computed, computed, ComputedOptions } from 'tlstate'
 
-/** @public */
+/**
+ * Creates a new computed signal and returns it. The computed signal will be created only once.
+ *
+ * See [[tlstate.computed]]
+ *
+ * @example
+ * ```ts
+ * type GreeterProps = {
+ *   firstName: Signal<string>
+ *   lastName: Signal<string>
+ * }
+ *
+ * const Greeter = track(function Greeter ({firstName, lastName}: GreeterProps) {
+ *   const fullName = useComputed('fullName', () => `${firstName.value} ${lastName.value}`)
+ *   return <div>Hello {fullName.value}!</div>
+ * })
+ * ```
+ *
+ * @public
+ */
 export function useComputed<Value>(name: string, compute: () => Value, deps: any[]): Computed<Value>
 /** @public */
 export function useComputed<Value, Diff = unknown>(

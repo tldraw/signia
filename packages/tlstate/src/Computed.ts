@@ -336,17 +336,17 @@ export function computed<Value, Diff = unknown>(
 	options?: ComputedOptions<Value, Diff>
 ): Computed<Value, Diff>
 
-/** @internal */
+/** @public */
 export function computed(
 	target: any,
 	key: string,
 	descriptor: PropertyDescriptor
 ): PropertyDescriptor
-/** @internal */
+/** @public */
 export function computed<Value, Diff = unknown>(
 	options?: ComputedOptions<Value, Diff>
 ): (target: any, key: string, descriptor: PropertyDescriptor) => PropertyDescriptor
-/** @internal */
+/** @public */
 export function computed() {
 	if (arguments.length === 1) {
 		const options = arguments[0]

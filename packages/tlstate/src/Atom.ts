@@ -36,10 +36,9 @@ export interface AtomOptions<Value, Diff> {
 }
 
 /**
- * An atom is a signal that can be updated directly by calling [[Atom.set]] or [[Atom.update]].
+ * An Atom is a signal that can be updated directly by calling [[Atom.set]] or [[Atom.update]].
  *
  * Atoms are created using the [[atom]] function.
- *
  *
  * @example
  * ```ts
@@ -155,6 +154,8 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 
 /**
  * Creates a new [[Atom]].
+ *
+ * An Atom is a signal that can be updated directly by calling [[Atom.set]] or [[Atom.update]].
  *
  * @example
  * ```ts

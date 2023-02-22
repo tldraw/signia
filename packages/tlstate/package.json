@@ -30,5 +30,11 @@
 	"devDependencies": {
 		"@types/lodash": "^4.14.188",
 		"lodash": "^4.17.21"
+	},
+	"typedoc": {
+		"readmeFile": "none",
+		"entryPoint": "./src/index.ts",
+		"displayName": "tlstate",
+		"tsconfig": "./tsconfig.json"
 	}
 }

@@ -27,6 +27,7 @@
 		"test": "turbo run test --concurrency=1",
 		"deploy": "./scripts/deploy.sh",
 		"serve": "pnpm --filter docs serve",
+		"dev-docs": "./scripts/dev-docs.sh",
 		"typecheck": "turbo run typecheck --concurrency=1"
 	},
 	"engines": {
@@ -58,6 +59,8 @@
 		"@typescript-eslint/eslint-plugin": "^5.38.0",
 		"@typescript-eslint/parser": "^5.38.0",
 		"auto": "^10.38.5",
+		"chokidar-cli": "^3.0.0",
+		"concurrently": "^7.6.0",
 		"cross-env": "^7.0.3",
 		"esbuild": "^0.17.5",
 		"eslint": "8.22.0",
@@ -80,6 +83,7 @@
 		"turbo": "^1.7.4",
 		"typedoc": "^0.23.25",
 		"typedoc-plugin-markdown": "4.0.0-next.3",
+		"typedoc-plugin-resolve-crossmodule-references": "^0.3.3",
 		"typescript": "^4.9.4"
 	},
 	"auto": {
@@ -100,5 +104,8 @@
 		"patchedDependencies": {
 			"typedoc-plugin-markdown@4.0.0-next.3": "patches/typedoc-plugin-markdown@4.0.0-next.3.patch"
 		}
+	},
+	"typedoc": {
+		"displayName": "API"
 	}
 }
