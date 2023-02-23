@@ -124,7 +124,7 @@ const JsxDev: JsxRuntimeModule = jsxRuntimeDev
  * Any signals that any component reads during its render will be tracked.
  * This means that if any of those signals change, the component will be re-rendered.
  *
- * Beware! This method uses internal React APIs, so it may break in future versions of React.
+ * Beware! This method uses internal React APIs, so it may break in future major versions of React.
  *
  * Note that, unlike [[tlstate-react.track]], this will not wrap components with React.memo since that may
  * cause bugs in any 3rd party libraries which use mutable props.

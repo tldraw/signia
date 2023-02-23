@@ -1,0 +1,225 @@
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+# React
+
+We provide officially-supported React bindings for `tlstate` in two packages:
+
+- `tlstate-react` provides hooks for creating and consuming signals in functional components.
+  - [`useAtom`](docs/API/tlstate_react/functions/useAtom) - A hook for creating atomic signals.
+  - [`useComputed`](docs/API/tlstate_react/functions/useAtom) - A hook for creating computed signals.
+  - [`track`](docs/API/tlstate_react/functions/useAtom) - component wrapper for automatically tracking signal value access and re-rendering the wrapped component if the signals' values change.
+  - [`useValue`](docs/API/tlstate_react/functions/useAtom) - A hook for manually tracking signal value access (not required if you use `track`)
+- `tlstate-react-jsx` provides a minimal global jsx integration. This causes all functional components to be automatically
+  rerendered when the values of any signals they use change. This means you will not need to use `track` at all.
+  - [`install`](docs/API/tlstate_react_jsx/functions/install) - Call this before your app renders to install the jsx integration.
+
+:::info Should I use the jsx integration?
+Do not use the jsx integration if you are publishing a library rather than building an app. Doing so would pollute the React runtime for your library's consumers.
+
+Otherwise, there are a couple of minor things to keep in mind:
+
+- **Tracking has a slight performance cost.**
+
+  This will be neglible for normal web apps, but if you are using the React render cycle for animation, or something similarly demanding, you should probably stick to using [`track`](docs/API/tlstate_react/functions/useAtom) selectively.
+
+- **We use internal React APIs to set up the integration.**
+
+  React may decide to remove or change the internal APIs in a future major release.
+  In that case we'd have to find another way to set up the integration.
+  In the worst case that might not be possible which could prevent you from upgrading to newer versions of React easily.
+
+  We use the same approach as other popular libraries, e.g. `@preact/signals`, so it would be a _reasonably_ big deal if the React team were to fully prevent the sort of code injection such libraries rely on.
+
+:::
+
+## Installing the Bindings
+
+:::note
+These official react bindings require a JS environment that supports [`Proxy`](https://caniuse.com/?search=Proxy), and they do not currently work with legacy [class components](https://beta.reactjs.org/reference/react/Component). We may be willing to add and maintain legacy support if there is suffient demand. Let us know!
+:::
+
+<Tabs>
+	<TabItem value="npm" label="npm">
+		<pre>npm add tlstate-react</pre>
+	</TabItem>
+	<TabItem value="yarn" label="yarn">
+		<pre>yarn add tlstate-react</pre>
+	</TabItem>
+	<TabItem value="pnpm" label="pnpm">
+		<pre>pnpm add tlstate-react</pre>
+	</TabItem>
+</Tabs>
+
+If you are using TypeScript and you wish to use the `@computed` decorator, make sure to enable [experimental decorators](https://www.typescriptlang.org/tsconfig#experimentalDecorators). As soon as TypeScript 5.0 is released we will also add support for the new standard decorators.
+
+### Automatic component tracking
+
+If you wish to enable tracking on all functional components automatically, run:
+
+<Tabs>
+	<TabItem value="npm" label="npm">
+		<pre>npm add tlstate-react-jsx</pre>
+	</TabItem>
+	<TabItem value="yarn" label="yarn">
+		<pre>yarn add tlstate-react-jsx</pre>
+	</TabItem>
+	<TabItem value="pnpm" label="pnpm">
+		<pre>pnpm add tlstate-react-jsx</pre>
+	</TabItem>
+</Tabs>
+
+And then add these lines to your app's entry file
+
+```ts
+import { install } from 'tlstate-react-jsx'
+install()
+```
+
+## Usage
+
+### Writing reactive components
+
+:::tip
+If you are using `tlstate-react-jsx`, feel free to skip this section. Your components are already reactive! ✨
+:::
+
+We recommend using `track` to wrap all components that use signals following this pattern:
+
+```ts
+type MyComponentProps = { foo: Bar }
+const MyComponent = track(function MyComponent(props: MyComponentProps) {
+	// ...
+})
+```
+
+If you are unable to use `track`, you should make sure that any usages of signals are wrapped by a `useValue`
+
+```ts
+type MyComponentProps = { foo: Signal<Bar> }
+const MyComponent: React.FC<MyComponentProps> = (props: MyComponentProps) => {
+	const foo: Bar = useValue(props.foo)
+	// ...
+}
+```
+
+If a signal is being used indirectly you can pass a 'compute' function to `useValue`.
+
+```ts
+type MyComponentProps = { getFoo: (n: number) => Bar }
+const MyComponent: React.FC<MyComponentProps> = (props: MyComponentProps) => {
+	// getFoo uses a signal under the hood, but we don't have direct access to that signal.
+	const n = 42
+	const foo: Bar = useValue('foo', () => props.getFoo(42), [props.getFoo, n])
+	// ...
+}
+```
+
+### Managing shared state
+
+We recommend keeping high-level shared state and logic in a class, or a set of linked classes.
+
+```ts
+class Document {
+	private readonly state = atom({ title: 'Page 1', body: 'words etc' })
+  readonly stylePanel = new StylePanel(this)
+
+	setTitle(title: string) {
+		this.state.update((state) => ({ ...state, title }))
+	}
+
+	setBody(body: string) {
+		this.state.update((state) => ({ ...state, body }))
+	}
+}
+
+class StylePanel {
+  constructor(private document: Document) {}
+
+  private readonly state = atom({ fontSize: 12, color: 'black' })
+
+  increaseFontSize() {
+    this.state.update(state => ({...state, fontSize: state.fontSize + 1}))
+  }
+}
+```
+
+Then creating a hook to instantiate it when your app initializes:
+
+```ts
+const useNewDocument = () => useMemo(() => new Document(), [])
+
+const App = () => {
+  const doc = useNewDocument()
+
+  // ...
+}
+```
+
+You can either pass the doc around in props or use [context](https://beta.reactjs.org/learn/passing-data-deeply-with-context) to make it more easily accessible without prop drilling. We prefer the latter!
+
+
+### Avoiding unwanted re-renders
+
+Signals are as fine-grained as you make them.
+Very often you might have a signal that contains an object, but you only care
+about part of the object.
+
+```ts
+class Document {
+	state = atom({ title: 'Page 1', body: 'words etc' })
+
+	setTitle(title: string) {
+		this.state.update((state) => ({ ...state, title }))
+	}
+
+	setBody(body: string) {
+		this.state.update((state) => ({ ...state, body }))
+	}
+}
+
+const DocumentTitle = track(function DocumentTitle({ doc }: { doc: Document }) {
+	return <h1>{doc.state.value.title}</h1>
+})
+```
+
+In this example, every time `setBody` is called it will cause the `DocumentTitle` component to re-render, even though it does not use the body text. This is because there is only one signal at play here: the atom for the whole document state. `DocumentTitle` accesses that signal directly so it rerenders any time the whole document state changes.
+
+To get around this, you can create a computed signal to 'select' the part of the state you care about. There are a number of ways to do that:
+
+1. **[recommmended]** Use the `@computed` annotation in the `Document` class
+
+   ```ts
+   class Document {
+   	state = atom({ title: 'Page 1', body: 'words etc' })
+
+   	@computed get title() {
+   		return this.state.value.title
+   	}
+   }
+
+   const DocumentTitle = track(function DocumentTitle({ doc }: { doc: Document }) {
+   	return <h1>{doc.title}</h1>
+   })
+   ```
+
+2. Extract the title with `useValue`.
+
+   ```ts
+   const DocumentTitle: React.FC<{ doc: Document }> = ({ doc }) => {
+   	const title = useValue('title', () => doc.state.value.title, [doc])
+   	return <h1>{title}</h1>
+   }
+   ```
+
+3. Extract the title with `useComputed`.
+
+   ```ts
+   const DocumentTitle = track(function DocumentTitle({ doc }: { doc: Document }) {
+   	const title = useComputed('title', () => doc.state.value.title, [doc])
+   	return <h1>{title.value}</h1>
+   })
+   ```
+
+
+###

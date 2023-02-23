@@ -171,8 +171,17 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
  * @public
  */
 export function atom<Value, Diff = unknown>(
+	/**
+	 * A name for the signal. This is used for debugging and profiling purposes, it does not need to be unique.
+	 */
 	name: string,
+	/**
+	 * The initial value of the signal.
+	 */
 	initialValue: Value,
+	/**
+	 * The options to configure the atom. See [[AtomOptions]].
+	 */
 	options?: AtomOptions<Value, Diff>
 ): Atom<Value, Diff> {
 	return new _Atom(name, initialValue, options)
