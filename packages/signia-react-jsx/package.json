@@ -2,7 +2,7 @@
 	"name": "signia-react-jsx",
 	"private": false,
 	"description": "A tiny little drawing app (reactive state management).",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {
