@@ -267,7 +267,7 @@ function computedAnnotation(
 export function getComputedInstance<Obj extends object, Prop extends keyof Obj>(
 	obj: Obj,
 	propertyName: Prop
-) {
+): Computed<Obj[Prop]> {
 	// deref to make sure it exists first
 	const key = Symbol.for('__signia__computed__' + propertyName.toString())
 	let inst = obj[key as keyof typeof obj] as _Computed<Obj[Prop]> | undefined
@@ -276,7 +276,7 @@ export function getComputedInstance<Obj extends object, Prop extends keyof Obj>(
 		obj[propertyName]
 		inst = obj[key as keyof typeof obj] as _Computed<Obj[Prop]> | undefined
 	}
-	return inst
+	return inst as any
 }
 
 /**
