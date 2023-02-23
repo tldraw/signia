@@ -17,9 +17,13 @@ test('i can import `atom` and use it in a .ts file and typescript is cool with t
 	execSync('npx tsc --init', { cwd: dir })
 	writeFileSync(
 		`${dir}/test.ts`,
-		`import {atom} from 'signia'; console.log(atom('test', 'value').value)`
+		`import {atom, computed} from 'signia';
+		const a = atom('test', 'value');
+		const b = computed('test', () => a.value);
+		console.log('total:', a.value.length + b.value.length)
+		`
 	)
-	execSync('npx tsc', { cwd: dir })
+	execSync('npx tsc', { cwd: dir, stdio: 'inherit' })
 	const output = execSync(`node test.js`, { cwd: dir, encoding: 'utf8' }).trim()
-	expect(output).toBe('value')
+	expect(output).toBe('total: 10')
 })
