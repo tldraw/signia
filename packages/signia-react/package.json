@@ -2,7 +2,7 @@
 	"name": "signia-react",
 	"private": false,
 	"description": "Tiny little react bindings for signia.",
-	"version": "0.0.0",
+	"version": "0.0.5",
 	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {

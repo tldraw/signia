@@ -2,7 +2,7 @@
 	"name": "signia",
 	"private": false,
 	"description": "A tiny little drawing reactive state management library.",
-	"version": "0.0.0",
+	"version": "0.0.5",
 	"author": "tldraw GB Ltd.",
 	"homepage": "https://tldraw.dev",
 	"repository": {
