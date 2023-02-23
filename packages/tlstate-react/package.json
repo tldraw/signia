@@ -35,5 +35,11 @@
 	},
 	"peerDependencies": {
 		"react": "^18"
+	},
+	"typedoc": {
+		"readmeFile": "none",
+		"entryPoint": "./src/index.ts",
+		"displayName": "tlstate-react",
+		"tsconfig": "./tsconfig.json"
 	}
 }

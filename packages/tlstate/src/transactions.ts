@@ -1,6 +1,6 @@
 import { _Atom } from './Atom'
 import { GLOBAL_START_EPOCH } from './constants'
-import { Child, Parent, ReactingChild } from './types'
+import { Child, ReactingChild, Signal } from './types'
 
 // The current epoch (global to all atoms).
 export let globalEpoch = GLOBAL_START_EPOCH + 1
@@ -92,7 +92,7 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
 			if ('maybeScheduleEffect' in node) {
 				reactors.add(node)
 			} else {
-				;(node as any as Parent<any>).children.visit(traverse)
+				;(node as any as Signal<any>).children.visit(traverse)
 			}
 		}
 
@@ -114,6 +114,8 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
  *
  * @param atom The atom that changed.
  * @param previousValue The atom's previous value.
+ *
+ * @internal
  */
 export function atomDidChange(atom: _Atom<any>, previousValue: any) {
 	if (!currentTransaction) {
@@ -132,7 +134,73 @@ export function atomDidChange(atom: _Atom<any>, previousValue: any) {
 export let currentTransaction = null as Transaction | null
 
 /**
- * Run a function in a transaction. If the function throws, the transaction is aborted.
+ * Batches state updates, deferring side effects until after the transaction completes.
+ *
+ * @example
+ * ```ts
+ * const firstName = atom('John')
+ * const lastName = atom('Doe')
+ *
+ * react('greet', () => {
+ *   console.log(`Hello, ${firstName.value} ${lastName.value}!`)
+ * })
+ *
+ * // Logs "Hello, John Doe!"
+ *
+ * transaction(() => {
+ *  firstName.set('Jane')
+ *  lastName.set('Smith')
+ * })
+ *
+ * // Logs "Hello, Jane Smith!"
+ * ```
+ *
+ * If the function throws, the transaction is aborted and any signals that were updated during the transaction revert to their state before the transaction began.
+ *
+ * @example
+ * ```ts
+ * const firstName = atom('John')
+ * const lastName = atom('Doe')
+ *
+ * react('greet', () => {
+ *   console.log(`Hello, ${firstName.value} ${lastName.value}!`)
+ * })
+ *
+ * // Logs "Hello, John Doe!"
+ *
+ * transaction(() => {
+ *  firstName.set('Jane')
+ *  throw new Error('oops')
+ * })
+ *
+ * // Does not log
+ * // firstName.value === 'John'
+ * ```
+ *
+ * A `rollback` callback is passed into the function.
+ * Calling this will prevent the transaction from committing and will revert any signals that were updated during the transaction to their state before the transaction began.
+ *
+ *  * @example
+ * ```ts
+ * const firstName = atom('John')
+ * const lastName = atom('Doe')
+ *
+ * react('greet', () => {
+ *   console.log(`Hello, ${firstName.value} ${lastName.value}!`)
+ * })
+ *
+ * // Logs "Hello, John Doe!"
+ *
+ * transaction((rollback) => {
+ *  firstName.set('Jane')
+ *  lastName.set('Smith')
+ *  rollback()
+ * })
+ *
+ * // Does not log
+ * // firstName.value === 'John'
+ * // lastName.value === 'Doe'
+ * ```
  *
  * @param fn The function to run in a transaction, called with a function to roll back the change.
  * @public
@@ -169,8 +237,7 @@ export function transaction<T>(fn: (rollback: () => void) => T) {
 }
 
 /**
- * Runs a function inside the current transaction, or creates a new transaction if there is not
- * already one in progress
+ * Like [transaction](#transaction), but does not create a new transaction if there is already one in progress.
  *
  * @param fn
  * @public

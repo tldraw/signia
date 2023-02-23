@@ -1,16 +1,26 @@
 #!/usr/bin/env bash
 set -eux
 
-function buildMarkdown {
-  pnpm typedoc --plugin typedoc-plugin-markdown --out docs src/index.ts --excludePrivate --excludeInternal --readme none --githubPages false  --entryDocument index.md
-}
+# The types need to be built before the docs can be generated
+# because typedoc doesn't support composite ts projects
+pnpm typecheck
 
-pushd packages/tlstate; buildMarkdown; popd
-pushd packages/tlstate-react; buildMarkdown; popd
+pnpm typedoc \
+  --plugin typedoc-plugin-markdown \
+  --plugin typedoc-plugin-resolve-crossmodule-references \
+  --out docs/docs/API \
+  --excludePrivate \
+  --excludeInternal \
+  --excludeExternals \
+  --readme none \
+  --githubPages false \
+  --entryDocument index.md \
+  --enableFrontmatter true \
+  --hideBreadcrumbs true \
+  --entryPointStrategy "packages" \
+  --entryPoints packages/tlstate \
+  --entryPoints packages/tlstate-react \
+  --entryPoints packages/tlstate-react-jsx
 
-rm -rf docs/docs/tlstate docs/docs/tlstate-react
-
-cp -r packages/tlstate/docs docs/docs/tlstate
-cp -r packages/tlstate-react/docs docs/docs/tlstate-react
-
-pnpm tsx scripts/set-docs-titles.ts
+# typedoc generates this useless index file
+rm -rf docs/docs/API/index.md

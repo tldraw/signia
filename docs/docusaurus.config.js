@@ -68,6 +68,12 @@ const config = {
 						label: 'Getting Started',
 					},
 					{
+						type: 'doc',
+						docId: 'API/tlstate/tlstate',
+						position: 'left',
+						label: 'API',
+					},
+					{
 						href: 'https://github.com/tldraw/tlstate',
 						label: 'GitHub',
 						position: 'right',

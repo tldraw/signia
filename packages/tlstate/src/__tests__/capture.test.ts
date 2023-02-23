@@ -1,5 +1,12 @@
 import { atom } from '../Atom'
-import { maybeCaptureParent, startCapturingParents, stopCapturingParents } from '../capture'
+import {
+	maybeCaptureParent,
+	startCapturingParents,
+	stopCapturingParents,
+	unsafe__withoutCapture,
+} from '../capture'
+import { computed } from '../Computed'
+import { react } from '../EffectScheduler'
 import { advanceGlobalEpoch, globalEpoch } from '../transactions'
 import { Child } from '../types'
 
@@ -155,5 +162,77 @@ describe('capturing parents', () => {
 		expect(() => {
 			maybeCaptureParent(atom('', 1))
 		}).not.toThrow()
+	})
+})
+
+describe(unsafe__withoutCapture, () => {
+	it('allows executing comptuer code in a context that short-circuits the current capture frame', () => {
+		const atomA = atom('a', 1)
+		const atomB = atom('b', 1)
+		const atomC = atom('c', 1)
+
+		const child = computed('', () => {
+			return atomA.value + atomB.value + unsafe__withoutCapture(() => atomC.value)
+		})
+
+		let lastValue: number | undefined
+		let numReactions = 0
+
+		react('', () => {
+			numReactions++
+			lastValue = child.value
+		})
+
+		expect(lastValue).toBe(3)
+		expect(numReactions).toBe(1)
+
+		atomA.set(2)
+
+		expect(lastValue).toBe(4)
+		expect(numReactions).toBe(2)
+
+		atomB.set(2)
+
+		expect(lastValue).toBe(5)
+		expect(numReactions).toBe(3)
+
+		atomC.set(2)
+
+		// The reaction should not have run because C was not captured
+		expect(lastValue).toBe(5)
+		expect(numReactions).toBe(3)
+	})
+
+	it('allows executing reactor code in a context that short-circuits the current capture frame', () => {
+		const atomA = atom('a', 1)
+		const atomB = atom('b', 1)
+		const atomC = atom('c', 1)
+
+		let lastValue: number | undefined
+		let numReactions = 0
+
+		react('', () => {
+			numReactions++
+			lastValue = atomA.value + atomB.value + unsafe__withoutCapture(() => atomC.value)
+		})
+
+		expect(lastValue).toBe(3)
+		expect(numReactions).toBe(1)
+
+		atomA.set(2)
+
+		expect(lastValue).toBe(4)
+		expect(numReactions).toBe(2)
+
+		atomB.set(2)
+
+		expect(lastValue).toBe(5)
+		expect(numReactions).toBe(3)
+
+		atomC.set(2)
+
+		// The reaction should not have run because C was not captured
+		expect(lastValue).toBe(5)
+		expect(numReactions).toBe(3)
 	})
 })

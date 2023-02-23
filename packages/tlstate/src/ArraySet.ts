@@ -4,6 +4,7 @@ export const ARRAY_SIZE_THRESHOLD = 32
 /**
  * An ArraySet operates as an array until it reaches a certain size, after which a Set is used
  * instead. In either case, the same methods are used to get, set, remove, and visit the items.
+ * @internal
  */
 export class ArraySet<T> {
 	private arraySize = 0
@@ -34,7 +35,7 @@ export class ArraySet<T> {
 	/**
 	 * Add an item to the ArraySet if it is not already present.
 	 *
-	 * @param elem The element to add.
+	 * @param elem - The element to add.
 	 */
 
 	add(elem: T) {
@@ -92,7 +93,7 @@ export class ArraySet<T> {
 	/**
 	 * Remove an item from the ArraySet if it is present.
 	 *
-	 * @param elem The element to remove
+	 * @param elem - The element to remove
 	 */
 	remove(elem: T) {
 		if (this.array) {
