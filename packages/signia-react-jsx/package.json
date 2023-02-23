@@ -1,0 +1,45 @@
+{
+	"name": "signia-react-jsx",
+	"private": false,
+	"description": "A tiny little drawing app (reactive state management).",
+	"version": "0.0.0",
+	"author": "tldraw GB Ltd.",
+	"homepage": "https://tldraw.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tldraw/signia"
+	},
+	"bugs": {
+		"url": "https://github.com/tldraw/signia/issues"
+	},
+	"/* NOTE */": "These `main` and `types` fields are rewritten by the build script. They are not the actual values we publish",
+	"main": "./src/index.ts",
+	"types": ".tsbuild/index.d.ts",
+	"scripts": {
+		"test": "jest",
+		"test:coverage": "jest --coverage",
+		"typecheck": "tsc --build",
+		"prepack": "tsx ../../scripts/prepack.ts",
+		"postpack": "../../scripts/postpack.sh",
+		"build": "tsx ../../scripts/build-package.ts"
+	},
+	"dependencies": {
+		"signia": "workspace:*",
+		"signia-react": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/react": "*"
+	},
+	"jest": {
+		"preset": "../../jest-preset.js"
+	},
+	"peerDependencies": {
+		"react": "^18"
+	},
+	"typedoc": {
+		"readmeFile": "none",
+		"entryPoint": "./src/index.ts",
+		"displayName": "signia-react-jsx",
+		"tsconfig": "./tsconfig.json"
+	}
+}

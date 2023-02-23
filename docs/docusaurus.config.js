@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-	title: 'tlstate',
+	title: 'signia',
 	tagline: 'Scaleable reactive signals',
 	favicon: 'img/favicon.png',
 
@@ -19,7 +19,7 @@ const config = {
 	// GitHub pages deployment config.
 	// If you aren't using GitHub pages, you don't need these.
 	organizationName: 'tldraw', // Usually your GitHub org/user name.
-	projectName: 'tlstate', // Usually your repo name.
+	projectName: 'signia', // Usually your repo name.
 
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',
@@ -55,9 +55,9 @@ const config = {
 			// Replace with your project's social card
 			image: 'img/docusaurus-social-card.jpg',
 			navbar: {
-				title: 'tlstate',
+				title: 'signia',
 				logo: {
-					alt: 'tlstate logo',
+					alt: 'signia logo',
 					src: 'img/logo-small.svg',
 				},
 				items: [
@@ -69,12 +69,12 @@ const config = {
 					},
 					{
 						type: 'doc',
-						docId: 'API/tlstate/tlstate',
+						docId: 'API/signia/signia',
 						position: 'left',
 						label: 'API',
 					},
 					{
-						href: 'https://github.com/tldraw/tlstate',
+						href: 'https://github.com/tldraw/signia',
 						label: 'GitHub',
 						position: 'right',
 					},
@@ -110,7 +110,7 @@ const config = {
 						items: [
 							{
 								label: 'GitHub',
-								href: 'https://github.com/tldraw/tlstate',
+								href: 'https://github.com/tldraw/signia',
 							},
 						],
 					},

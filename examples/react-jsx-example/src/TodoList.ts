@@ -1,4 +1,4 @@
-import { atom, computed } from 'tlstate'
+import { atom, computed } from 'signia'
 
 interface Todo {
 	id: number
@@ -10,7 +10,7 @@ export class TodoList {
 	readonly todos = atom<Todo[]>('todos', [
 		{
 			id: 0,
-			title: 'Use TLState',
+			title: 'Use signia',
 			completed: false,
 		},
 	])

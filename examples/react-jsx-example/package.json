@@ -1,5 +1,5 @@
 {
-	"name": "tlstate-react-jsx-example",
+	"name": "signia-react-jsx-example",
 	"private": true,
 	"version": "0.0.4",
 	"type": "module",
@@ -11,8 +11,8 @@
 	"dependencies": {
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"tlstate": "workspace:*",
-		"tlstate-react-jsx": "workspace:*",
+		"signia": "workspace:*",
+		"signia-react-jsx": "workspace:*",
 		"todomvc-app-css": "^2.4.2"
 	},
 	"devDependencies": {

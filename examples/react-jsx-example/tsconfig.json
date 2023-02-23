@@ -19,8 +19,5 @@
 		"jsx": "react-jsx"
 	},
 	"include": ["src"],
-	"references": [
-		{ "path": "../../packages/tlstate" },
-		{ "path": "../../packages/tlstate-react-jsx" }
-	]
+	"references": [{ "path": "../../packages/signia" }, { "path": "../../packages/signia-react-jsx" }]
 }
