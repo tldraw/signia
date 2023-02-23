@@ -1,3 +1,16 @@
+# v0.0.6 (Thu Feb 23 2023)
+
+#### 🐛 Bug Fix
+
+- `signia`
+  - Fix getComputedInstance typing [#26](https://github.com/tldraw/signia/pull/26) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.5 (Thu Feb 23 2023)
 
 #### 🐛 Bug Fix
