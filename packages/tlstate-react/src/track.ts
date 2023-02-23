@@ -26,9 +26,9 @@ const ReactMemoSymbol = Symbol.for('react.memo')
  * Returns a tracked version of the given component.
  * Any signals whose values are read while the component renders will be tracked.
  * If any of the tracked signals change later it will cause the component to re-render.
- * 
+ *
  * This also wraps the component in a React.memo() call, so it will only re-render if the props change.
- * 
+ *
  * @example
  * ```ts
  * const Counter = track(function Counter(props: CounterProps) {
