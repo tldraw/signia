@@ -120,9 +120,14 @@ const MyComponent: React.FC<MyComponentProps> = (props: MyComponentProps) => {
 We recommend keeping high-level shared state and logic in a class, or a set of linked classes.
 
 ```ts
+import { atom } from 'tlstate'
+
 class Document {
-	private readonly state = atom({ title: 'Page 1', body: 'words etc' })
-  readonly stylePanel = new StylePanel(this)
+	private readonly state = atom('Document.state', {
+		title: 'Page 1',
+		body: 'words etc',
+	})
+	readonly stylePanel = new StylePanel(this)
 
 	setTitle(title: string) {
 		this.state.update((state) => ({ ...state, title }))
@@ -134,13 +139,16 @@ class Document {
 }
 
 class StylePanel {
-  constructor(private document: Document) {}
+	constructor(private document: Document) {}
 
-  private readonly state = atom({ fontSize: 12, color: 'black' })
+	private readonly state = atom('StylePanel.state', {
+		fontSize: 12,
+		color: 'black',
+	})
 
-  increaseFontSize() {
-    this.state.update(state => ({...state, fontSize: state.fontSize + 1}))
-  }
+	increaseFontSize() {
+		this.state.update((state) => ({ ...state, fontSize: state.fontSize + 1 }))
+	}
 }
 ```
 
@@ -150,24 +158,65 @@ Then creating a hook to instantiate it when your app initializes:
 const useNewDocument = () => useMemo(() => new Document(), [])
 
 const App = () => {
-  const doc = useNewDocument()
+	const doc = useNewDocument()
 
-  // ...
+	// ...
 }
 ```
 
-You can either pass the doc around in props or use [context](https://beta.reactjs.org/learn/passing-data-deeply-with-context) to make it more easily accessible without prop drilling. We prefer the latter!
+You can either pass the doc around in props or use [context](https://beta.reactjs.org/learn/passing-data-deeply-with-context) to make it more easily accessible without prop drilling.
 
+We prefer to use context:
+
+```ts
+const DocumentContext = React.createContext<Document | null>(null)
+
+const useDocument = () => {
+	const doc = useContext(DocumentContext)
+	if (!doc) throw new Error('No document found in context')
+	return doc
+}
+
+const App = () => {
+	const doc = useNewDocument()
+
+	return (
+		<DocumentContext.Provider value={doc}>
+			{/* ... the rest of the app ... */}
+		</DocumentContext.Provider>
+	)
+}
+```
+
+### Managing local state
+
+`useAtom` can help you manage component-local state in a similar way to `useState`.
+
+```diff
+ const Counter = track(function Counter () {
+-  const [count, setCount] = useState(0)
++  const count = useAtom('count', 0)
+
+-  const increment = useCallback(() => setCount(count + 1), [count])
++  const increment = useCallback(() => count.set(count.value + 1), [])
+
+-  return <button onClick={increment}>The count is {count}</button>
++  return <button onClick={increment}>The count is {count.value}</button>
+ })
+```
+
+In this example, `count` will never change and `count.value` will always be up to date, so **you never need to worry about stale values in closures**.
+
+You can think of `useAtom` as a 'reactive' version of `React.useRef`.
 
 ### Avoiding unwanted re-renders
 
 Signals are as fine-grained as you make them.
-Very often you might have a signal that contains an object, but you only care
-about part of the object.
+Very often you might have a signal that contains an object, but you only care about part of the object.
 
 ```ts
 class Document {
-	state = atom({ title: 'Page 1', body: 'words etc' })
+	state = atom('Document.state', { title: 'Page 1', body: 'words etc' })
 
 	setTitle(title: string) {
 		this.state.update((state) => ({ ...state, title }))
@@ -191,7 +240,10 @@ To get around this, you can create a computed signal to 'select' the part of the
 
    ```ts
    class Document {
-   	state = atom({ title: 'Page 1', body: 'words etc' })
+   	private readonly state = atom('Document.state', {
+   		title: 'Page 1',
+   		body: 'words etc',
+   	})
 
    	@computed get title() {
    		return this.state.value.title
@@ -220,6 +272,3 @@ To get around this, you can create a computed signal to 'select' the part of the
    	return <h1>{title.value}</h1>
    })
    ```
-
-
-###
