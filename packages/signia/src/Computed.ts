@@ -40,9 +40,6 @@ export const isUninitialized = (value: any): value is UNINITIALIZED => {
 	return value === UNINITIALIZED
 }
 
-/**
- * @internal
- */
 class WithDiff<Value, Diff> {
 	constructor(public value: Value, public diff: Diff) {}
 }
