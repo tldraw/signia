@@ -11,4 +11,5 @@ rm -rf packages/*/api
 rm -rf packages/*/dist
 rm -rf packages/*/docs
 rm -rf packages/*/*.tgz
+rm -rf docs/.docusaurus
 pnpm install
