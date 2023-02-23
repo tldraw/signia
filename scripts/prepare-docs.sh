@@ -18,9 +18,9 @@ pnpm typedoc \
   --enableFrontmatter true \
   --hideBreadcrumbs true \
   --entryPointStrategy "packages" \
-  --entryPoints packages/tlstate \
-  --entryPoints packages/tlstate-react \
-  --entryPoints packages/tlstate-react-jsx
+  --entryPoints packages/signia \
+  --entryPoints packages/signia-react \
+  --entryPoints packages/signia-react-jsx
 
 # typedoc generates this useless index file
 rm -rf docs/docs/API/index.md

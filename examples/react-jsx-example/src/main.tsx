@@ -1,12 +1,6 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { install } from 'tlstate-react-jsx'
-import App from './App'
+import { install } from 'signia-react-jsx'
+
+import { start } from './main2'
 
 install()
-
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>
-)
+start()

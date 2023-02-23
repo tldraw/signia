@@ -1,0 +1,45 @@
+{
+	"name": "signia-react",
+	"private": false,
+	"description": "Tiny little react bindings for signia.",
+	"version": "0.0.0",
+	"author": "tldraw GB Ltd.",
+	"homepage": "https://tldraw.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tldraw/signia"
+	},
+	"bugs": {
+		"url": "https://github.com/tldraw/signia/issues"
+	},
+	"/* NOTE */": "These `main` and `types` fields are rewritten by the build script. They are not the actual values we publish",
+	"main": "./src/index.ts",
+	"types": ".tsbuild/index.d.ts",
+	"scripts": {
+		"test": "jest",
+		"test:coverage": "jest --coverage",
+		"typecheck": "tsc --build",
+		"prepack": "tsx ../../scripts/prepack.ts",
+		"postpack": "../../scripts/postpack.sh",
+		"build-docs": "typedoc --plugin typedoc-plugin-markdown --out docs src/index.ts --excludePrivate --excludeInternal --readme none  --githubPages false --entryDocument index.md",
+		"build": "tsx ../../scripts/build-package.ts"
+	},
+	"dependencies": {
+		"signia": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/react": "^18.0.24"
+	},
+	"jest": {
+		"preset": "../../jest-preset.js"
+	},
+	"peerDependencies": {
+		"react": "^18"
+	},
+	"typedoc": {
+		"readmeFile": "none",
+		"entryPoint": "./src/index.ts",
+		"displayName": "signia-react",
+		"tsconfig": "./tsconfig.json"
+	}
+}

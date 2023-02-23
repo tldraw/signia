@@ -1,5 +1,5 @@
 {
-	"name": "@tldraw/tlstate-monorepo",
+	"name": "@tldraw/signia-monorepo",
 	"private": true,
 	"description": "A tiny little state managment library (monorepo).",
 	"version": "0.0.0",
@@ -7,10 +7,10 @@
 	"homepage": "https://tldraw.dev",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/tldraw/tlstate"
+		"url": "https://github.com/tldraw/signia"
 	},
 	"bugs": {
-		"url": "https://github.com/tldraw/tlstate/issues"
+		"url": "https://github.com/tldraw/signia/issues"
 	},
 	"workspaces": [
 		"examples/*",
