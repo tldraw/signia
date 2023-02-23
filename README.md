@@ -7,4 +7,4 @@
 
 `signia` is a small, fast, and scalable signals library for JavaScript and TypeScript.
 
-Check the [docs](https://github.com/tldraw/signia)
+Check the [docs](https://tldraw.github.io/signia)
