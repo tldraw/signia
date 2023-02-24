@@ -4,7 +4,7 @@
 	"description": "tests for our package build scripts",
 	"private": true,
 	"scripts": {
-		"test": "jest"
+		"test": "jest --runInBand"
 	},
 	"keywords": [],
 	"author": "",

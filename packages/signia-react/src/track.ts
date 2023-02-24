@@ -1,7 +1,7 @@
-import React, { FunctionComponent, memo } from 'react'
+import React, { forwardRef, FunctionComponent, memo } from 'react'
 import { useStateTracking } from './useStateTracking'
 
-const ProxyHandlers = {
+export const ProxyHandlers = {
 	/**
 	 * This is a function call trap for functional components. When this is called, we know it means
 	 * React did run 'Component()', that means we can use any hooks here to setup our effect and
@@ -20,7 +20,8 @@ const ProxyHandlers = {
 	},
 }
 
-const ReactMemoSymbol = Symbol.for('react.memo')
+export const ReactMemoSymbol = Symbol.for('react.memo')
+export const ReactForwardRefSymbol = Symbol.for('react.forward_ref')
 
 /**
  * Returns a tracked version of the given component.
@@ -45,9 +46,14 @@ export function track<T extends FunctionComponent<any>>(
 	baseComponent: T
 ): T extends React.MemoExoticComponent<any> ? T : React.MemoExoticComponent<T> {
 	let compare = null
-	if (baseComponent['$$typeof' as keyof typeof baseComponent] === ReactMemoSymbol) {
+	const $$typeof = baseComponent['$$typeof' as keyof typeof baseComponent]
+	if ($$typeof === ReactMemoSymbol) {
 		baseComponent = (baseComponent as any).type
 		compare = (baseComponent as any).compare
 	}
+	if ($$typeof === ReactForwardRefSymbol) {
+		return memo(forwardRef(new Proxy((baseComponent as any).render, ProxyHandlers) as any)) as any
+	}
+
 	return memo(new Proxy(baseComponent, ProxyHandlers) as any, compare) as any
 }

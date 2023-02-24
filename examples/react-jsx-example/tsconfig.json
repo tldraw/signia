@@ -16,8 +16,9 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"noEmit": true,
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"jsxImportSource": "signia-react-jsx"
 	},
 	"include": ["src"],
-	"references": [{ "path": "../../packages/signia" }, { "path": "../../packages/signia-react-jsx" }]
+	"references": [{ "path": "../../packages/signia" }, { "path": "../../packages/signia-react" }]
 }
