@@ -1,6 +1,7 @@
 import { _Atom } from './Atom'
 import { GLOBAL_START_EPOCH } from './constants'
-import { Child, ReactingChild, Signal } from './types'
+import { EffectScheduler } from './EffectScheduler'
+import { Child, Signal } from './types'
 
 // The current epoch (global to all atoms).
 export let globalEpoch = GLOBAL_START_EPOCH + 1
@@ -79,7 +80,7 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
 		globalIsReacting = true
 
 		// Collect all of the visited reactors.
-		const reactors = new Set<ReactingChild>()
+		const reactors = new Set<EffectScheduler<unknown>>()
 
 		// Visit each descendant of the atom, collecting reactors.
 		const traverse = (node: Child) => {

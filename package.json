@@ -27,7 +27,8 @@
 		"test": "turbo run test --concurrency=1",
 		"deploy": "./scripts/deploy.sh",
 		"serve": "pnpm --filter docs serve",
-		"dev-docs": "./scripts/dev-docs.sh",
+		"start-docs": "./scripts/start-docs.sh",
+		"check-api": "tsx ./scripts/check-api.ts",
 		"typecheck": "turbo run typecheck --concurrency=1"
 	},
 	"engines": {
