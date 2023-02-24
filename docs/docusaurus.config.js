@@ -58,7 +58,7 @@ const config = {
 				title: 'signia',
 				logo: {
 					alt: 'signia logo',
-					src: 'img/logo-small.svg',
+					src: 'img/icon-small.svg',
 				},
 				items: [
 					{
