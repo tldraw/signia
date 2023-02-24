@@ -19,8 +19,7 @@ pnpm typedoc \
   --hideBreadcrumbs true \
   --entryPointStrategy "packages" \
   --entryPoints packages/signia \
-  --entryPoints packages/signia-react \
-  --entryPoints packages/signia-react-jsx
+  --entryPoints packages/signia-react
 
 # typedoc generates this useless index file
 rm -rf docs/docs/API/index.md

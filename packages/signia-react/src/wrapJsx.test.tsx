@@ -1,9 +1,24 @@
-import { createRef, forwardRef, memo, useEffect, useImperativeHandle } from 'react'
+/*
+  @jsx testjsx
+	@jsxFrag Fragment
+*/
+
+import {
+	createElement,
+	createRef,
+	forwardRef,
+	Fragment,
+	memo,
+	useEffect,
+	useImperativeHandle,
+} from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
 import { atom } from 'signia'
-import { install } from './jsx-injection'
+import { wrapJsx } from './wrapJsx'
 
-install()
+// assign this to an unused variable to prevent editors from removing it
+const _Fragment = Fragment
+const testjsx = wrapJsx(createElement)
 
 test('components can use refs', async () => {
 	const a = atom('a', 1)

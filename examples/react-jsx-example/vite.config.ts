@@ -3,5 +3,5 @@ import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react({ tsDecorators: true })],
+	plugins: [react({ tsDecorators: true, jsxImportSource: 'signia-react-jsx' })],
 })
