@@ -10,33 +10,16 @@ We provide officially-supported React bindings for `signia` in two packages:
   - [`useComputed`](docs/API/signia_react/functions/useAtom) - A hook for creating computed signals.
   - [`track`](docs/API/signia_react/functions/useAtom) - component wrapper for automatically tracking signal value access and re-rendering the wrapped component if the signals' values change.
   - [`useValue`](docs/API/signia_react/functions/useAtom) - A hook for manually tracking signal value access (not required if you use `track`)
-- `signia-react-jsx` provides a minimal global jsx integration. This causes all functional components to be automatically
-  rerendered when the values of any signals they use change. This means you will not need to use `track` at all.
-  - [`install`](docs/API/signia_react_jsx/functions/install) - Call this before your app renders to install the jsx integration.
-
-:::info Should I use the jsx integration?
-Do not use the jsx integration if you are publishing a library rather than building an app. Doing so would pollute the React runtime for your library's consumers.
-
-Otherwise, there are a couple of minor things to keep in mind:
-
-- **Tracking has a slight performance cost.**
-
-  This will be neglible for normal web apps, but if you are using the React render cycle for animation, or something similarly demanding, you should probably stick to using [`track`](docs/API/signia_react/functions/useAtom) selectively.
-
-- **We use internal React APIs to set up the integration.**
-
-  React may decide to remove or change the internal APIs in a future major release.
-  In that case we'd have to find another way to set up the integration.
-  In the worst case that might not be possible which could prevent you from upgrading to newer versions of React easily.
-
-  We use the same approach as other popular libraries, e.g. `@preact/signals`, so it would be a _reasonably_ big deal if the React team were to fully prevent the sort of code injection such libraries rely on.
-
-:::
+- `signia-react-jsx` provides a minimal global jsx integration for use with TypeScript's `jsxImportSource` option. This causes all functional components to be automatically
+  rerendered when the values of any signals they use change.
 
 ## Installing the Bindings
 
 :::note
-These official react bindings require a JS environment that supports [`Proxy`](https://caniuse.com/?search=Proxy), and they do not currently work with legacy [class components](https://beta.reactjs.org/reference/react/Component). We may be willing to add and maintain legacy support if there is suffient demand. Let us know!
+
+- These bindings require a JS environment that supports [`Proxy`](https://caniuse.com/?search=Proxy).
+- These bindings not currently work with legacy [class components](https://beta.reactjs.org/reference/react/Component). We may be willing to add and maintain legacy support if there is suffient demand. Let us know!
+
 :::
 
 <Tabs>
