@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { Child, ComputedChild, ComputeDiff, RESET_VALUE, Signal } from './types'
+import { Child, ComputeDiff, RESET_VALUE, Signal } from './types'
 
 import { maybeCaptureParent, startCapturingParents, stopCapturingParents } from './capture'
 
@@ -105,7 +105,18 @@ export interface ComputedOptions<Value, Diff> {
  *
  * @public
  */
-export interface Computed<Value, Diff = unknown> extends Signal<Value, Diff>, ComputedChild {}
+export interface Computed<Value, Diff = unknown> extends Signal<Value, Diff> {
+	/**
+	 * Whether this computed child is involved in an actively-running effect graph.
+	 * @public
+	 */
+	readonly isActivelyListening: boolean
+
+	/** @internal */
+	readonly parents: Signal<any, any>[]
+	/** @internal */
+	readonly parentEpochs: number[]
+}
 
 /**
  * @internal

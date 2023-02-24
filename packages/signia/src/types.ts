@@ -1,4 +1,5 @@
 import { ArraySet } from './ArraySet'
+import { _Computed } from './Computed'
 import { EffectScheduler } from './EffectScheduler'
 
 /** @public */
@@ -48,43 +49,8 @@ export interface Signal<Value, Diff = unknown> {
 	children: ArraySet<Child>
 }
 
-/** @public */
-export interface ComputedChild {
-	/**
-	 * Any signals this computed child dereferenced the last time it was computed.
-	 * @internal
-	 */
-	parents: Signal<any, any>[]
-	/**
-	 * The matching epochs of the parents array when this child was last computed.
-	 * @internal
-	 */
-	parentEpochs: number[]
-	/**
-	 * Whether this computed child is involved in an actively-running effect graph.
-	 * @public
-	 */
-	isActivelyListening: boolean
-	/**
-	 * The epoch when this child was last traversed during the 'commit' phase of a transation (or calling [[Atom.set]] outside of a transaction).
-	 * @internal
-	 */
-	lastTraversedEpoch: number
-}
-
-/**
- * A child that can run effects if necessary.
- * @public
- */
-export interface ReactingChild extends ComputedChild {
-	/**
-	 * This should check whether the child needs to run any effects, and schedule them if necessary.
-	 */
-	maybeScheduleEffect(): void
-}
-
 /** @internal */
-export type Child = ReactingChild | ComputedChild
+export type Child = EffectScheduler<any> | _Computed<any>
 
 /**
  * Computes the diff between the previous and current value.

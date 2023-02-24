@@ -2,7 +2,7 @@ import { startCapturingParents, stopCapturingParents } from './capture'
 import { GLOBAL_START_EPOCH } from './constants'
 import { attach, detach, haveParentsChanged } from './helpers'
 import { globalEpoch } from './transactions'
-import { ReactingChild, Reactor, Signal } from './types'
+import { Reactor, Signal } from './types'
 
 /**
  * An EffectScheduler is responsible for executing side effects in response to changes in state.
@@ -21,13 +21,32 @@ import { ReactingChild, Reactor, Signal } from './types'
  *
  * @public
  */
-export class EffectScheduler<Result> implements ReactingChild {
-	isActivelyListening = false
+export class EffectScheduler<Result> {
+	private _isActivelyListening = false
+	/**
+	 * Whether this scheduler is attached and actively listening to its parents.
+	 * @public
+	 */
+	get isActivelyListening() {
+		return this._isActivelyListening
+	}
+	/** @internal */
 	lastTraversedEpoch = GLOBAL_START_EPOCH
-	lastReactedEpoch = GLOBAL_START_EPOCH
-	scheduleCount = 0
 
+	private lastReactedEpoch = GLOBAL_START_EPOCH
+	private _scheduleCount = 0
+
+	/**
+	 * The number of times this effect has been scheduled.
+	 * @public
+	 */
+	get scheduleCount() {
+		return this._scheduleCount
+	}
+
+	/** @internal */
 	parentEpochs: number[] = []
+	/** @internal */
 	parents: Signal<any, any>[] = []
 
 	constructor(
@@ -36,9 +55,10 @@ export class EffectScheduler<Result> implements ReactingChild {
 		private readonly scheduleEffect?: (execute: () => void) => void
 	) {}
 
+	/** @internal */
 	maybeScheduleEffect() {
 		// bail out if we have been cancelled by another effect
-		if (!this.isActivelyListening) return
+		if (!this._isActivelyListening) return
 		// bail out if no atoms have changed since the last time we ran this effect
 		if (this.lastReactedEpoch === globalEpoch) return
 
@@ -49,7 +69,7 @@ export class EffectScheduler<Result> implements ReactingChild {
 		}
 		// if we don't have parents it's probably the first time this is running.
 
-		this.scheduleCount++
+		this._scheduleCount++
 		if (this.scheduleEffect) {
 			// if the efect should be deferred (e.g. until a react render), do so
 			this.scheduleEffect(this.maybeExecute)
@@ -61,7 +81,7 @@ export class EffectScheduler<Result> implements ReactingChild {
 
 	private maybeExecute = () => {
 		// bail out if we have been detached before this runs
-		if (!this.isActivelyListening) return
+		if (!this._isActivelyListening) return
 		this.execute()
 	}
 
@@ -72,7 +92,7 @@ export class EffectScheduler<Result> implements ReactingChild {
 	 * @public
 	 */
 	attach() {
-		this.isActivelyListening = true
+		this._isActivelyListening = true
 		for (let i = 0, n = this.parents.length; i < n; i++) {
 			attach(this.parents[i], this)
 		}
@@ -83,7 +103,7 @@ export class EffectScheduler<Result> implements ReactingChild {
 	 * It will no longer be eligible to receive 'maybeScheduleEffect' calls until [[EffectScheduler.attach]] is called again.
 	 */
 	detach() {
-		this.isActivelyListening = false
+		this._isActivelyListening = false
 		for (let i = 0, n = this.parents.length; i < n; i++) {
 			detach(this.parents[i], this)
 		}
