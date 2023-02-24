@@ -1,3 +1,15 @@
+# v0.0.7 (Fri Feb 24 2023)
+
+#### 🐛 Bug Fix
+
+- [chore] simplify types and add check-api script [#28](https://github.com/tldraw/signia/pull/28) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.6 (Thu Feb 23 2023)
 
 #### 🐛 Bug Fix
