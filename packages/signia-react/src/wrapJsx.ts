@@ -38,7 +38,7 @@ function proxyFunctionalComponent(Component: FunctionComponent<any>) {
 	return tracked
 }
 
-/** @private */
+/** @internal */
 export function wrapJsx<T>(jsx: T): T {
 	if (typeof jsx !== 'function') return jsx
 
