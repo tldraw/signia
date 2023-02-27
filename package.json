@@ -28,6 +28,7 @@
 		"deploy": "./scripts/deploy.sh",
 		"serve": "pnpm --filter docs serve",
 		"start-docs": "./scripts/start-docs.sh",
+		"deploy-docs": "pnpm --filter docs run deploy",
 		"check-api": "tsx ./scripts/check-api.ts",
 		"typecheck": "turbo run typecheck --concurrency=1"
 	},

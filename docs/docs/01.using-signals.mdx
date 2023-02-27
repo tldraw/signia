@@ -1,1 +1,38 @@
 # Using Signals
+
+## Atoms
+
+Root signals can be created using the `atom` function. These atoms store the root state for your app. (See [What are signals?](what-are-signals))
+
+We recommend using a class as a way to group atoms with related code such as:
+
+- functions that perform mutations
+- shared derived data
+- lifecycle management code
+
+Another useful feature of classes we suggest using is to make an atom private, to restrict the ability of other parts of the code base from directly mutating it with custom logic.
+
+In this tutorial we will create a `TextDocument` class for managing a text document in a hypothetical rich text editor.
+
+```ts
+import { atom } from 'signia'
+
+type TextDocumentState = {
+	title: string
+	text: string
+	cursorPosition: number
+	selectionRange: null | [number, number]
+}
+
+class TextDocument {
+	private readonly _state = atom<TextDocumentState>('TextDocument._state', {
+		title: 'My Document',
+		text: 'Lorem ipsum dolor sit amet...',
+		cursorPosition: 0,
+		selectionRange: null,
+	})
+	get state() {
+		return this._state.value
+	}
+}
+```

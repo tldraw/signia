@@ -154,6 +154,14 @@ We prefer to use context:
 ```ts
 const DocumentContext = React.createContext<Document | null>(null)
 
+class Document {
+	// ...
+	static useNewDocument = () => {
+		const doc = useMemo(() => new Document(), [])
+		// You can add any effects and other lifecycle logic in here
+		return doc
+	}
+}
 const useDocument = () => {
 	const doc = useContext(DocumentContext)
 	if (!doc) throw new Error('No document found in context')
@@ -161,7 +169,7 @@ const useDocument = () => {
 }
 
 const App = () => {
-	const doc = useNewDocument()
+	const doc = Document.useNewDocument()
 
 	return (
 		<DocumentContext.Provider value={doc}>
