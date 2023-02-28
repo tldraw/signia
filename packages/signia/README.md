@@ -1,19 +1,5 @@
-# @tldraw/signia
+# Signia
 
-## `Atom`
+A minimal, fast, scalable signals library for TypeScript
 
-An atomic value, another.
-
-## `Reactor`
-
-## `Derivation`
-
-## `transact`
-
-## `buildIncrementalDerivation`
-
-## `derivation` decorator
-
-## `EMPTY_ARRAY`
-
-## `RESET_VALUE`
+https://github.com/tldraw/signia

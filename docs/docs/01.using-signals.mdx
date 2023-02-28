@@ -1,16 +1,86 @@
 # Using Signals
 
+There are two types of signal:
+
+- **Atoms** which store the root state for your app
+- **Computed** signals which are derived from other signals
+
+If you are new to signals we recommend reading the [What are signals?](what-are-signals) page first.
+
 ## Atoms
 
-Root signals can be created using the `atom` function. These atoms store the root state for your app. (See [What are signals?](what-are-signals))
+### Creating Atoms
 
-We recommend using a class as a way to group atoms with related code such as:
+Atoms can be created using the `atom` function, which takes a `name` for the atom, and an `initialValue`.
+
+```ts
+import { atom } from 'signia'
+
+const firstName = atom('firstName', 'David')
+```
+
+:::tip Naming atoms
+We make the `name` of the atom a required first argument to aid debugging. Typing the name twice is a small price to pay for a happier debugging experience 🙂
+
+The name does not need to be unique since it is not used except for debugging and potentially by dev tooling.
+
+If you have an idea for how to use build tooling to infer the name automatically we'd gladly support you in implementing it!
+:::
+
+### Updating Atoms
+
+Atoms can be updated using the `set` method.
+
+```ts
+firstName.set('John')
+console.log(firstName.value) // John
+```
+
+Or by using the `update` method, which takes a function that receives the current value and returns the new value.
+
+```ts
+firstName.update((value) => value.toUpperCase())
+console.log(firstName.value) // JOHN
+```
+
+## Computed Signals
+
+### Creating Computed Signals
+
+Computed signals can be created using the `computed` function, which takes a `name` for the signal, and a `compute` function.
+
+```ts
+import { computed, atom } from 'signia'
+
+const firstName = atom('firstName', 'David')
+const lastName = atom('lastName', 'Bowie')
+
+const fullName = computed('fullName', () => {
+	return `${firstName.value} ${lastName.value}`
+})
+
+console.log(fullName.value) // David Bowie
+```
+
+### Updating Computed Signals
+
+Computed signals are read-only, and cannot be updated directly. Instead, update their root atoms and the computed signal will update automatically.
+
+```ts
+firstName.set('John')
+
+console.log(fullName.value) // John Bowie
+```
+
+## Using Classes to Organize Code
+
+For real applications, we recommend using a class as a way to group atoms with related code such as:
 
 - functions that perform mutations
 - shared derived data
 - lifecycle management code
 
-Another useful feature of classes we suggest using is to make an atom private, to restrict the ability of other parts of the code base from directly mutating it with custom logic.
+Classes also make it easy to make atoms 'private' which helps to keep code tidy by preventing mutation code from being spread across the codebase.
 
 In this tutorial we will create a `TextDocument` class for managing a text document in a hypothetical rich text editor.
 
@@ -35,4 +105,92 @@ class TextDocument {
 		return this._state.value
 	}
 }
+```
+
+## The `@computed` decorator
+
+The `@computed` decorator can be used within a class to create a 'transparent' computed signal with which you don't need to use `.value` to get the value.
+
+```ts
+import { computed } from 'signia'
+
+class TextDocument {
+	// ...
+
+	@computed get title() {
+		return this._state.title
+	}
+
+	@computed get wordCount() {
+		return this._state.text.split(' ').length
+	}
+
+	@computed get selectedText() {
+		if (this._state.selectionRange === null) {
+			return ''
+		}
+		const [start, end] = this._state.selectionRange
+		return this._state.text.slice(start, end)
+	}
+}
+
+new TextDocument().wordCount // 5
+```
+
+If you need to access the underlying `Computed` instance, you can use `getComputedInstance`
+
+```ts
+import { getComputedInstance } from 'signia'
+
+const doc = new TextDocument()
+
+const wordCount = getComputedInstance(doc.wordCount)
+
+console.log(wordCount.value) // 5
+```
+
+## Running effects
+
+If you want to run some code whenever a signal changes, you can use the `react` function.
+
+```ts
+import { react } from 'signia'
+
+const doc = new TextDocument()
+
+// react returns a function that can be called to stop the effect
+const stop = react('set page title', () => {
+	document.title = doc.title
+})
+```
+
+If you need something that can be started and stopped multiple times, you can use the `reactor` function.
+
+```ts
+const reactor = reactor('set page title', () => {
+	document.title = doc.title
+})
+
+reactor.start()
+reactor.stop()
+```
+
+`reactor` also supports a `scheduler` option which can be used to defer effects until another time. A common use case for this would be to batch effects to run on a single animation frame.
+
+```ts
+let isRafScheduled = false
+const scheduledEffects = []
+const scheduleEffect = (runEffect) => {
+	scheduledEffects.push(runEffect)
+	if (!isRafScheduled) {
+		requestAnimationFrame(() => {
+			isRafScheduled = false
+			scheduledEffects.forEach((runEffect) => runEffect())
+			scheduledEffects.length = 0
+		})
+	}
+}
+const reactor = reactor('set page title', () => {
+	document.title = doc.title,
+}, scheduleEffect)
 ```

@@ -1,0 +1,218 @@
+# Incrementally computed signals
+
+One of the things that sets Signia apart is that it supports incremental recomputation of derived values.
+This means that working with large derived collections can be extremely efficient, while still benefitting from the lazy evaluation and always-on-caching that Signia provides.
+
+This is achieved using an epochal reactivity system.
+
+## Epochs
+
+Signia has a global 'epoch' value which is an integer that gets incremented every time any atom is updated.
+
+When a derived value is computed, its computing function is passed two arguments: the previous value, and the global epoch when the previous value was computed.
+
+This 'last computed' epoch can be used in conjunction with the `Signal.getDiffSince(epoch)` method to retrieve a list of changes, or 'diffs', since the last time the computed value was derived.
+
+## Diffs don't come free
+
+JavaScript's data types don't have built-in support for diffs, so it necessary to implement this functionality manually.
+
+For this tutorial, let's use [`immer`](https://immerjs.github.io/immer/), which is a library for working with immutable data. It also has the ability to extract diffs while making changes
+
+Here is an example of an Atom wrapper which uses `immer` to capture diffs:
+
+```ts
+import { Patch, produceWithPatches, enablePatches } from 'immer'
+import { Atom, atom } from 'signia'
+
+enablePatches()
+
+class ImmerAtom<T> {
+	// The second Atom type parameter is the type of the diff
+	readonly atom: Atom<T, Patch[]>
+	constructor(name: string, initialValue: T) {
+		this.atom = atom(name, initialValue, {
+			// In order to save diffs, we need to provide a historyLength argument
+			// to the atom constructor. Otherwise it will not allocate a history buffer.
+			historyLength: 10,
+		})
+	}
+
+	update(fn: (draft: T[]) => void) {
+		const [nextValue, patches] = produceWithPatches(this.atom.value, fn)
+		this.atom.set(nextValue, patches)
+	}
+}
+```
+
+## Using diffs in `computed`
+
+Now that we have a way to capture diffs, we can use them in our `computed` functions.
+
+Let's define an incremental version of Array.map:
+
+```ts
+import { Draft } from 'immer'
+import { RESET_VALUE, withDiff } from 'signia'
+
+function map<T, U>(source: ImmerAtom<T[]>, fn: (value: T) => U): Computed<U[], Patch[]> {
+	return computed(
+		source.atom.name + ':mapped',
+		(prev, lastComputedEpoch) => {
+			// we need to check whether this is the first time we're running
+			if (isUninitialized(prev)) {
+				// if so, just map over the array and return it
+				return source.atom.value.map(fn)
+			}
+
+			// this is not the first time we're running, so we need to calculate the diff of the source atom
+			const diffs = source.atom.getDiffSince(lastComputedEpoch)
+			// if there is not enough history to calculate the diff, this will be the RESET_VALUE constant
+			if (diffs === RESET_VALUE) {
+				// in which case we need to start over
+				return source.atom.value.map(fn)
+			}
+
+			// we have diffs and a previous value
+			const [next, patches] = produceWithPatches(prev, (draft) => {
+				// apply the upstream diffs while generating a new set of downstream diffs
+				for (const patch of diffs.flat()) {
+					const index = patch.path[0]
+					if (typeof index !== 'number') {
+						// this will be array length changes
+						draft[patch.path[0] as 'length'] = patch.value as number
+						continue
+					}
+					if (patch.op === 'add') {
+						if (patch.path.length === 0) {
+							// this is a new item in the array, we need to splice it in and call the map function on it
+							draft.splice(patch.path[0] as number, 0, fn(patch.value) as Draft<U>)
+						} else {
+							// one of the existing items in the array has changed deeply
+							// let's call the map function on the new value
+							draft[index] = fn(source.atom.value[index]) as Draft<U>
+						}
+					} else if (patch.op === 'replace') {
+						// one of the existing items in the array has been fully replaced
+						draft[index] = fn(patch.value) as Draft<U>
+					} else if (patch.op === 'remove') {
+						next.splice(index, 1)
+					}
+				}
+			})
+
+			// withDiff is a helper function that returns a special value that tells Signia to use the
+			// provided value and diff
+			return withDiff(next, patches)
+		},
+		{
+			historyLength: 10,
+		}
+	)
+}
+```
+
+You're probably thinking: "that's a whole lot of code just to map over an array!"
+
+Alas, such is the nature of the beast. Incremental logic is _much_ trickier to write than non-incremental logic, but the payoff is worth it.
+
+## The payoff
+
+Let's define a list of names and a computed value that reverses them:
+
+```ts
+const names = new ImmerAtom('names', ['Steve', 'Alex', 'Lu', 'Jamie', 'Mitja'])
+
+let numReverseCalls = 0
+const reversedNames = map(names, (name) => {
+	numReverseCalls++
+	return name.split('').reverse().join('')
+})
+
+console.log(reversedNames.value) // [ 'evetS', 'xelA', 'uL', 'eimaJ', 'ajtiM' ]
+console.log(numReverseCalls) // 5
+```
+
+Now if we push a new name into the list, we can see that the 'reverse' function is only called once more:
+
+```ts
+names.update((draft) => {
+	draft.push('David')
+})
+
+console.log(reversedNames.value) // [ 'evetS', 'xelA', 'uL', 'eimaJ', 'ajtiM', 'divaD' ]
+console.log(numReverseCalls) // 6
+```
+
+And similarly, if we update an existing name, the 'reverse' function is only called once more:
+
+```ts
+names.update((draft) => {
+	draft[0] = 'Sunil'
+})
+
+console.log(reversedNames.value) // [ 'linuS', 'xelA', 'uL', 'eimaJ', 'ajtiM', 'divaD' ]
+console.log(numReverseCalls) // 7
+```
+
+And finally, if we pop a name off the list, the 'reverse' function is not even called!
+
+```ts
+names.update((draft) => {
+	draft.pop()
+})
+
+console.log(reversedNames.value) // [ 'linuS', 'xelA', 'uL', 'eimaJ', 'ajtiM' ]
+console.log(numReverseCalls) // 7
+```
+
+:::note A small caveat
+
+In this example, if the mapping function reads any other external signals, then those dependencies will not necessarily be captured on incremental runs. e.g. if popping an item off the list.
+This will prevent updates to external signals from propagating correctly through the mapped list.
+There are a couple of ways around this:
+
+- Maintaining an array of computed signals, one for each item in the root list.
+- Adding an explicit dependencies array to the `map` function.
+
+These are left as an exercise for the reader :) Feel free to reach out in our [Discord](https://discord.gg/3GJTuqay) if you need help.
+:::
+
+## The `historyLength` option
+
+The `historyLength` option is used to tell Signia how many diffs to store. Each time a value changes, a new diff is stored.
+
+What you set this value to depends on how frequently the signal is read in relation to how often it changes.
+
+- If it changes roughly as often as it is read, you can use a very low number.
+- If it changes infrequently and is read frequently, you can also use a very low number.
+- If it changes frequently and is read infrequently, you should use a higher number.
+
+If you're not sure, I would suggest adding dev-time `console.warn` statements for when the `RESET_VALUE` constant is encountered. This will tell you that Signia doesn't have enough history to calculate the diff, and you should increase the `historyLength` option.
+
+## The `computeDiff` option
+
+If convenient, you can provide a `computeDiff` option along with the `historyLength` option when creating atoms or computed signals. Signia will use this so that you don't need to supply the diff when calling `Atom.set` or when returning from the compute function.
+
+```ts
+const names = atom('names', ['Bob', 'Alice'], {
+	historyLength: 10,
+	computeDiff: (prev, next) => {
+		return produceWithPatches(prev, (draft) => {
+			return next
+		})[1]
+	},
+})
+const startEpoch = names.lastChangedEpoch
+
+names.set(['Bob', 'Abhiti'])
+console.log(names.getDiffSince(startEpoch)) // [[ { op: 'replace', path: [1], value: 'Abhiti' } ]]
+```
+
+## Conclusion
+
+Most complex software systems do _something_ along these lines by necessity, usually ad-hoc. The nice thing about integrating it into Signia is that it's now a first-class citizen and it works seamlessly with other signals. There's no need to worry about cache invalidation or update ordering, everything just works.
+
+At [tldraw](https://tldraw.com) we use incrementally computed signals for a handful of our core data structures, and it's been a huge win for performance. We're able to keep our canvas snappy and responsive even when we have thousands of shapes.
+
+We also have a rudimentary reactive database based on `signia` which makes heavy use of incrementally computed signals for building reactive queries and indexes.

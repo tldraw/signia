@@ -11,7 +11,7 @@ We provide officially-supported React bindings for `signia` in two packages:
   - [`track`](docs/API/signia_react/functions/useAtom) - component wrapper for automatically tracking signal value access and re-rendering the wrapped component if the signals' values change.
   - [`useValue`](docs/API/signia_react/functions/useAtom) - A hook for manually tracking signal value access (not required if you use `track`)
 - `signia-react-jsx` provides a minimal global jsx integration for use with TypeScript's `jsxImportSource` option. This causes all functional components to be automatically
-  rerendered when the values of any signals they use change.
+  tracked.
 
 ## Installing the Bindings
 
@@ -52,14 +52,37 @@ If you wish to enable tracking on all functional components automatically, run:
 	</TabItem>
 </Tabs>
 
-And then add these lines to your app's entry file
+And then make your `tsconfig.json` include these properties:
 
-```ts
-import { install } from 'signia-react-jsx'
-install()
+```json
+{
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"jsxImportSource": "signia-react-jsx"
+	}
+}
 ```
 
+:::tip Vite
+If you are using Vite, you will need to add `jsxImportSource` to your `vite.config.ts`:
+
+```ts
+import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vite'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+	plugins: [react({ jsxImportSource: 'signia-react-jsx' })],
+})
+```
+
+:::
+
 ## Usage
+
+:::caution
+Before reading this section, make sure you have read the [Using Signals](using-signals) tutorial.
+:::
 
 ### Writing reactive components
 
@@ -263,3 +286,35 @@ To get around this, you can create a computed signal to 'select' the part of the
    	return <h1>{title.value}</h1>
    })
    ```
+
+### Running effects without re-rendering the component
+
+`useEffect` is a good way to run effects after re-rendering the component. With Signia you can use signal values in useEffect dependency arrays, as you would any other values.
+
+```ts
+const DocumentTitle = track(function DocumentTitle({ doc }: { doc: Document }) {
+	// set the browser tab's title
+	useEffect(() => {
+		window.document.title = doc.title
+	}, [doc.title]])
+
+  return <h1>{doc.title}</h1>
+})
+```
+
+However, sometimes you might wish to avoid triggering a re-render just to execute some effect. In that case you can combine `useEffect` with `react`.
+
+```ts
+import { react } from 'signia'
+
+const SetDocumentTitle: React.FC<{ doc: Document }> = () => {
+	useEffect(
+		() =>
+			react(() => {
+				window.document.title = doc.title
+			}),
+		[doc]
+	)
+	return null
+}
+```
