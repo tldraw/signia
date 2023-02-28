@@ -65,7 +65,7 @@ const config = {
 						type: 'doc',
 						docId: 'intro',
 						position: 'left',
-						label: 'Getting Started',
+						label: 'Docs',
 					},
 					{
 						type: 'doc',
@@ -78,6 +78,11 @@ const config = {
 						label: 'GitHub',
 						position: 'right',
 					},
+					{
+						href: 'https://discord.gg/3GJTuqay',
+						label: 'Discord',
+						position: 'right',
+					},
 				],
 			},
 			footer: {
@@ -87,7 +92,7 @@ const config = {
 						title: 'Docs',
 						items: [
 							{
-								label: 'Getting Started',
+								label: 'Docs',
 								to: '/docs/intro',
 							},
 						],
