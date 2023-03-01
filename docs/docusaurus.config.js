@@ -120,7 +120,7 @@ const config = {
 						],
 					},
 				],
-				copyright: `Copyright © ${new Date().getFullYear()} TLDraw Ltd. Built with Docusaurus.`,
+				copyright: `Copyright © ${new Date().getFullYear()} tldraw GB Ltd. Built with Docusaurus.`,
 			},
 			prism: {
 				theme: lightCodeTheme,
