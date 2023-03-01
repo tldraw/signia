@@ -54,8 +54,10 @@ describe(EffectScheduler, () => {
 				a.value
 				numReactions++
 			},
-			() => {
-				numSchedules++
+			{
+				scheduleEffect: () => {
+					numSchedules++
+				},
 			}
 		)
 		scheduler.attach()

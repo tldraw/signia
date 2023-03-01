@@ -166,7 +166,7 @@ import { getComputedInstance } from 'signia'
 
 const doc = new TextDocument()
 
-const wordCount = getComputedInstance(doc.wordCount)
+const wordCount = getComputedInstance(doc, 'wordCount')
 
 console.log(wordCount.value) // 5
 ```
@@ -180,7 +180,7 @@ import { react } from 'signia'
 
 const doc = new TextDocument()
 
-// react returns a function that can be called to stop the effect
+// `react` returns a function that can be called to stop the effect
 const stop = react('set page title', () => {
 	document.title = doc.title
 })
@@ -189,22 +189,25 @@ const stop = react('set page title', () => {
 If you need something that can be started and stopped multiple times, you can use the `reactor` function.
 
 ```ts
-const reactor = reactor('set page title', () => {
+import { reactor } from 'signia'
+
+const effect = reactor('set page title', () => {
 	document.title = doc.title
 })
 
-reactor.start()
-reactor.stop()
+effect.start()
+effect.stop()
 ```
 
-`reactor` also supports a `scheduler` option which can be used to defer effects until another time. A common use case for this would be to batch effects to run on a single animation frame.
+`reactor` and `react` also support providing a `scheduler` option which can be used to defer effects until another time. A common use case for this would be to batch effects to run on a single animation frame.
 
 ```ts
 let isRafScheduled = false
-const scheduledEffects = []
-const scheduleEffect = (runEffect) => {
+const scheduledEffects: Array<() => void> = []
+const scheduleEffect = (runEffect: () => void) => {
 	scheduledEffects.push(runEffect)
 	if (!isRafScheduled) {
+		isRafScheduled = true
 		requestAnimationFrame(() => {
 			isRafScheduled = false
 			scheduledEffects.forEach((runEffect) => runEffect())
@@ -212,7 +215,7 @@ const scheduleEffect = (runEffect) => {
 		})
 	}
 }
-const reactor = reactor('set page title', () => {
+const stop = react('set page title', () => {
 	document.title = doc.title,
 }, scheduleEffect)
 ```
