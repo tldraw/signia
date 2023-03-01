@@ -52,14 +52,34 @@ Signals libraries or frameworks are typically based on three primitives:
   In React, updating the DOM is a side effect which is managed by React itself. It also provides `useEffect` for executing custom side effects in response to changing values.
   :::
 
+Let's look at a simple Todo list React app to see how these primitives map to code.
+
+```ts
+function TodoApp() {
+	const [todos, setTodos] = useState<Todo[]>([{ text: 'buy milk', completed: false }])
+	const [showCompleted, setShowCompleted] = useState(false)
+
+	const filteredTodos = useMemo(() => {
+		return todos.filter((todo) => !todo.completed || showCompleted)
+	}, [todos, showCompleted])
+
+	return (
+		<>
+			{/* ... */}
+			<TodoList todos={filteredTodos} />
+		</>
+	)
+}
+```
+
 import ThemedImage from '@theme/ThemedImage'
 import useBaseUrl from '@docusaurus/useBaseUrl'
 
 <ThemedImage
 	alt="How signals work"
 	sources={{
-		light: useBaseUrl('/img/what-are-signals-0-light.svg'),
-		dark: useBaseUrl('/img/what-are-signals-0-dark.svg'),
+		light: useBaseUrl('/img/what-are-signals-0-light.png'),
+		dark: useBaseUrl('/img/what-are-signals-0-dark.png'),
 	}}
 />
 
@@ -90,8 +110,8 @@ When you change a root value, any derived values that read from it are immediate
 <ThemedImage
 	alt="Push signals"
 	sources={{
-		light: useBaseUrl('/img/what-are-signals-push-light.svg'),
-		dark: useBaseUrl('/img/what-are-signals-push-dark.svg'),
+		light: useBaseUrl('/img/what-are-signals-push-light.png'),
+		dark: useBaseUrl('/img/what-are-signals-push-dark.png'),
 	}}
 />
 
@@ -108,8 +128,8 @@ if they are read from.
 <ThemedImage
 	alt="Push signals"
 	sources={{
-		light: useBaseUrl('/img/what-are-signals-pull-light.svg'),
-		dark: useBaseUrl('/img/what-are-signals-pull-dark.svg'),
+		light: useBaseUrl('/img/what-are-signals-pull-light.png'),
+		dark: useBaseUrl('/img/what-are-signals-pull-dark.png'),
 	}}
 />
 
