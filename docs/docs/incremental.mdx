@@ -15,7 +15,7 @@ Signia has a global logical **clock**. This is an integer that gets incremented 
 
 An **epoch** is one specific value of the global clock. It is a virtual point in time.
 
-You can access the epoch on which a signal was last updated using the `lastChangedEpoch` property:
+You can access the epoch upon which a signal's value last changed using the `lastChangedEpoch` property:
 
 ```ts
 const firstName = atom('firstName', 'Brian')
@@ -138,7 +138,7 @@ function map<T, U>(source: ImmerAtom<T[]>, fn: (value: T) => U): Computed<U[], P
 
 You're probably thinking: "that's a whole lot of code just to map over an array!"
 
-Alas, such is the nature of the beast. Incremental logic is _much_ trickier to write than non-incremental logic, but the payoff is worth it.
+Alas, incremental logic is _much_ trickier to write than non-incremental logic. But often the payoff is worth it.
 
 ## The payoff
 
@@ -190,18 +190,6 @@ console.log(reversedNames.value) // [ 'linuS', 'xelA', 'uL', 'eimaJ', 'ajtiM' ]
 console.log(numReverseCalls) // 7
 ```
 
-:::note A small caveat
-
-In this example, if the mapping function reads any other external signals, then those dependencies will not necessarily be captured on incremental runs. e.g. if popping an item off the list.
-This will prevent updates to external signals from propagating correctly through the mapped list.
-There are a couple of ways around this:
-
-- Maintaining an array of computed signals, one for each item in the root list.
-- Adding an explicit dependencies array to the `map` function.
-
-These are left as an exercise for the reader :) Feel free to reach out in our [Discord](https://discord.gg/3GJTuqay) if you need help.
-:::
-
 ## The `historyLength` option
 
 The `historyLength` option is used to tell Signia how many diffs to store. Each time a value changes, a new diff is stored.
@@ -233,6 +221,58 @@ names.set(['Bob', 'Abhiti'])
 console.log(names.getDiffSince(startEpoch)) // [[ { op: 'replace', path: [1], value: 'Abhiti' } ]]
 ```
 
+## Testing
+
+Applying incremental diffs correctly takes a lot of care and can be difficult in unexpected ways.
+
+We suggest using generative testing to make sure your incremental logic matches your non-incremental logic.
+
+An easy way to get started is by creating a seeded random number generator and using it to generate random 'update ops' for atoms.
+You can then run the same updates through both the incremental and non-incremental logic and compare the results.
+
+```ts
+const seed = Math.random()
+test(`using seed ${seed}`, () => {
+	const rng = new RandomNumberGenerator(seed)
+	const names = new ImmerAtom('names', [], { historyLength: 10 })
+	// if you set historyLength to 0 it will force your `map` incremental logic down the RESET_VALUE path
+	const names_no_diff = new ImmerAtom('names_no_diff', [], { historyLength: 0 })
+
+	const updateBoth = (fn: (draft: string[]) => void) => {
+		names.update(fn)
+		names_no_diff.update(fn)
+	}
+
+	const reversedNames = map(names, (name) => name.split('').reverse().join(''))
+	const reversedNames_no_diff = map(names_no_diff, (name) => name.split('').reverse().join(''))
+
+	for (let i = 0; i < 1000; i++) {
+		// getRandomNamesOp implementation left as an exercise for the reader
+		const op = getRandomNamesOp(names.state.value, rng)
+		if (op.type === 'add_name') {
+			updateBoth((draft) => {
+				draft.splice(op.index, 0, op.name)
+			})
+		} else if (op.type === 'remove_name') {
+			updateBoth((draft) => {
+				draft.splice(op.index, 1)
+			})
+		} else if (op.type === 'update_name') {
+			updateBoth((draft) => {
+				draft[op.index] = op.name
+			})
+		}
+
+		// don't check every time, to allow for some history buffer buildup and overflow
+		if (rng.random() < 0.1) {
+			expect(reversedNames.value).toEqual(reversedNames_no_diff.value)
+		}
+	}
+
+	expect(reversedNames.value).toEqual(reversedNames_no_diff.value)
+})
+```
+
 ## Conclusion
 
 Most complex software systems do _something_ along these lines by necessity, usually ad-hoc. The nice thing about integrating it into Signia is that it's now a first-class citizen and it works seamlessly with other signals. There's no need to worry about cache invalidation or update ordering, everything just works.
@@ -240,3 +280,11 @@ Most complex software systems do _something_ along these lines by necessity, usu
 At [tldraw](https://tldraw.com) we use incrementally computed signals for a handful of our core data structures, and it's been a huge win for performance. We're able to keep our canvas snappy and responsive even when we have thousands of shapes.
 
 We also have a rudimentary reactive database based on `signia` which makes heavy use of incrementally computed signals for building reactive queries and indexes.
+
+:::info Get involved!
+
+This is an extremely new kind of tool with lots of sharp edges! There are probably lots of ways to improve it and address common problems.
+
+We'd be happy to hear your feedback and suggestions on [GitHub](https://github.com/tldraw/signia/discussions) or in the [Discord channel](https://discord.gg/3GJTuqay).
+
+:::

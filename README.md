@@ -5,7 +5,7 @@
 	</picture>
 </div>
 
-**Signia** is a minimal, fast, and scalable signals library for TypeScript.
+**Signia** is a minimal, fast, and [scalable](https://signia.tldraw.dev/docs/scalability) signals library for TypeScript.
 
 It uses a new clock-based lazy reactivity system that allows signals to scale with complex data-intensive applications.
 

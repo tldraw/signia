@@ -1,15 +1,48 @@
 ---
 sidebar_position: -1
-title: Introducing Signia
+title: Getting Started
 hide_title: true
 ---
 
-import Intro from './_intro.mdx'
+import ThemedImage from '@theme/ThemedImage'
+import useBaseUrl from '@docusaurus/useBaseUrl'
 
-<Intro />
+<ThemedImage
+	alt="Push signals"
+	sources={{
+		light: useBaseUrl('/img/hero-light@2x.png'),
+		dark: useBaseUrl('/img/hero-dark@2x.png'),
+	}}
+/>
 
-## Quick links
+# Getting started
 
-- [Getting started](getting-started)
-- [What are signals](what-are-signals)?
-- [How is Signia special](scalability)?
+## Installation
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+### Core library
+
+<Tabs>
+	<TabItem value="npm" label="npm">
+		<pre>npm add signia</pre>
+	</TabItem>
+	<TabItem value="yarn" label="yarn">
+		<pre>yarn add signia</pre>
+	</TabItem>
+	<TabItem value="pnpm" label="pnpm">
+		<pre>pnpm add signia</pre>
+	</TabItem>
+</Tabs>
+
+### React bindings
+
+`signia` has no dependencies, and is useful outside of react applications.
+However if you wish to use it in a react app, we have officially-supported bindings available.
+
+Read the [installation instructions](react-bindings) to find out more.
+
+## Next: Read the tutorial
+
+The [Using Signals Tutorial](using-signals) will walk you through the basics of using `signia` in an application.
