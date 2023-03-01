@@ -4,24 +4,44 @@ sidebar_position: 2
 
 # Incrementally computed signals
 
-One of the things that sets Signia apart is that it supports incremental recomputation of derived values.
-This means that working with large derived collections can be extremely efficient, while still benefitting from the lazy evaluation and always-on-caching that Signia provides.
+One of Signia's superpowers is its support for incremental recomputation of derived values.
+This makes it possible to work with large derived collections extremely efficiently, while still benefitting from the lazy evaluation and always-on caching that Signia provides.
 
-This is achieved using an epochal reactivity system.
+This is achieved using a clock-based reactivity system.
 
-## Epochs
+## Clocks and Epochs
 
-Signia has a global 'epoch' value which is an integer that gets incremented every time any atom is updated.
+Signia has a global logical **clock**. This is an integer that gets incremented every time any atom is updated.
 
-When a derived value is computed, its computing function is passed two arguments: the previous value, and the global epoch when the previous value was computed.
+An **epoch** is one specific value of the global clock. It is a virtual point in time.
 
-This 'last computed' epoch can be used in conjunction with the `Signal.getDiffSince(epoch)` method to retrieve a list of changes, or 'diffs', since the last time the computed value was derived.
+You can access the epoch on which a signal was last updated using the `lastChangedEpoch` property:
+
+```ts
+const firstName = atom('firstName', 'Brian')
+const startEpoch = firstName.lastChangedEpoch
+firstName.set('Steve')
+const endEpoch = firstName.lastChangedEpoch
+console.log(endEpoch - startEpoch) // 1
+```
+
+When a derived value is computed, its computing function is passed two arguments:
+
+- `previousValue` the last value returned by the computing function
+- `lastComputedEpoch` the value of the global clock when the previous value was last _computed_.
+
+  :::note
+  Beware that 'last computed' is not the same as 'last changed', since a value can be recomputed and end up the same as it was before.
+  :::
+
+`lastComputedEpoch` can be used in conjunction with the `Signal.getDiffSince` method to retrieve a list of changes, or **diffs**, since the last time the computing function was invoked.
 
 ## Diffs don't come free
 
-JavaScript's data types don't have built-in support for diffs, so it necessary to implement this functionality manually.
+JavaScript's datatypes don't have built-in support for diffs, so you need to implement this functionality manually.
 
-For this tutorial, let's use [`immer`](https://immerjs.github.io/immer/), which is a library for working with immutable data. It also has the ability to extract diffs while making changes
+For this tutorial, let's use [`immer`](https://immerjs.github.io/immer/), which is a library for working with immutable data.
+It has the ability to extract diffs while making changes using its `produceWithPatches` function.
 
 Here is an example of an Atom wrapper which uses `immer` to capture diffs:
 
@@ -36,7 +56,7 @@ class ImmerAtom<T> {
 	readonly atom: Atom<T, Patch[]>
 	constructor(name: string, initialValue: T) {
 		this.atom = atom(name, initialValue, {
-			// In order to save diffs, we need to provide a historyLength argument
+			// In order to store diffs, we need to provide the `historyLength` argument
 			// to the atom constructor. Otherwise it will not allocate a history buffer.
 			historyLength: 10,
 		})
@@ -51,7 +71,7 @@ class ImmerAtom<T> {
 
 ## Using diffs in `computed`
 
-Now that we have a way to capture diffs, we can use them in our `computed` functions.
+We can use the diffs emitted by our ImmerAtom in our `computed` functions.
 
 Let's define an incremental version of Array.map:
 
