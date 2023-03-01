@@ -2,18 +2,51 @@ import { startCapturingParents, stopCapturingParents } from './capture'
 import { GLOBAL_START_EPOCH } from './constants'
 import { attach, detach, haveParentsChanged } from './helpers'
 import { globalEpoch } from './transactions'
-import { Reactor, Signal } from './types'
+import { Signal } from './types'
+
+interface EffectSchedulerOptions {
+	/**
+	 * scheduleEffect is a function that will be called when the effect is scheduled.
+	 *
+	 * It can be used to defer running effects until a later time, for example to batch them together with requestAnimationFrame.
+	 *
+	 *
+	 * @example
+	 * ```ts
+	 * let isRafScheduled = false
+	 * const scheduledEffects: Array<() => void> = []
+	 * const scheduleEffect = (runEffect: () => void) => {
+	 * 	scheduledEffects.push(runEffect)
+	 * 	if (!isRafScheduled) {
+	 * 		isRafScheduled = true
+	 * 		requestAnimationFrame(() => {
+	 * 			isRafScheduled = false
+	 * 			scheduledEffects.forEach((runEffect) => runEffect())
+	 * 			scheduledEffects.length = 0
+	 * 		})
+	 * 	}
+	 * }
+	 * const stop = react('set page title', () => {
+	 * 	document.title = doc.title,
+	 * }, scheduleEffect)
+	 * ```
+	 *
+	 * @param execute
+	 * @returns
+	 */
+	scheduleEffect?: (execute: () => void) => void
+}
 
 /**
  * An EffectScheduler is responsible for executing side effects in response to changes in state.
  *
- * You probably don't need to use this directly unless you're integrating signia with a framework of some kind.
+ * You probably don't need to use this directly unless you're integrating Signia with a framework of some kind.
  *
  * Instead, use the [[react]] and [[reactor]] functions.
  *
  * @example
  * ```ts
- * const render = new EffectScheduler('render', drawToCanvas, requestAnimationFrame)
+ * const render = new EffectScheduler('render', drawToCanvas)
  *
  * render.attach()
  * render.execute()
@@ -48,12 +81,14 @@ export class EffectScheduler<Result> {
 	parentEpochs: number[] = []
 	/** @internal */
 	parents: Signal<any, any>[] = []
-
+	private readonly _scheduleEffect?: (execute: () => void) => void
 	constructor(
 		public readonly name: string,
 		private readonly runEffect: (lastReactedEpoch: number) => Result,
-		private readonly scheduleEffect?: (execute: () => void) => void
-	) {}
+		options?: EffectSchedulerOptions
+	) {
+		this._scheduleEffect = options?.scheduleEffect
+	}
 
 	/** @internal */
 	maybeScheduleEffect() {
@@ -68,11 +103,15 @@ export class EffectScheduler<Result> {
 			return
 		}
 		// if we don't have parents it's probably the first time this is running.
+		this.scheduleEffect()
+	}
 
+	/** @internal */
+	scheduleEffect() {
 		this._scheduleCount++
-		if (this.scheduleEffect) {
-			// if the efect should be deferred (e.g. until a react render), do so
-			this.scheduleEffect(this.maybeExecute)
+		if (this._scheduleEffect) {
+			// if the effect should be deferred (e.g. until a react render), do so
+			this._scheduleEffect(this.maybeExecute)
 		} else {
 			// otherwise execute right now!
 			this.execute()
@@ -88,7 +127,7 @@ export class EffectScheduler<Result> {
 	/**
 	 * Makes this scheduler become 'actively listening' to its parents.
 	 * If it has been executed before it will immediately become eligible to receive 'maybeScheduleEffect' calls.
-	 * If it has not executed beofre it will need to be manually executed once to become eligible for scheduling, i.e. by calling [[EffectScheduler.execute]].
+	 * If it has not executed before it will need to be manually executed once to become eligible for scheduling, i.e. by calling [[EffectScheduler.execute]].
 	 * @public
 	 */
 	attach() {
@@ -126,7 +165,7 @@ export class EffectScheduler<Result> {
 }
 
 /**
- * Starts a new effect scheduler, executing the effect immediately.
+ * Starts a new effect scheduler, scheduling the effect immediately.
  *
  * Returns a function that can be called to stop the scheduler.
  *
@@ -155,32 +194,72 @@ export class EffectScheduler<Result> {
  *
  * @public
  */
-export function react(name: string, fn: (lastReactedEpoch: number) => any) {
-	const scheduler = new EffectScheduler(name, fn)
+export function react(
+	name: string,
+	fn: (lastReactedEpoch: number) => any,
+	options?: EffectSchedulerOptions
+) {
+	const scheduler = new EffectScheduler(name, fn, options)
 	scheduler.attach()
-	scheduler.execute()
+	scheduler.scheduleEffect()
 	return () => {
 		scheduler.detach()
 	}
 }
 
 /**
- * Creates a [[Reactor]] wrapper for an [[EffectScheduler]].
+ * The reactor is a user-friendly interface for starting and stopping an [[EffectScheduler]].
  *
- * This is a user-friendly API for creating a scheduler that can be started and stopped.
+ * Calling .start() will attach the scheduler and execute the effect immediately the first time it is called.
+ *
+ * If the reactor is stopped, calling `.start()` will re-attach the scheduler but will only execute the effect if any of its parents have changed since it was stopped.
+ *
+ * You can create a reactor with [[reactor]].
  * @public
  */
-export function reactor(
+export interface Reactor<T = unknown> {
+	/**
+	 * The underlying effect scheduler.
+	 * @public
+	 */
+	scheduler: EffectScheduler<T>
+	/**
+	 * Start the scheduler. The first time this is called the effect will be scheduled immediately.
+	 *
+	 * If the reactor is stopped, calling this will start the scheduler again but will only execute the effect if any of its parents have changed since it was stopped.
+	 *
+	 * If you need to force re-execution of the effect, pass `{ force: true }`.
+	 * @public
+	 */
+	start(options?: { force?: boolean }): void
+	/**
+	 * Stop the scheduler.
+	 * @public
+	 */
+	stop(): void
+}
+
+/**
+ * Creates a [[Reactor]], which is a thin wrapper around an [[EffectScheduler]].
+ *
+ * @public
+ */
+export function reactor<Result>(
 	name: string,
-	fn: (lastReactedEpoch: number) => any,
-	effectScheduler?: (cb: () => any) => void
-): Reactor {
-	const scheduler = new EffectScheduler(name, fn, effectScheduler)
+	fn: (lastReactedEpoch: number) => Result,
+	options?: EffectSchedulerOptions
+): Reactor<Result> {
+	const scheduler = new EffectScheduler<Result>(name, fn, options)
 	return {
 		scheduler,
-		start: () => {
+		start: (options?: { force?: boolean }) => {
+			const force = options?.force ?? false
 			scheduler.attach()
-			scheduler.execute()
+			if (force) {
+				scheduler.scheduleEffect()
+			} else {
+				scheduler.maybeScheduleEffect()
+			}
 		},
 		stop: () => {
 			scheduler.detach()

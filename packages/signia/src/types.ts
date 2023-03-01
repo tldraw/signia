@@ -66,26 +66,4 @@ export type ComputeDiff<Value, Diff> = (
 	currentEpoch: number
 ) => Diff | RESET_VALUE
 
-/**
- * The reactor is a simple interface for starting and stopping an [[EffectScheduler]].
- *
- * You can create a reactor with [[reactor]].
- * @public
- */
-export interface Reactor<T = unknown> {
-	/**
-	 * The underlying effect scheduler.
-	 * @public
-	 */
-	scheduler: EffectScheduler<T>
-	/**
-	 * Start the scheduler.
-	 * @public
-	 */
-	start(): void
-	/**
-	 * Stop the scheduler.
-	 * @public
-	 */
-	stop(): void
-}
+

@@ -25,7 +25,11 @@ export function useStateTracking<T>(name: string, render: () => T): T {
 			// this is what `scheduler.execute()` will call
 			() => renderRef.current?.(),
 			// this is what will be invoked when signia detects a change in an upstream reactive value
-			() => scheduleUpdate?.()
+			{
+				scheduleEffect() {
+					scheduleUpdate?.()
+				},
+			}
 		)
 
 		// we use an incrementing number based on when this

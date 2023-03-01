@@ -1,9 +1,9 @@
 import { times } from 'lodash'
 import { atom, Atom, isAtom } from '../Atom'
 import { computed, Computed, isComputed } from '../Computed'
-import { reactor } from '../EffectScheduler'
+import { Reactor, reactor } from '../EffectScheduler'
 import { transact } from '../transactions'
-import { Reactor, Signal } from '../types'
+import { Signal } from '../types'
 
 class RandomSource {
 	private seed: number
