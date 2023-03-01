@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 /** @type {import('@docusaurus/types').Config} */
 const config = {
 	title: 'signia',
-	tagline: 'Scaleable reactive signals',
+	tagline: 'Scalable reactive signals',
 	favicon: 'img/favicon.png',
 
 	// Set the production url of your site here
@@ -53,7 +53,7 @@ const config = {
 		/** @type {import('@docusaurus/preset-classic').ThemeConfig} */
 		({
 			// Replace with your project's social card
-			image: 'img/docusaurus-social-card.jpg',
+			image: 'img/social-card.png',
 			navbar: {
 				title: 'signia',
 				logo: {
@@ -120,7 +120,7 @@ const config = {
 						],
 					},
 				],
-				copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+				copyright: `Copyright © ${new Date().getFullYear()} TLDraw Ltd. Built with Docusaurus.`,
 			},
 			prism: {
 				theme: lightCodeTheme,
