@@ -65,5 +65,3 @@ export type ComputeDiff<Value, Diff> = (
 	lastComputedEpoch: number,
 	currentEpoch: number
 ) => Diff | RESET_VALUE
-
-
