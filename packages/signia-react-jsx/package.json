@@ -4,6 +4,7 @@
 	"description": "A tiny little drawing app (reactive state management).",
 	"version": "0.0.7",
 	"author": "tldraw GB Ltd.",
+	"license": "MIT",
 	"homepage": "https://tldraw.dev",
 	"repository": {
 		"type": "git",
