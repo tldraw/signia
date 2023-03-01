@@ -11,7 +11,7 @@ const config = {
 	favicon: 'img/favicon.png',
 
 	// Set the production url of your site here
-	url: 'https://your-docusaurus-test-site.com',
+	url: 'https://signia.tldraw.dev',
 	// Set the /<baseUrl>/ pathname under which your site is served
 	// For GitHub pages deployment, it is often '/<projectName>/'
 	baseUrl: '/',
@@ -53,7 +53,7 @@ const config = {
 		/** @type {import('@docusaurus/preset-classic').ThemeConfig} */
 		({
 			// Replace with your project's social card
-			image: 'img/docusaurus-social-card.jpg',
+			image: 'img/signia-social-card__light.jpg',
 			navbar: {
 				title: 'signia',
 				logo: {
@@ -89,11 +89,15 @@ const config = {
 				style: 'dark',
 				links: [
 					{
-						title: 'Docs',
+						title: 'Developers',
 						items: [
 							{
 								label: 'Docs',
 								to: '/docs/intro',
+							},
+							{
+								label: 'API',
+								to: '/docs/API/signia',
 							},
 						],
 					},
@@ -108,19 +112,27 @@ const config = {
 								label: 'Twitter',
 								href: 'https://twitter.com/tldraw',
 							},
-						],
-					},
-					{
-						title: 'More',
-						items: [
 							{
 								label: 'GitHub',
 								href: 'https://github.com/tldraw/signia',
 							},
 						],
 					},
+					{
+						title: 'Links',
+						items: [
+							{
+								label: 'tldraw',
+								href: 'https://beta.tldraw.com',
+							},
+							{
+								label: 'tldraw for devs',
+								href: 'https://tldraw.dev',
+							},
+						],
+					},
 				],
-				copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+				copyright: `Copyright © ${new Date().getFullYear()} tldraw GB Ltd.`,
 			},
 			prism: {
 				theme: lightCodeTheme,
