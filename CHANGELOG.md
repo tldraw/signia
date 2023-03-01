@@ -1,3 +1,31 @@
+# v0.0.8 (Wed Mar 01 2023)
+
+#### 🐛 Bug Fix
+
+- `signia-react-jsx`, `signia-react`, `signia`
+  - add MIT license [#36](https://github.com/tldraw/signia/pull/36) ([@ds300](https://github.com/ds300))
+- `signia-react`, `signia`
+  - effect scheduler tweaks [#33](https://github.com/tldraw/signia/pull/33) ([@ds300](https://github.com/ds300))
+
+#### 🏠 Internal
+
+- futz with deploy.yml to maybe avoid the cache error [#37](https://github.com/tldraw/signia/pull/37) ([@ds300](https://github.com/ds300))
+
+#### 📝 Documentation
+
+- fix up diagrams [#35](https://github.com/tldraw/signia/pull/35) ([@ds300](https://github.com/ds300))
+- more docs tweaking [#34](https://github.com/tldraw/signia/pull/34) ([@ds300](https://github.com/ds300))
+- fix a few docs issues [#32](https://github.com/tldraw/signia/pull/32) ([@ds300](https://github.com/ds300))
+- docs misc cleanup [#30](https://github.com/tldraw/signia/pull/30) ([@ds300](https://github.com/ds300))
+- `signia-react-jsx`, `signia-react`, `signia`
+  - Docs first draft done [#31](https://github.com/tldraw/signia/pull/31) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.7 (Fri Feb 24 2023)
 
 #### 🐛 Bug Fix
