@@ -28,7 +28,7 @@ Since handling pointer-move events does not count as 'active listening', in othe
 
 This 'throw it away when there are no listeners' behavior is generally done because reactivity frameworks based on 'dirty-flag-checking' have no way to keep the 'dirty flag' up-to-date without potentially creating memory leaks.
 
-`signia` uses a new epochal reactivity system which avoids 'dirty flags' and allows caching of signal values at all times with no risk of causing memory leaks.
+`signia` uses a new lazy reactivity system based on logical clocks instead of 'dirty flags', which allows caching of signal values at all times with no risk of causing memory leaks.
 
 ## Transactions with rollbacks
 
