@@ -17,74 +17,11 @@ We provide officially-supported React bindings for `signia` in two packages:
 - `signia-react-jsx` provides a minimal global jsx integration for use with TypeScript's `jsxImportSource` option. This causes all functional components to be automatically
   tracked.
 
-## Installing the Bindings
-
-:::note
-
-- These bindings require a JS environment that supports [`Proxy`](https://caniuse.com/?search=Proxy).
-- These bindings not currently work with legacy [class components](https://beta.reactjs.org/reference/react/Component). We may be willing to add and maintain legacy support if there is suffient demand. Let us know!
-
-:::
-
-<Tabs>
-	<TabItem value="npm" label="npm">
-		<pre>npm add signia-react</pre>
-	</TabItem>
-	<TabItem value="yarn" label="yarn">
-		<pre>yarn add signia-react</pre>
-	</TabItem>
-	<TabItem value="pnpm" label="pnpm">
-		<pre>pnpm add signia-react</pre>
-	</TabItem>
-</Tabs>
-
-If you are using TypeScript and you wish to use the `@computed` decorator, make sure to enable [experimental decorators](https://www.typescriptlang.org/tsconfig#experimentalDecorators). As soon as TypeScript 5.0 is released we will also add support for the new standard decorators.
-
-### Automatic component tracking
-
-If you wish to enable tracking on all functional components automatically, run:
-
-<Tabs>
-	<TabItem value="npm" label="npm">
-		<pre>npm add signia-react-jsx</pre>
-	</TabItem>
-	<TabItem value="yarn" label="yarn">
-		<pre>yarn add signia-react-jsx</pre>
-	</TabItem>
-	<TabItem value="pnpm" label="pnpm">
-		<pre>pnpm add signia-react-jsx</pre>
-	</TabItem>
-</Tabs>
-
-And then make your `tsconfig.json` include these properties:
-
-```json
-{
-	"compilerOptions": {
-		"jsx": "react-jsx",
-		"jsxImportSource": "signia-react-jsx"
-	}
-}
-```
-
-:::tip Vite
-If you are using Vite, you will need to add `jsxImportSource` to your `vite.config.ts`:
-
-```ts
-import react from '@vitejs/plugin-react-swc'
-import { defineConfig } from 'vite'
-
-// https://vitejs.dev/config/
-export default defineConfig({
-	plugins: [react({ jsxImportSource: 'signia-react-jsx' })],
-})
-```
-
-:::
+If you haven't already, see the [installation guide](intro#react-bindings) for instructions on how to install and set up the packages.
 
 ## Usage
 
-:::caution
+:::note
 Before reading this section, make sure you have read the [Using Signals](using-signals) tutorial.
 :::
 

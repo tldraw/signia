@@ -9,8 +9,6 @@ There are two types of signal:
 - **Atoms** which store the root state for your app
 - **Computed** signals which are derived from other signals
 
-If you are new to signals we recommend reading the [What are signals?](what-are-signals) page first.
-
 ## Atoms
 
 ### Creating Atoms
@@ -218,4 +216,50 @@ const scheduleEffect = (runEffect: () => void) => {
 const stop = react('set page title', () => {
 	document.title = doc.title,
 }, scheduleEffect)
+```
+
+## Transactions
+
+If you need to update multiple atoms at once, you can use the `transact` function to defer running side effects until after all updates complete.
+
+```ts
+import { transact } from 'signia'
+
+const firstName = atom('firstName', 'David')
+const lastName = atom('lastName', 'Bowie')
+
+const fullName = computed('fullName', () => {
+	return `${firstName.value} ${lastName.value}`
+})
+
+transact(() => {
+	firstName.set('John')
+	lastName.set('Lennon')
+})
+```
+
+`transact` has no effect if used inside an already-running transaction.
+
+### Rollbacks
+
+If an error is thrown by the root `transact`, all updates made within the scope will be rolled back.
+
+If you need to be able to rollback a nested set of updates within a transaction, you can use the `transaction` function to explicitly create a new transaction boundary.
+
+```ts
+transact(() => {
+	firstName.set('John')
+	lastName.set('Lennon')
+
+	transaction((rollback) => {
+		firstName.set('Paul')
+		lastName.set('McCartney')
+		console.log(fullName.value) // Paul McCartney
+		rollback()
+	})
+	console.log(fullName.value) // John Lennon
+
+	firstName.set('George')
+	lastName.set('Harrison')
+})
 ```

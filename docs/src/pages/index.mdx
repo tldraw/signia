@@ -1,9 +1,27 @@
-import Intro from '@site/docs/_intro.mdx'
-
-<Intro />
-
+import ThemedImage from '@theme/ThemedImage'
+import useBaseUrl from '@docusaurus/useBaseUrl'
 import Link from '@docusaurus/Link'
 
-<Link className="button button--primary button--lg" to="/docs/intro">
-	Getting Started
-</Link>
+<ThemedImage
+	alt="Push signals"
+	sources={{
+		light: useBaseUrl('/img/hero-light@2x.png'),
+		dark: useBaseUrl('/img/hero-dark@2x.png'),
+	}}
+/>
+
+**Signia** is a minimal, fast, and [scalable](/docs/scalability) signals library for TypeScript. It is framework-agnostic, and has official React bindings.
+
+Signia was originally created for [tldraw](https://beta.tldraw.com), to meet performance demands that other reactive signals libraries could not.
+
+<div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2em' }}>
+	<Link className="button button--primary button--lg" to="/docs/intro">
+		Getting Started
+	</Link>
+</div>
+
+## Quick Links
+
+- [Using Signals](/docs/using-signals)
+- [React Bindings](/docs/react-bindings)
+- [What are Signals?](/docs/what-are-signals)

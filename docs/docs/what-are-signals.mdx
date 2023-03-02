@@ -83,18 +83,18 @@ import useBaseUrl from '@docusaurus/useBaseUrl'
 	}}
 />
 
-On top of this foundation there exists a wide spectrum of variables that each signals implementation may approach differently. Here's just a few:
+## The Signals Design Space
+
+On top of this foundation there exists a wide spectrum of features and design decisions that each signals implementation may approach differently. Here's just a few:
 
 ### How do you access the value of a signal?
 
 - Are the signals explicitly wrapped?
 - Does a compiler do the unwrapping on your behalf?
-- If not, is it `get(wrapper)` or `wrapper.value` or `wrapper.get()`?
-  <br />
-  <br />
+- If not, is it `get(wrapper)` or `wrapper.value` or `wrapper.get()` or `wrapper()`?
 
 :::info
-In React this is complicated. Values are unwrapped and can be tricky to read depending on where they are defined, e.g. folks frequently accidentally read stale values.
+In idiomatic React code this is complicated. Values are unwrapped and can be tricky to read depending on where they are defined, e.g. folks frequently accidentally read stale values.
 :::
 
 ### How does data flow?
@@ -115,9 +115,9 @@ When you change a root value, any derived values that read from it are immediate
 	}}
 />
 
-1. The root value is updated.
-2. The derived value is updated.
-3. The next derived value is updated.
+1. The `todos` value is updated.
+2. The `filteredTodos` value is updated.
+3. The `<TodoList />` value is updated.
 4. The side effect is triggered.
 
 #### Pull
@@ -133,12 +133,16 @@ if they are read from.
 	}}
 />
 
-1. The root value is updated
+1. The `todos` value is updated.
 2. The side effect is 'maybe' triggered, and reads the `<TodoList>` value to see if it changed
 3. The `<TodoList>` value is 'maybe' recomputed, and reads the `Active todos` value to see if it changed
-4. The `Active todos` value is recomputed because it's root dependency changed
+4. The `filteredTodos` value is recomputed because it's root dependency changed
 5. The `<TodoList>` value is recomputed because the `Active todos` value changed
 6. The side effect is triggered
+
+:::info
+React is a mixture of push and pull. Derived values are updated in 'push' mode during a render, but renders are evaluated in a larger 'pull' context. 
+:::
 
 ### How are derived values created and cached?
 
