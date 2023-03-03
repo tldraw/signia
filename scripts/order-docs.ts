@@ -5,6 +5,14 @@ import { pathToFileURL } from 'url'
 
 type Ordering = Array<string | [string, Ordering] | [string]>
 
+function extractFrontmatter(file: string) {
+	const match = file.match(/^---\s*([\s\S]*?)\s*---\s+((.|\s)*)/)
+	if (!match) {
+		throw new Error('No frontmatter found')
+	}
+	return { frontMatter: match[1], content: match[2] }
+}
+
 function orderDocs(packageName: string) {
 	const orderingFile = join('packages', packageName, 'docs-ordering.json')
 	if (!existsSync(orderingFile)) {
@@ -32,12 +40,10 @@ function orderDocs(packageName: string) {
 					throw new Error(`File ${filePath} does not exist`)
 				}
 				console.log('Ordering file ' + filePath)
+				const { frontMatter, content } = extractFrontmatter(readFileSync(filePath, 'utf8'))
 				writeFileSync(
 					filePath,
-					`---\nsidebar_position: ${ordering.indexOf(entry)}\ntitle: ${entry.replace(
-						'-1',
-						''
-					)}\n---\n\n` + readFileSync(filePath, 'utf8')
+					`---\nsidebar_position: ${ordering.indexOf(entry)}\n${frontMatter}\n---\n\n${content}`
 				)
 			}
 		}
