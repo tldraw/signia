@@ -34,8 +34,10 @@ function orderDocs(packageName: string) {
 				console.log('Ordering file ' + filePath)
 				writeFileSync(
 					filePath,
-					`---\nsidebar_position: ${ordering.indexOf(entry)}\n---\n\n` +
-						readFileSync(filePath, 'utf8')
+					`---\nsidebar_position: ${ordering.indexOf(entry)}\ntitle: ${entry.replace(
+						'-1',
+						''
+					)}\n---\n\n` + readFileSync(filePath, 'utf8')
 				)
 			}
 		}
