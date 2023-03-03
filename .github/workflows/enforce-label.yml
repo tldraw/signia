@@ -1,4 +1,7 @@
-name: Enfore label
+name: Enforce label
+
+permissions:
+  checks: write
 
 on:
   pull_request:
@@ -24,4 +27,4 @@ jobs:
       - run: yarn auto pr-check --pr $PR --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
         env:
           PR: ${{ steps.PR.outputs.number }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
