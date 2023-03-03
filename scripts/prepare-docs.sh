@@ -21,5 +21,8 @@ pnpm typedoc \
   --entryPoints packages/signia \
   --entryPoints packages/signia-react
 
+
+pnpm tsx scripts/order-docs.ts
+
 # typedoc generates this useless index file
 rm -rf docs/docs/API/index.md

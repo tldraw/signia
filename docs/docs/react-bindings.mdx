@@ -15,7 +15,10 @@ We provide officially-supported React bindings for `signia` in two packages:
   - [`track`](API/signia_react/functions/useAtom) - component wrapper for automatically tracking signal value access and re-rendering the wrapped component if the signals' values change.
   - [`useValue`](API/signia_react/functions/useAtom) - A hook for manually tracking signal value access (not required if you use `track`)
 - `signia-react-jsx` provides a minimal global jsx integration for use with TypeScript's `jsxImportSource` option. This causes all functional components to be automatically
-  tracked.
+  tracked. It does not provide any automatic unpacking (i.e. dereferencing) of signal values.
+
+  - ✅ `<div>Your name is {name.value}</div>` — Correct
+  - ❌ `<div>Your name is {name}</div>` — We do not call `.value` for you
 
 If you haven't already, see the [installation guide](intro#react-bindings) for instructions on how to install and set up the packages.
 
