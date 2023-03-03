@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { existsSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'fs'
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { pathToFileURL } from 'url'
 
@@ -31,9 +31,12 @@ function orderDocs(packageName: string) {
 				if (!existsSync(filePath)) {
 					throw new Error(`File ${filePath} does not exist`)
 				}
-				const newFilePath = join(filesDir, `${ordering.indexOf(entry)}.${entry}.md`)
-				console.log(`Renaming ${entry} to ${ordering.indexOf(entry)}.md`)
-				renameSync(filePath, newFilePath)
+				console.log('Ordering file ' + filePath)
+				writeFileSync(
+					filePath,
+					`---\nsidebar_position: ${ordering.indexOf(entry)}\n---\n\n` +
+						readFileSync(filePath, 'utf8')
+				)
 			}
 		}
 	}
