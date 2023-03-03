@@ -1,7 +1,10 @@
 name: Enforce label
 
 permissions:
+  actions: read
   checks: write
+  pull-requests: read
+  statuses: write
 
 on:
   pull_request:
