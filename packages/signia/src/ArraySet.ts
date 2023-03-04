@@ -1,5 +1,5 @@
 // The maximum size for an array in an ArraySet
-export const ARRAY_SIZE_THRESHOLD = 32
+export const ARRAY_SIZE_THRESHOLD = 8
 
 /**
  * An ArraySet operates as an array until it reaches a certain size, after which a Set is used
@@ -8,8 +8,6 @@ export const ARRAY_SIZE_THRESHOLD = 32
  */
 export class ArraySet<T> {
 	private arraySize = 0
-
-	private nextAvailableArraySlot = 0
 
 	private array: (T | undefined)[] | null = Array(ARRAY_SIZE_THRESHOLD)
 
@@ -51,20 +49,8 @@ export class ArraySet<T> {
 				// If the array is below the size threshold, push items into the array.
 
 				// Insert the element into the array's next available slot.
-				this.array[this.nextAvailableArraySlot] = elem
+				this.array[this.arraySize] = elem
 				this.arraySize++
-
-				this.nextAvailableArraySlot = this.array.indexOf(undefined, this.nextAvailableArraySlot)
-
-				// If undefined is not found after the current slot, then search from the start.
-				if (this.nextAvailableArraySlot === -1) {
-					this.nextAvailableArraySlot = this.array.indexOf(undefined)
-				}
-
-				// If undefined is still not found, insert the next element at the end of the array.
-				if (this.nextAvailableArraySlot === -1) {
-					this.nextAvailableArraySlot = this.arraySize
-				}
 
 				return true
 			} else {
@@ -107,8 +93,12 @@ export class ArraySet<T> {
 			this.array[idx] = undefined
 			this.arraySize--
 
-			// Free up the slot
-			this.nextAvailableArraySlot = Math.min(this.nextAvailableArraySlot, idx)
+			if (idx !== this.arraySize) {
+				// If the item is not the last item in the array, move the last item into the
+				// removed item's slot.
+				this.array[idx] = this.array[this.arraySize]
+				this.array[this.arraySize] = undefined
+			}
 
 			return true
 		}
@@ -134,7 +124,7 @@ export class ArraySet<T> {
 	 */
 	visit(visitor: (item: T) => void) {
 		if (this.array) {
-			for (let i = 0; i < this.array.length; i++) {
+			for (let i = 0; i < this.arraySize; i++) {
 				const elem = this.array[i]
 
 				if (typeof elem !== 'undefined') {
