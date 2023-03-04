@@ -1,3 +1,19 @@
+# v0.0.9 (Sat Mar 04 2023)
+
+#### 🐛 Bug Fix
+
+- [perf] improve ArraySet perf [#48](https://github.com/tldraw/signia/pull/48) ([@ds300](https://github.com/ds300))
+
+#### 📝 Documentation
+
+- [infra] fix docs ordering [#45](https://github.com/tldraw/signia/pull/45) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.8 (Wed Mar 01 2023)
 
 #### 🐛 Bug Fix

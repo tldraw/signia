@@ -1,3 +1,36 @@
+# v0.0.9 (Sat Mar 04 2023)
+
+#### 🐛 Bug Fix
+
+- `signia`
+  - [perf] improve ArraySet perf [#48](https://github.com/tldraw/signia/pull/48) ([@ds300](https://github.com/ds300))
+
+#### ⚠️ Pushed to `main`
+
+- Update docusaurus.config.js ([@steveruizok](https://github.com/steveruizok))
+
+#### 📝 Documentation
+
+- fix front matter again [#47](https://github.com/tldraw/signia/pull/47) ([@ds300](https://github.com/ds300))
+- remove -1 suffixes from docs titles [#46](https://github.com/tldraw/signia/pull/46) ([@ds300](https://github.com/ds300))
+- Create Github.png [#42](https://github.com/tldraw/signia/pull/42) ([@steveruizok](https://github.com/steveruizok))
+- Update intro.mdx [#44](https://github.com/tldraw/signia/pull/44) ([@susiwen8](https://github.com/susiwen8))
+- Fix react bindings doc links [#43](https://github.com/tldraw/signia/pull/43) ([@MitjaBezensek](https://github.com/MitjaBezensek))
+- transact docs + more [#41](https://github.com/tldraw/signia/pull/41) ([@ds300](https://github.com/ds300))
+- fix social card again [#40](https://github.com/tldraw/signia/pull/40) ([@ds300](https://github.com/ds300))
+- [chore] fix social card [#39](https://github.com/tldraw/signia/pull/39) ([@ds300](https://github.com/ds300))
+- `signia`
+  - [infra] fix docs ordering [#45](https://github.com/tldraw/signia/pull/45) ([@ds300](https://github.com/ds300))
+
+#### Authors: 4
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+- Mitja Bezenšek ([@MitjaBezensek](https://github.com/MitjaBezensek))
+- Steve Ruiz ([@steveruizok](https://github.com/steveruizok))
+- susiwen8 ([@susiwen8](https://github.com/susiwen8))
+
+---
+
 # v0.0.8 (Wed Mar 01 2023)
 
 #### 🐛 Bug Fix
