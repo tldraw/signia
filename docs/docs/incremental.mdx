@@ -62,7 +62,7 @@ class ImmerAtom<T> {
 		})
 	}
 
-	update(fn: (draft: T[]) => void) {
+	update(fn: (draft: T) => void) {
 		const [nextValue, patches] = produceWithPatches(this.atom.value, fn)
 		this.atom.set(nextValue, patches)
 	}
@@ -108,7 +108,7 @@ function map<T, U>(source: ImmerAtom<T[]>, fn: (value: T) => U): Computed<U[], P
 						continue
 					}
 					if (patch.op === 'add') {
-						if (patch.path.length === 0) {
+						if (patch.path.length === 1) {
 							// this is a new item in the array, we need to splice it in and call the map function on it
 							draft.splice(patch.path[0] as number, 0, fn(patch.value) as Draft<U>)
 						} else {
@@ -190,13 +190,21 @@ console.log(reversedNames.value) // [ 'linuS', 'xelA', 'uL', 'eimaJ', 'ajtiM' ]
 console.log(numReverseCalls) // 7
 ```
 
+:::tip
+You can play with this example on codesandbox https://codesandbox.io/p/sandbox/festive-https-tdbl4q?welcome=true
+:::
+
 ## The `historyLength` option
 
-The `historyLength` option is used to tell Signia how many diffs to store. Each time a value changes, a new diff is stored.
+The `historyLength` option is used to tell Signia how many diffs to store for that signal. Each time a value changes, a new diff is stored.
 
-What you set this value to depends on how frequently the signal is read in relation to how often it changes.
+If your history length is too small, Signia will not be able to calculate the diff between the current value and the previous value. In this case, Signia will return the `RESET_VALUE` constant instead of the diff.
 
-- If it changes roughly as often as it is read, you can use a very low number.
+If your history length is very long, Signia will use more memory.
+
+As a rule of thumb, what you set `historyLength` to depends on how frequently the signal is read in relation to how often it changes.
+
+- If it changes about as often as it is read, you can use a very low number.
 - If it changes infrequently and is read frequently, you can also use a very low number.
 - If it changes frequently and is read infrequently, you should use a higher number.
 
