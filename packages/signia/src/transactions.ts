@@ -1,4 +1,5 @@
 import { _Atom } from './Atom'
+import { _Computed } from './Computed'
 import { GLOBAL_START_EPOCH } from './constants'
 import { EffectScheduler } from './EffectScheduler'
 import { Child, Signal } from './types'
@@ -16,6 +17,8 @@ export function advanceGlobalEpoch() {
 class Transaction {
 	constructor(public readonly parent: Transaction | null) {}
 	initialAtomValues = new Map<_Atom<any>, any>()
+	reactors = new Set<EffectScheduler<any>>()
+	pushComputeds = new Set<_Computed<any>>()
 
 	/**
 	 * Get whether this transaction is a root (no parents).
@@ -34,16 +37,68 @@ class Transaction {
 	commit() {
 		if (this.isRoot) {
 			// For root transactions, flush changes to each of the atom's initial values.
-			const atoms = this.initialAtomValues
-			this.initialAtomValues = new Map()
-			flushChanges(atoms.keys())
+			const traverse = (node: Child) => {
+				if (node.lastTraversedEpoch === globalEpoch) {
+					return
+				}
+
+				node.lastTraversedEpoch = globalEpoch
+
+				if (node instanceof EffectScheduler) {
+					this.reactors.add(node)
+				} else if (node instanceof _Computed && node.isPush) {
+					const lastChangedEpoch = node.lastChangedEpoch
+					node.__unsafe__getWithoutCapture()
+					if (node.lastChangedEpoch !== lastChangedEpoch) {
+						node.children.visit(traverse)
+					}
+				} else {
+					;(node as any as Signal<any>).children.visit(traverse)
+				}
+			}
+
+			this.pushComputeds.forEach(traverse)
+
+			this.reactors.forEach((reactor) => {
+				reactor.maybeScheduleEffect()
+			})
 		} else {
-			// For transaction's with parents, add the transaction's initial values to the parent's.
+			// For a transaction with parents, add the transaction's initial values to the parent's.
 			this.initialAtomValues.forEach((value, atom) => {
 				if (!this.parent!.initialAtomValues.has(atom)) {
 					this.parent!.initialAtomValues.set(atom, value)
 				}
 			})
+			this.reactors.forEach((reactor) => {
+				this.parent!.reactors.add(reactor)
+			})
+			this.pushComputeds.forEach((computed) => {
+				this.parent!.pushComputeds.add(computed)
+			})
+		}
+	}
+
+	captureAtomUpdate(atom: _Atom<any>, previousValue: any) {
+		if (!this.initialAtomValues.has(atom)) {
+			this.initialAtomValues.set(atom, previousValue)
+
+			const traverse = (node: Child) => {
+				if (node.lastTraversedEpoch === globalEpoch) {
+					return
+				}
+
+				node.lastTraversedEpoch = globalEpoch
+
+				if (node instanceof EffectScheduler) {
+					this.reactors.add(node)
+				} else if (node instanceof _Computed && node.isPush) {
+					this.pushComputeds.add(node)
+				} else {
+					;(node as any as Signal<any>).children.visit(traverse)
+				}
+			}
+
+			atom.children.visit(traverse)
 		}
 	}
 
@@ -71,7 +126,7 @@ class Transaction {
  *
  * @param atom The atom to flush changes for.
  */
-function flushChanges(atoms: Iterable<_Atom<any>>) {
+function flushChanges(atoms: Iterable<Signal<any>>) {
 	if (globalIsReacting) {
 		throw new Error('cannot change atoms during reaction cycle')
 	}
@@ -90,8 +145,13 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
 
 			node.lastTraversedEpoch = globalEpoch
 
-			if ('maybeScheduleEffect' in node) {
+			if (node instanceof EffectScheduler) {
 				reactors.add(node)
+			} else if (node instanceof _Computed && node.isPush) {
+				node.__unsafe__getWithoutCapture()
+				if (node.lastChangedEpoch !== globalEpoch) {
+					node.children.visit(traverse)
+				}
 			} else {
 				;(node as any as Signal<any>).children.visit(traverse)
 			}
@@ -121,8 +181,8 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
 export function atomDidChange(atom: _Atom<any>, previousValue: any) {
 	if (!currentTransaction) {
 		flushChanges([atom])
-	} else if (!currentTransaction.initialAtomValues.has(atom)) {
-		currentTransaction.initialAtomValues.set(atom, previousValue)
+	} else {
+		currentTransaction.captureAtomUpdate(atom, previousValue)
 	}
 }
 

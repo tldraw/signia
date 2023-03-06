@@ -98,6 +98,8 @@ export interface ComputedOptions<Value, Diff> {
 	 * @returns
 	 */
 	isEqual?: (a: any, b: any) => boolean
+
+	isPush?: boolean
 }
 
 /**
@@ -140,6 +142,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 	}
 
 	historyBuffer?: HistoryBuffer<Diff>
+	isPush: boolean
 
 	// The last-computed value of this signal.
 	private state: Value = UNINITIALIZED as unknown as Value
@@ -167,6 +170,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 		}
 		this.computeDiff = options?.computeDiff
 		this.isEqual = options?.isEqual ?? null
+		this.isPush = options?.isPush ?? false
 	}
 
 	__unsafe__getWithoutCapture(): Value {

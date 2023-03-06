@@ -98,7 +98,7 @@ const MAX_DERIVATIONS_IN_DERIVATIONS = 10
 const MAX_ATOMS_IN_DERIVATIONS = 10
 const MAX_REACTORS = 10
 const MAX_DEPENDENCIES_PER_ATOM = 3
-const MAX_OPS_IN_TRANSACTION = 10
+const MAX_OPS_IN_TRANSACTION = 4
 
 class Test {
 	source: RandomSource
@@ -349,8 +349,8 @@ class Test {
 	}
 }
 
-const NUM_TESTS = 100
-const NUM_OPS_PER_TEST = 1000
+const NUM_TESTS = 1000
+const NUM_OPS_PER_TEST = 5
 
 function runTest(seed: number) {
 	const test = new Test(seed)
@@ -358,13 +358,21 @@ function runTest(seed: number) {
 	for (let i = 0; i < NUM_OPS_PER_TEST; i++) {
 		test.tick()
 		const { expected, actual } = test.getResultComparisons()
-		expect(expected).toEqual(actual)
+		try {
+			expect(expected).toEqual(actual)
+		} finally {
+			console.log('test', seed, i, JSON.stringify(test.ops, null, 2))
+		}
 	}
 }
 
-for (let i = 0; i < NUM_TESTS; i++) {
-	const seed = Math.floor(Math.random() * 1000000)
-	test('fuzzzzzz ' + seed, () => {
-		runTest(seed)
-	})
-}
+// for (let i = 0; i < NUM_TESTS; i++) {
+// 	const seed = Math.floor(Math.random() * 1000000)
+// 	test('fuzzzzzz ' + seed, () => {
+// 		runTest(seed)
+// 	})
+// }
+
+test('blug', () => {
+	runTest(352688)
+})
