@@ -135,9 +135,9 @@ if they are read from.
 
 1. The `todos` value is updated.
 2. The side effect is 'maybe' triggered, and reads the `<TodoList>` value to see if it changed
-3. The `<TodoList>` value is 'maybe' recomputed, and reads the `Active todos` value to see if it changed
+3. The `<TodoList>` value is 'maybe' recomputed, and reads the `filteredTodos` value to see if it changed
 4. The `filteredTodos` value is recomputed because it's root dependency changed
-5. The `<TodoList>` value is recomputed because the `Active todos` value changed
+5. The `<TodoList>` value is recomputed because the `filteredTodos` value changed
 6. The side effect is triggered
 
 :::info
