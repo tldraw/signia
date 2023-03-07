@@ -98,7 +98,7 @@ const MAX_DERIVATIONS_IN_DERIVATIONS = 10
 const MAX_ATOMS_IN_DERIVATIONS = 10
 const MAX_REACTORS = 10
 const MAX_DEPENDENCIES_PER_ATOM = 3
-const MAX_OPS_IN_TRANSACTION = 10
+const MAX_OPS_IN_TRANSACTION = 2
 
 class Test {
 	source: RandomSource
@@ -160,7 +160,9 @@ class Test {
 		times(this.source.nextIntInRange(1, MAX_ATOMS_IN_DERIVATIONS), () => {
 			const derivationId = this.source.nextId()
 			const atom = this.source.selectOne(Object.values(this.systemState.atoms))
-			this.systemState.atomsInDerivations[derivationId] = computed(derivationId, () => atom)
+			this.systemState.atomsInDerivations[derivationId] = computed(derivationId, () => atom, {
+				isPush: this.source.selectOne([true, false, undefined]),
+			})
 		})
 
 		times(this.source.nextIntInRange(1, MAX_DERIVATIONS), () => {
@@ -176,13 +178,19 @@ class Test {
 			const inputC = this.source.selectOne(derivables)
 			const inputD = this.source.selectOne(derivables)
 			this.systemState.derivations[derivationId] = {
-				derivation: computed(derivationId, () => {
-					if (unpack(inputA) === unpack(inputB)) {
-						return unpack(inputC)
-					} else {
-						return unpack(inputD)
+				derivation: computed(
+					derivationId,
+					() => {
+						if (unpack(inputA) === unpack(inputB)) {
+							return unpack(inputC)
+						} else {
+							return unpack(inputD)
+						}
+					},
+					{
+						isPush: this.source.selectOne([true, false, undefined]),
 					}
-				}),
+				),
 				sneakyGet: () => {
 					if (this.unpack_sneaky(inputA) === this.unpack_sneaky(inputB)) {
 						return this.unpack_sneaky(inputC)
@@ -195,8 +203,15 @@ class Test {
 
 		times(this.source.nextIntInRange(1, MAX_DERIVATIONS_IN_DERIVATIONS), () => {
 			const derivationId = this.source.nextId()
-			this.systemState.derivationsInDerivations[derivationId] = computed(derivationId, () =>
-				this.source.selectOne(Object.values(this.systemState.derivations).map((d) => d.derivation))
+			this.systemState.derivationsInDerivations[derivationId] = computed(
+				derivationId,
+				() =>
+					this.source.selectOne(
+						Object.values(this.systemState.derivations).map((d) => d.derivation)
+					),
+				{
+					isPush: this.source.selectOne([true, false, undefined]),
+				}
 			)
 		})
 
@@ -352,13 +367,24 @@ class Test {
 const NUM_TESTS = 100
 const NUM_OPS_PER_TEST = 1000
 
-function runTest(seed: number) {
+function runTest(seed: number, ops?: Op[]) {
 	const test = new Test(seed)
+	if (ops) {
+		ops.forEach((op) => test.applyOp(op))
+		const { expected, actual } = test.getResultComparisons()
+		expect(expected).toEqual(actual)
+		return
+	}
 	// console.log(test.systemState)
 	for (let i = 0; i < NUM_OPS_PER_TEST; i++) {
 		test.tick()
 		const { expected, actual } = test.getResultComparisons()
-		expect(expected).toEqual(actual)
+		try {
+			expect(expected).toEqual(actual)
+		} catch (e) {
+			console.log(JSON.stringify(test.ops, null, 2))
+			throw e
+		}
 	}
 }
 
