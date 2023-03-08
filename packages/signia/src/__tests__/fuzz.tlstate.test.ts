@@ -1,9 +1,8 @@
 import { times } from 'lodash'
-import { atom, Atom, isAtom } from '../Atom'
-import { computed, Computed, isComputed } from '../Computed'
+import { atom, Atom } from '../Atom'
+import { computed, Computed } from '../Computed'
 import { Reactor, reactor } from '../EffectScheduler'
-import { transact } from '../transactions'
-import { Signal } from '../types'
+import { transaction } from '../transactions'
 
 class RandomSource {
 	private seed: number
@@ -62,23 +61,58 @@ class RandomSource {
 	}
 }
 
-const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f'] as const
+const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'] as const
 type Letter = (typeof LETTERS)[number]
 
-const unpack = (value: unknown): Letter => {
-	if (isComputed(value) || isAtom(value)) {
-		return unpack(value.value) as Letter
-	}
-	return value as Letter
+const toUpper = (letter: Letter): Letter => letter.toUpperCase() as Letter
+const toLower = (letter: Letter): Letter => letter.toLowerCase() as Letter
+
+const conversions = {
+	toUpper,
+	toLower,
+	none: (x: Letter) => x,
+}
+type Conversion = keyof typeof conversions
+
+type AtomDep = { type: 'atom'; atom: Atom<Letter>; value: Letter }
+type AtomInAtomDep = { type: 'atomInAtom'; atomInAtom: Atom<Atom<Letter>>; innerAtomId: string }
+type DerivationDep = {
+	type: 'derivation'
+	derivation: Computed<Letter>
+	sneakyGet: () => Letter
+	conversion: Conversion
+	isPush: boolean
+}
+type DerivationInDerivationDep = {
+	type: 'derivationInDerivation'
+	derivationInDerivation: Computed<Computed<Letter>>
+	innerDerivationId: string
+	isPush: boolean
+}
+type AtomInDerivationDep = {
+	type: 'atomInDerivation'
+	atomInDerivation: Computed<Atom<Letter>>
+	innerAtomId: string
+	isPush: boolean
 }
 
+type Dep = AtomDep | AtomInAtomDep | DerivationDep | DerivationInDerivationDep | AtomInDerivationDep
+
 type FuzzSystemState = {
-	atoms: Record<string, Atom<Letter>>
-	atomsInAtoms: Record<string, Atom<Atom<Letter>>>
-	derivations: Record<string, { derivation: Computed<Letter>; sneakyGet: () => Letter }>
-	derivationsInDerivations: Record<string, Computed<Computed<Letter>>>
-	atomsInDerivations: Record<string, Computed<Atom<Letter>>>
-	reactors: Record<string, { reactor: Reactor; result: string | null; dependencies: Signal<any>[] }>
+	atoms: Record<string, AtomDep>
+	atomsInAtoms: Record<string, AtomInAtomDep>
+	derivations: Record<string, DerivationDep>
+	derivationsInDerivations: Record<string, DerivationInDerivationDep>
+	atomsInDerivations: Record<string, AtomInDerivationDep>
+	reactors: Record<
+		string,
+		{
+			reactor: Reactor
+			result: string
+			dependencies: Dep[]
+			sneakyResult: string
+		}
+	>
 }
 
 type Op =
@@ -97,8 +131,8 @@ const MAX_DERIVATIONS = 10
 const MAX_DERIVATIONS_IN_DERIVATIONS = 10
 const MAX_ATOMS_IN_DERIVATIONS = 10
 const MAX_REACTORS = 10
-const MAX_DEPENDENCIES_PER_ATOM = 3
-const MAX_OPS_IN_TRANSACTION = 2
+const MAX_DEPENDENCIES_PER_REACTOR = 3
+const MAX_OPS_IN_TRANSACTION = 10
 
 class Test {
 	source: RandomSource
@@ -111,18 +145,34 @@ class Test {
 		reactors: {},
 	}
 
-	unpack_sneaky = (value: unknown): Letter => {
-		if (isComputed(value)) {
-			if (this.systemState.derivations[value.name]) {
-				return this.systemState.derivations[value.name].sneakyGet()
-			}
-			// @ts-expect-error
-			return this.unpack_sneaky(value.state) as Letter
-		} else if (isAtom(value)) {
-			// @ts-expect-error
-			return this.unpack_sneaky(value.current) as Letter
+	unpack = (value: Dep): Letter => {
+		switch (value.type) {
+			case 'atom':
+				return value.atom.value
+			case 'atomInAtom':
+				return value.atomInAtom.value.value
+			case 'derivation':
+				return value.derivation.value
+			case 'derivationInDerivation':
+				return value.derivationInDerivation.value.value
+			case 'atomInDerivation':
+				return value.atomInDerivation.value.value
 		}
-		return value as Letter
+	}
+
+	unpack_sneaky = (value: Dep): Letter => {
+		switch (value.type) {
+			case 'atom':
+				return value.value
+			case 'atomInAtom':
+				return this.systemState.atoms[value.innerAtomId].value
+			case 'derivation':
+				return value.sneakyGet()
+			case 'derivationInDerivation':
+				return this.systemState.derivations[value.innerDerivationId].sneakyGet()
+			case 'atomInDerivation':
+				return this.systemState.atoms[value.innerAtomId].value
+		}
 	}
 
 	getResultComparisons() {
@@ -130,11 +180,11 @@ class Test {
 			expected: {},
 			actual: {},
 		}
-		for (const [reactorId, { reactor, result: actualResult, dependencies }] of Object.entries(
-			this.systemState.reactors
-		)) {
-			if (!reactor.scheduler.isActivelyListening) continue
-			result.expected[reactorId] = dependencies.map(this.unpack_sneaky).join(':')
+		for (const [
+			reactorId,
+			{ result: actualResult, sneakyResult: expectedResult },
+		] of Object.entries(this.systemState.reactors)) {
+			result.expected[reactorId] = expectedResult
 			result.actual[reactorId] = actualResult
 		}
 
@@ -146,23 +196,32 @@ class Test {
 
 		times(this.source.nextIntInRange(1, MAX_ATOMS), () => {
 			const atomId = this.source.nextId()
-			this.systemState.atoms[atomId] = atom(atomId, this.source.selectOne(LETTERS))
+			const initial = this.source.selectOne(LETTERS)
+			this.systemState.atoms[atomId] = { type: 'atom', atom: atom(atomId, initial), value: initial }
 		})
 
 		times(this.source.nextIntInRange(1, MAX_ATOMS_IN_ATOMS), () => {
 			const atomId = this.source.nextId()
-			this.systemState.atomsInAtoms[atomId] = atom(
-				atomId,
-				this.source.selectOne(Object.values(this.systemState.atoms))
-			)
+			const innerAtomId = this.source.selectOne(Object.keys(this.systemState.atoms))
+			this.systemState.atomsInAtoms[atomId] = {
+				type: 'atomInAtom',
+				atomInAtom: atom(atomId, this.systemState.atoms[innerAtomId].atom),
+				innerAtomId,
+			}
 		})
 
 		times(this.source.nextIntInRange(1, MAX_ATOMS_IN_DERIVATIONS), () => {
 			const derivationId = this.source.nextId()
-			const atom = this.source.selectOne(Object.values(this.systemState.atoms))
-			this.systemState.atomsInDerivations[derivationId] = computed(derivationId, () => atom, {
-				isPush: this.source.selectOne([true, false, undefined]),
-			})
+			const innerAtomId = this.source.selectOne(Object.keys(this.systemState.atoms))
+			const isPush = this.source.selectOne([false, false])
+			this.systemState.atomsInDerivations[derivationId] = {
+				type: 'atomInDerivation',
+				atomInDerivation: computed(derivationId, () => this.systemState.atoms[innerAtomId].atom, {
+					isPush,
+				}),
+				innerAtomId,
+				isPush,
+			}
 		})
 
 		times(this.source.nextIntInRange(1, MAX_DERIVATIONS), () => {
@@ -177,25 +236,30 @@ class Test {
 			const inputB = this.source.selectOne(derivables)
 			const inputC = this.source.selectOne(derivables)
 			const inputD = this.source.selectOne(derivables)
+			const conversion = this.source.selectOne(Object.keys(conversions)) as Conversion
+			const isPush = this.source.selectOne([false, false])
 			this.systemState.derivations[derivationId] = {
+				type: 'derivation',
 				derivation: computed(
 					derivationId,
 					() => {
-						if (unpack(inputA) === unpack(inputB)) {
-							return unpack(inputC)
+						if (this.unpack(inputA) === this.unpack(inputB)) {
+							return conversions[conversion](this.unpack(inputC))
 						} else {
-							return unpack(inputD)
+							return conversions[conversion](this.unpack(inputD))
 						}
 					},
 					{
-						isPush: this.source.selectOne([true, false, undefined]),
+						isPush,
 					}
 				),
+				isPush,
+				conversion,
 				sneakyGet: () => {
 					if (this.unpack_sneaky(inputA) === this.unpack_sneaky(inputB)) {
-						return this.unpack_sneaky(inputC)
+						return conversions[conversion](this.unpack_sneaky(inputC))
 					} else {
-						return this.unpack_sneaky(inputD)
+						return conversions[conversion](this.unpack_sneaky(inputD))
 					}
 				},
 			}
@@ -203,23 +267,27 @@ class Test {
 
 		times(this.source.nextIntInRange(1, MAX_DERIVATIONS_IN_DERIVATIONS), () => {
 			const derivationId = this.source.nextId()
-			this.systemState.derivationsInDerivations[derivationId] = computed(
-				derivationId,
-				() =>
-					this.source.selectOne(
-						Object.values(this.systemState.derivations).map((d) => d.derivation)
-					),
-				{
-					isPush: this.source.selectOne([true, false, undefined]),
-				}
-			)
+			const innerDerivationId = this.source.selectOne(Object.keys(this.systemState.derivations))
+			const isPush = this.source.selectOne([false, false])
+			this.systemState.derivationsInDerivations[derivationId] = {
+				type: 'derivationInDerivation',
+				derivationInDerivation: computed(
+					derivationId,
+					() => this.systemState.derivations[innerDerivationId].derivation,
+					{
+						isPush,
+					}
+				),
+				isPush,
+				innerDerivationId,
+			}
 		})
 
 		times(this.source.nextIntInRange(1, MAX_REACTORS), () => {
 			const reactorId = this.source.nextId()
-			const dependencies: Signal<any>[] = []
+			const dependencies: Dep[] = []
 
-			times(this.source.nextIntInRange(1, MAX_DEPENDENCIES_PER_ATOM), () => {
+			times(this.source.nextIntInRange(1, MAX_DEPENDENCIES_PER_REACTOR), () => {
 				this.source.executeOne({
 					'add a random atom': () => {
 						dependencies.push(this.source.selectOne(Object.values(this.systemState.atoms)))
@@ -228,11 +296,7 @@ class Test {
 						dependencies.push(this.source.selectOne(Object.values(this.systemState.atomsInAtoms)))
 					},
 					'add a random derivation': () => {
-						dependencies.push(
-							this.source.selectOne(
-								Object.values(this.systemState.derivations).map((d) => d.derivation)
-							)
-						)
+						dependencies.push(this.source.selectOne(Object.values(this.systemState.derivations)))
 					},
 					'add a random derivation in derivation': () => {
 						dependencies.push(
@@ -250,8 +314,9 @@ class Test {
 
 			this.systemState.reactors[reactorId] = {
 				reactor: reactor(reactorId, () => {
-					this.systemState.reactors[reactorId].result = dependencies.map(unpack).join(':')
+					this.systemState.reactors[reactorId].result = dependencies.map(this.unpack).join(':')
 				}),
+				sneakyResult: '',
 				result: '',
 				dependencies,
 			}
@@ -318,11 +383,12 @@ class Test {
 	applyOp(op: Op) {
 		switch (op.type) {
 			case 'update_atom': {
-				this.systemState.atoms[op.id].set(op.value)
+				this.systemState.atoms[op.id].atom.set(op.value)
+				this.systemState.atoms[op.id].value = op.value
 				break
 			}
 			case 'deref_atom_in_derivation': {
-				this.systemState.atomsInDerivations[op.id].value
+				this.systemState.atomsInDerivations[op.id].atomInDerivation.value
 				break
 			}
 			case 'deref_derivation': {
@@ -330,21 +396,27 @@ class Test {
 				break
 			}
 			case 'deref_derivation_in_derivation': {
-				this.systemState.derivationsInDerivations[op.id].value
+				this.systemState.derivationsInDerivations[op.id].derivationInDerivation.value
 				break
 			}
 			case 'update_atom_in_atom': {
-				this.systemState.atomsInAtoms[op.id].set(this.systemState.atoms[op.atomId])
+				this.systemState.atomsInAtoms[op.id].atomInAtom.set(this.systemState.atoms[op.atomId].atom)
+				this.systemState.atomsInAtoms[op.id].innerAtomId = op.atomId
 				break
 			}
 			case 'run_several_ops_in_transaction': {
-				transact(() => {
+				transaction(() => {
 					op.ops.forEach((op) => this.applyOp(op))
 				})
 				break
 			}
 			case 'start_reactor': {
 				this.systemState.reactors[op.id].reactor.start()
+				this.systemState.reactors[op.id].sneakyResult = this.systemState.reactors[
+					op.id
+				].dependencies
+					.map(this.unpack_sneaky)
+					.join(':')
 				break
 			}
 			case 'stop_reactor': {
@@ -357,20 +429,24 @@ class Test {
 		}
 	}
 
-	tick() {
-		const op = this.getNextOp()
+	tick(op = this.getNextOp()) {
 		this.ops.push(op)
 		this.applyOp(op)
+		for (const reactor of Object.values(this.systemState.reactors)) {
+			if (reactor.reactor.scheduler.isActivelyListening) {
+				reactor.sneakyResult = reactor.dependencies.map(this.unpack_sneaky).join(':')
+			}
+		}
 	}
 }
 
-const NUM_TESTS = 100
-const NUM_OPS_PER_TEST = 1000
+const NUM_TESTS = 1000
+const NUM_OPS_PER_TEST = 300
 
 function runTest(seed: number, ops?: Op[]) {
 	const test = new Test(seed)
 	if (ops) {
-		ops.forEach((op) => test.applyOp(op))
+		ops.forEach((op) => test.tick(op))
 		const { expected, actual } = test.getResultComparisons()
 		expect(expected).toEqual(actual)
 		return
