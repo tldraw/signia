@@ -1,3 +1,15 @@
+# v0.0.10 (Mon Mar 13 2023)
+
+#### 🐛 Bug Fix
+
+- fix signia-react-jsx build [#55](https://github.com/tldraw/signia/pull/55) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.8 (Wed Mar 01 2023)
 
 #### 🐛 Bug Fix
