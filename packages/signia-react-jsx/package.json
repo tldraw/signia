@@ -15,9 +15,9 @@
 	},
 	"types": "./index.d.ts",
 	"files": [
-		"jsx-dev-runtime.js",
+		"jsx-dev-runtime.mjs",
 		"jsx-dev-runtime.d.ts",
-		"jsx-runtime.js",
+		"jsx-runtime.mjs",
 		"jsx-runtime.d.ts"
 	],
 	"dependencies": {
