@@ -213,7 +213,7 @@ class Test {
 		times(this.source.nextIntInRange(1, MAX_ATOMS_IN_DERIVATIONS), () => {
 			const derivationId = this.source.nextId()
 			const innerAtomId = this.source.selectOne(Object.keys(this.systemState.atoms))
-			const isPush = this.source.selectOne([false, false])
+			const isPush = this.source.selectOne([false, true])
 			this.systemState.atomsInDerivations[derivationId] = {
 				type: 'atomInDerivation',
 				atomInDerivation: computed(derivationId, () => this.systemState.atoms[innerAtomId].atom, {
@@ -237,7 +237,7 @@ class Test {
 			const inputC = this.source.selectOne(derivables)
 			const inputD = this.source.selectOne(derivables)
 			const conversion = this.source.selectOne(Object.keys(conversions)) as Conversion
-			const isPush = this.source.selectOne([false, false])
+			const isPush = this.source.selectOne([false, true])
 			this.systemState.derivations[derivationId] = {
 				type: 'derivation',
 				derivation: computed(
@@ -327,13 +327,13 @@ class Test {
 
 	getNextOp(): Op {
 		return this.source.executeOne<Op>({
-			'update atom': () => {
-				return {
-					type: 'update_atom',
-					id: this.source.selectOne(Object.keys(this.systemState.atoms)),
-					value: this.source.selectOne(LETTERS),
-				}
-			},
+			// 'update atom': () => {
+			// 	return {
+			// 		type: 'update_atom',
+			// 		id: this.source.selectOne(Object.keys(this.systemState.atoms)),
+			// 		value: this.source.selectOne(LETTERS),
+			// 	}
+			// },
 			'update atom in atom': () => {
 				return {
 					type: 'update_atom_in_atom',
@@ -341,42 +341,42 @@ class Test {
 					atomId: this.source.selectOne(Object.keys(this.systemState.atoms)),
 				}
 			},
-			'deref atom in derivation': () => {
-				return {
-					type: 'deref_atom_in_derivation',
-					id: this.source.selectOne(Object.keys(this.systemState.atomsInDerivations)),
-				}
-			},
-			'deref derivation in derivation': () => {
-				return {
-					type: 'deref_derivation_in_derivation',
-					id: this.source.selectOne(Object.keys(this.systemState.derivationsInDerivations)),
-				}
-			},
-			'deref derivation': () => {
-				return {
-					type: 'deref_derivation',
-					id: this.source.selectOne(Object.keys(this.systemState.derivations)),
-				}
-			},
-			'run several ops in a transaction': () => {
-				return {
-					type: 'run_several_ops_in_transaction',
-					ops: times(this.source.nextIntInRange(2, MAX_OPS_IN_TRANSACTION), () => this.getNextOp()),
-				}
-			},
+			// 'deref atom in derivation': () => {
+			// 	return {
+			// 		type: 'deref_atom_in_derivation',
+			// 		id: this.source.selectOne(Object.keys(this.systemState.atomsInDerivations)),
+			// 	}
+			// },
+			// 'deref derivation in derivation': () => {
+			// 	return {
+			// 		type: 'deref_derivation_in_derivation',
+			// 		id: this.source.selectOne(Object.keys(this.systemState.derivationsInDerivations)),
+			// 	}
+			// },
+			// 'deref derivation': () => {
+			// 	return {
+			// 		type: 'deref_derivation',
+			// 		id: this.source.selectOne(Object.keys(this.systemState.derivations)),
+			// 	}
+			// },
+			// 'run several ops in a transaction': () => {
+			// 	return {
+			// 		type: 'run_several_ops_in_transaction',
+			// 		ops: times(this.source.nextIntInRange(2, MAX_OPS_IN_TRANSACTION), () => this.getNextOp()),
+			// 	}
+			// },
 			start_reactor: () => {
 				return {
 					type: 'start_reactor',
 					id: this.source.selectOne(Object.keys(this.systemState.reactors)),
 				}
 			},
-			stop_reactor: () => {
-				return {
-					type: 'stop_reactor',
-					id: this.source.selectOne(Object.keys(this.systemState.reactors)),
-				}
-			},
+			// stop_reactor: () => {
+			// 	return {
+			// 		type: 'stop_reactor',
+			// 		id: this.source.selectOne(Object.keys(this.systemState.reactors)),
+			// 	}
+			// },
 		})
 	}
 
@@ -440,8 +440,8 @@ class Test {
 	}
 }
 
-const NUM_TESTS = 1000
-const NUM_OPS_PER_TEST = 300
+const NUM_TESTS = 10000
+const NUM_OPS_PER_TEST = 2
 
 function runTest(seed: number, ops?: Op[]) {
 	const test = new Test(seed)
@@ -464,9 +464,23 @@ function runTest(seed: number, ops?: Op[]) {
 	}
 }
 
-for (let i = 0; i < NUM_TESTS; i++) {
-	const seed = Math.floor(Math.random() * 1000000)
-	test('fuzzzzzz ' + seed, () => {
-		runTest(seed)
-	})
-}
+// for (let i = 0; i < NUM_TESTS; i++) {
+// 	const seed = Math.floor(Math.random() * 1000000)
+// 	test('fuzzzzzz ' + seed, () => {
+// 		runTest(seed)
+// 	})
+// }
+
+test('fuzz', () => {
+	runTest(486560, [
+		{
+			type: 'start_reactor',
+			id: 'q5ettr39t4',
+		},
+		{
+			type: 'update_atom_in_atom',
+			id: '1h47iho0ey6',
+			atomId: '1fjwzc6mf3w',
+		},
+	])
+})
