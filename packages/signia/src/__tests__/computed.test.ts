@@ -587,3 +587,24 @@ describe(getComputedInstance, () => {
 		expect(bInst).toBeInstanceOf(_Computed)
 	})
 })
+
+describe('push computeds', () => {
+	it('prevent traversal', () => {
+		const user = atom('', { id: 1, name: 'steve' })
+		const name = computed('', () => user.value.name, { isPush: true })
+		const nameLength = computed('', () => name.value.length)
+		let numNameLengthReactions = 0
+		const r = reactor('', () => {
+			numNameLengthReactions++
+			nameLength.value
+		})
+		r.start()
+		expect(numNameLengthReactions).toBe(1)
+		const lastTraversed = r.scheduler.lastTraversedEpoch
+
+		user.set({ id: 2, name: 'steve' })
+
+		expect(numNameLengthReactions).toBe(1)
+		expect(r.scheduler.lastTraversedEpoch).toBe(lastTraversed)
+	})
+})

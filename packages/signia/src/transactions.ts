@@ -1,7 +1,8 @@
 import { _Atom } from './Atom'
+import { _Computed } from './Computed'
 import { GLOBAL_START_EPOCH } from './constants'
 import { EffectScheduler } from './EffectScheduler'
-import { Child, Signal } from './types'
+import { Child } from './types'
 
 // The current epoch (global to all atoms).
 export let globalEpoch = GLOBAL_START_EPOCH + 1
@@ -12,6 +13,8 @@ let globalIsReacting = false
 export function advanceGlobalEpoch() {
 	globalEpoch++
 }
+
+let rootTransactionEpoch = GLOBAL_START_EPOCH
 
 class Transaction {
 	constructor(public readonly parent: Transaction | null) {}
@@ -83,22 +86,27 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
 		const reactors = new Set<EffectScheduler<unknown>>()
 
 		// Visit each descendant of the atom, collecting reactors.
-		const traverse = (node: Child) => {
+		const traverse = (node: Child, isPush: boolean) => {
 			if (node.lastTraversedEpoch === globalEpoch) {
 				return
 			}
 
 			node.lastTraversedEpoch = globalEpoch
 
-			if ('maybeScheduleEffect' in node) {
+			if (node instanceof EffectScheduler) {
 				reactors.add(node)
-			} else {
-				;(node as any as Signal<any>).children.visit(traverse)
+			} else if (node instanceof _Computed) {
+				if (isPush && node.isPush && node.lastChangedEpoch < rootTransactionEpoch) {
+					// don't traverse push nodes that didn't change
+					// need to make sure that there is an unbroken chain of push nodes to the root atom here
+				} else {
+					node.children.visit((child) => traverse(child, node.isPush))
+				}
 			}
 		}
 
 		for (const atom of atoms) {
-			atom.children.visit(traverse)
+			atom.children.visit((node) => traverse(node, true))
 		}
 
 		// Run each reactor.
@@ -111,6 +119,23 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
 }
 
 /**
+ * flush push computations immediately
+ */
+function flushPushes(atom: _Atom<any>) {
+	const traverse = (node: Child) => {
+		if (node instanceof _Computed && node.isPush) {
+			const lastChangedEpoch = node.lastChangedEpoch
+			node.__unsafe__getWithoutCapture()
+			if (node.lastChangedEpoch !== lastChangedEpoch) {
+				node.children.visit(traverse)
+			}
+		}
+	}
+
+	atom.children.visit(traverse)
+}
+
+/**
  * Handle a change to an atom.
  *
  * @param atom The atom that changed.
@@ -119,7 +144,9 @@ function flushChanges(atoms: Iterable<_Atom<any>>) {
  * @internal
  */
 export function atomDidChange(atom: _Atom<any>, previousValue: any) {
+	flushPushes(atom)
 	if (!currentTransaction) {
+		rootTransactionEpoch = globalEpoch
 		flushChanges([atom])
 	} else if (!currentTransaction.initialAtomValues.has(atom)) {
 		currentTransaction.initialAtomValues.set(atom, previousValue)
@@ -207,6 +234,9 @@ export let currentTransaction = null as Transaction | null
  * @public
  */
 export function transaction<T>(fn: (rollback: () => void) => T) {
+	if (!currentTransaction) {
+		rootTransactionEpoch = globalEpoch
+	}
 	const txn = new Transaction(currentTransaction)
 
 	// Set the current transaction to the transaction
