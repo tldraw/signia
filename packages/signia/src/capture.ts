@@ -1,6 +1,17 @@
 import { attach, detach } from './helpers'
 import { Child, Signal } from './types'
 
+const signiaKey = Symbol.for('__signia__')
+const global = globalThis as { [signiaKey]?: true }
+
+if (global[signiaKey]) {
+	console.error(
+		'Multiple versions of signia detected. This will cause unexpected behavior. Please add "resolutions" (yarn/pnpm) or "overrides" (npm) in your package.json to ensure only one version of signia is loaded.'
+	)
+} else {
+	global[signiaKey] = true
+}
+
 class CaptureStackFrame {
 	offset = 0
 	numNewParents = 0
