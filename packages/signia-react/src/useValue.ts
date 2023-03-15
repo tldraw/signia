@@ -67,5 +67,5 @@ export function useValue() {
 		}
 	}, [$val])
 
-	return useSyncExternalStore(subscribe, getSnapshot)
+	return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 }

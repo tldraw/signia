@@ -38,7 +38,7 @@ export function useStateTracking<T>(name: string, render: () => T): T {
 		return [scheduler, subscribe, getSnapshot]
 	}, [name])
 
-	React.useSyncExternalStore(subscribe, getSnapshot)
+	React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 
 	// reactive dependencies are captured when `scheduler.execute()` is called
 	// and then to make it reactive we wait for a `useEffect` to 'attach'
