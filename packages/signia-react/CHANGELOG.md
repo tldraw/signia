@@ -1,3 +1,15 @@
+# v0.0.11 (Wed Mar 15 2023)
+
+#### 🐛 Bug Fix
+
+- [fix] add getSeverSnapshot to support next et al [#59](https://github.com/tldraw/signia/pull/59) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.8 (Wed Mar 01 2023)
 
 #### 🐛 Bug Fix
