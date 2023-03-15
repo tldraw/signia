@@ -1,3 +1,16 @@
+# v0.0.12 (Wed Mar 15 2023)
+
+#### 🐛 Bug Fix
+
+- `signia`
+  - make sure only one version of signia is loaded [#60](https://github.com/tldraw/signia/pull/60) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.11 (Wed Mar 15 2023)
 
 #### 🐛 Bug Fix
