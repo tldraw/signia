@@ -25,9 +25,13 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 
 	const nextVersion = currentVerison?.inc(bumpType)
 
+	if (!nextVersion) {
+		throw new Error('Could not parse current version')
+	}
+
 	const sha = execSync('git rev-parse --short HEAD').toString().trim()
 
-	const versionString = `${nextVersion?.version}-canary.${sha}`
+	const versionString = `${nextVersion.major}.${nextVersion.minor}.${nextVersion.patch}-canary.${sha}`
 
 	console.log(`Setting ${packageJson.name} version to ${versionString}`)
 
