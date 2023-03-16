@@ -7,8 +7,8 @@ on:
 
 jobs:
   deploy:
-    name: 'Deploy'
-    environment: auto canary
+    name: 'Deploy Canary'
+    environment: auto deploy
     timeout-minutes: 15
     runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
 
