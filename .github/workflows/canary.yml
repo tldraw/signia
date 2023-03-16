@@ -1,12 +1,14 @@
-name: Deploy
+name: Deploy Canary
 
 # Deploys are manually triggered
-on: workflow_dispatch
+on:
+  push:
+    branches: [main]
 
 jobs:
   deploy:
     name: 'Deploy'
-    environment: auto deploy
+    environment: auto canary
     timeout-minutes: 15
     runs-on: ubuntu-latest # TODO: this should probably run on multiple OSes
 
@@ -32,9 +34,9 @@ jobs:
         run: pnpm install --frozen-lockfile
         shell: bash
 
-      - name: Deploy Final
+      - name: Deploy Canary
         if: ${{ ! inputs.prerelease }}
-        run: pnpm auto shipit -vv
+        run: ./scripts/publish-canary.sh
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

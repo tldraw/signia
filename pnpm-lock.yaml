@@ -23,6 +23,7 @@ importers:
       '@types/react': ^18.0.24
       '@types/react-dom': ^18.0.6
       '@types/react-test-renderer': ^18.0.0
+      '@types/semver': ^7.3.13
       '@types/tmp': ^0.2.3
       '@typescript-eslint/eslint-plugin': ^5.38.0
       '@typescript-eslint/parser': ^5.38.0
@@ -46,6 +47,7 @@ importers:
       react: ^18.2.0
       react-test-renderer: ^18.2.0
       rimraf: ^4.1.2
+      semver: ^7.3.8
       tsdoc-markdown: ^0.0.1
       tsx: ^3.12.3
       turbo: ^1.7.4
@@ -68,6 +70,7 @@ importers:
       '@types/react': 18.0.27
       '@types/react-dom': 18.0.10
       '@types/react-test-renderer': 18.0.0
+      '@types/semver': 7.3.13
       '@types/tmp': 0.2.3
       '@typescript-eslint/eslint-plugin': 5.51.0_txytoqwnpyl3rkv73mq3hslinu
       '@typescript-eslint/parser': 5.51.0_hp3n5f6hao4yyg55iy34n6oive
@@ -91,6 +94,7 @@ importers:
       react: 18.2.0
       react-test-renderer: 18.2.0_react@18.2.0
       rimraf: 4.1.2
+      semver: 7.3.8
       tsdoc-markdown: 0.0.1_typescript@4.9.5
       tsx: 3.12.3
       turbo: 1.7.4
