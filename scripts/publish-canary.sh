@@ -13,7 +13,7 @@ fi
 
 project_root=$(git rev-parse --show-toplevel)
 
-npm config set _authToken $NPM_TOKEN
+npm config set '//registry.npmjs.org/:_authToken' $NPM_TOKEN
 
 echo "publishing canary version"
 pnpm -r exec -- tsx $project_root/scripts/publish-canary-version.ts $type
