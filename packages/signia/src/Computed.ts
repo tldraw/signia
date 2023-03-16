@@ -45,7 +45,7 @@ class WithDiff<Value, Diff> {
 }
 
 /**
- * When writing incrementally-computed signals it is convenient (and usually more performant) to incrememtally compute the diff too.
+ * When writing incrementally-computed signals it is convenient (and usually more performant) to incrementally compute the diff too.
  *
  * You can use this function to wrap the return value of a computed signal function to indicate that the diff should be used instead of calculating a new one with [[AtomOptions.computeDiff]].
  *

@@ -31,10 +31,10 @@ export function haveParentsChanged(child: Child) {
 }
 
 /**
- * Detatch a child from a parent.
+ * Detach a child from a parent.
  *
- * @param parent The parent to detatch from.
- * @param child The child to detatch.
+ * @param parent The parent to detach from.
+ * @param child The child to detach.
  */
 export const detach = (parent: Signal<any>, child: Child) => {
 	// If the child is not attached to the parent, do nothing.
@@ -42,7 +42,7 @@ export const detach = (parent: Signal<any>, child: Child) => {
 		return
 	}
 
-	// If the parent has no more children, then detatch the parent from its parents.
+	// If the parent has no more children, then detach the parent from its parents.
 	if (parent.children.isEmpty && isChild(parent)) {
 		for (let i = 0, n = parent.parents.length; i < n; i++) {
 			detach(parent.parents[i], parent)
