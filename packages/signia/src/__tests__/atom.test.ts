@@ -1,7 +1,7 @@
-import { atom } from '../Atom'
-import { reactor } from '../EffectScheduler'
-import { globalEpoch, transact, transaction } from '../transactions'
-import { RESET_VALUE } from '../types'
+import { atom } from '../Atom.js'
+import { reactor } from '../EffectScheduler.js'
+import { globalEpoch, transact, transaction } from '../transactions.js'
+import { RESET_VALUE } from '../types.js'
 
 describe('atoms', () => {
 	it('contain data', () => {

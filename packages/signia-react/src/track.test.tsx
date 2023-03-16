@@ -1,7 +1,7 @@
 import { createRef, forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
 import { atom } from 'signia'
-import { track } from './track'
+import { track } from './track.js'
 
 test("tracked components are memo'd", async () => {
 	let numRenders = 0

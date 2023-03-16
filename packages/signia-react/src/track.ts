@@ -1,5 +1,5 @@
 import React, { forwardRef, FunctionComponent, memo } from 'react'
-import { useStateTracking } from './useStateTracking'
+import { useStateTracking } from './useStateTracking.js'
 
 export const ProxyHandlers = {
 	/**

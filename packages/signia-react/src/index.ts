@@ -6,9 +6,9 @@
  * @packageDocumentation
  */
 
-export { track } from './track'
-export { useAtom } from './useAtom'
-export { useComputed } from './useComputed'
-export { useStateTracking } from './useStateTracking'
-export { useValue } from './useValue'
-export { wrapJsx } from './wrapJsx'
+export { track } from './track.js'
+export { useAtom } from './useAtom.js'
+export { useComputed } from './useComputed.js'
+export { useStateTracking } from './useStateTracking.js'
+export { useValue } from './useValue.js'
+export { wrapJsx } from './wrapJsx.js'

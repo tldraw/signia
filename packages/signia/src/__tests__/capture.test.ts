@@ -1,14 +1,14 @@
-import { atom } from '../Atom'
+import { atom } from '../Atom.js'
 import {
 	maybeCaptureParent,
 	startCapturingParents,
 	stopCapturingParents,
 	unsafe__withoutCapture,
-} from '../capture'
-import { computed } from '../Computed'
-import { react } from '../EffectScheduler'
-import { advanceGlobalEpoch, globalEpoch } from '../transactions'
-import { Child } from '../types'
+} from '../capture.js'
+import { computed } from '../Computed.js'
+import { react } from '../EffectScheduler.js'
+import { advanceGlobalEpoch, globalEpoch } from '../transactions.js'
+import { Child } from '../types.js'
 
 const emptyChild = (props: Partial<Child> = {}) =>
 	({

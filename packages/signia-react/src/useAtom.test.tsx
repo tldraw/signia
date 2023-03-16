@@ -1,7 +1,7 @@
 import ReactTestRenderer from 'react-test-renderer'
 import { Atom } from 'signia'
-import { useAtom } from './useAtom'
-import { useValue } from './useValue'
+import { useAtom } from './useAtom.js'
+import { useValue } from './useValue.js'
 
 test('useAtom returns an atom', async () => {
 	let theAtom: null | Atom<any> = null as any

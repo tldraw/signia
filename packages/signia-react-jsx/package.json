@@ -13,7 +13,6 @@
 	"bugs": {
 		"url": "https://github.com/tldraw/signia/issues"
 	},
-	"types": "./index.d.ts",
 	"files": [
 		"jsx-dev-runtime.mjs",
 		"jsx-dev-runtime.d.ts",

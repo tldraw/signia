@@ -24,7 +24,7 @@
 // SOFTWARE.
 
 import { Component, type FunctionComponent } from 'react'
-import { track } from './track'
+import { track } from './track.js'
 
 const ReactMemoType = Symbol.for('react.memo') // https://github.com/facebook/react/blob/346c7d4c43a0717302d446da9e7423a8e28d8996/packages/shared/ReactSymbols.js#L30
 const ReactForwardRefType = Symbol.for('react.forward_ref')
