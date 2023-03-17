@@ -37,5 +37,5 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
 
 	writeFileSync('package.json', JSON.stringify({ ...packageJson, version: versionString }, null, 2))
 
-	execSync('npm publish --tag canary')
+	execSync('pnpm publish --tag canary --no-git-checks')
 }
