@@ -22,12 +22,12 @@ export async function preparePackage({ sourcePackageDir }: { sourcePackageDir: s
 
 	copyFileSync(
 		path.join(sourcePackageDir, `api/public.d.ts`),
-		path.join(sourcePackageDir, 'dist/cjs/index.d.ts')
+		path.join(sourcePackageDir, 'dist/cjs/index.d.cts')
 	)
 
 	copyFileSync(
 		path.join(sourcePackageDir, `api/public.d.ts`),
-		path.join(sourcePackageDir, 'dist/esm/index.d.ts')
+		path.join(sourcePackageDir, 'dist/esm/index.d.mts')
 	)
 
 	// save package.json and reinstate it in postpack
@@ -48,14 +48,8 @@ export async function preparePackage({ sourcePackageDir }: { sourcePackageDir: s
 		source: 'src/index.ts',
 		exports: {
 			'.': {
-				import: {
-					types: './dist/esm/index.d.ts',
-					default: './dist/esm/index.mjs',
-				},
-				require: {
-					types: './dist/cjs/index.d.ts',
-					default: './dist/cjs/index.cjs',
-				},
+				import: './dist/esm/index.mjs',
+				require: './dist/cjs/index.cjs',
 			},
 		},
 		files: ['dist', 'src'],
