@@ -1,4 +1,4 @@
-import { ArraySet, ARRAY_SIZE_THRESHOLD } from '../ArraySet'
+import { ArraySet, ARRAY_SIZE_THRESHOLD } from '../ArraySet.js'
 
 const get = <T>(set: ArraySet<T>) => {
 	const s = new Set<T>()

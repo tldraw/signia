@@ -1,5 +1,5 @@
-import { HistoryBuffer } from '../HistoryBuffer'
-import { RESET_VALUE } from '../types'
+import { HistoryBuffer } from '../HistoryBuffer.js'
+import { RESET_VALUE } from '../types.js'
 
 describe('HistoryBuffer', () => {
 	it('should wrap around', () => {

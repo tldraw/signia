@@ -22,7 +22,12 @@ export async function preparePackage({ sourcePackageDir }: { sourcePackageDir: s
 
 	copyFileSync(
 		path.join(sourcePackageDir, `api/public.d.ts`),
-		path.join(sourcePackageDir, 'index.d.ts')
+		path.join(sourcePackageDir, 'dist/cjs/index.d.cts')
+	)
+
+	copyFileSync(
+		path.join(sourcePackageDir, `api/public.d.ts`),
+		path.join(sourcePackageDir, 'dist/esm/index.d.mts')
 	)
 
 	// save package.json and reinstate it in postpack
@@ -34,13 +39,20 @@ export async function preparePackage({ sourcePackageDir }: { sourcePackageDir: s
 	// construct the final package.json
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const newManifest = structuredClone({
-		// filter out comments
-		...Object.fromEntries(Object.entries(manifest).filter(([key]) => !key.startsWith('/*'))),
-		main: 'dist/index.js',
-		module: 'dist/index.mjs',
+		// filter out comments and `types`
+		...Object.fromEntries(
+			Object.entries(manifest).filter(([key]) => !key.startsWith('/*') && key !== 'types')
+		),
+		main: 'dist/cjs/index.cjs',
+		module: 'dist/esm/index.mjs',
 		source: 'src/index.ts',
-		types: 'index.d.ts',
-		files: ['dist', 'src', 'index.d.ts'],
+		exports: {
+			'.': {
+				import: './dist/esm/index.mjs',
+				require: './dist/cjs/index.cjs',
+			},
+		},
+		files: ['dist', 'src'],
 	})
 	writeFileSync(
 		path.join(sourcePackageDir, 'package.json'),

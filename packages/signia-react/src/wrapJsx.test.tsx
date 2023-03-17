@@ -14,7 +14,7 @@ import {
 } from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
 import { atom } from 'signia'
-import { wrapJsx } from './wrapJsx'
+import { wrapJsx } from './wrapJsx.js'
 
 // assign this to an unused variable to prevent editors from removing it
 const _Fragment = Fragment

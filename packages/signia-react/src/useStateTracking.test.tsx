@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
 import { atom } from 'signia'
-import { useStateTracking } from './useStateTracking'
+import { useStateTracking } from './useStateTracking.js'
 
 describe('useStateTracking', () => {
 	it('causes a rerender when a dependency changes', async () => {

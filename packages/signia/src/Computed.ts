@@ -1,13 +1,13 @@
 /* eslint-disable prefer-rest-params */
-import { Child, ComputeDiff, RESET_VALUE, Signal } from './types'
+import { Child, ComputeDiff, RESET_VALUE, Signal } from './types.js'
 
-import { maybeCaptureParent, startCapturingParents, stopCapturingParents } from './capture'
+import { maybeCaptureParent, startCapturingParents, stopCapturingParents } from './capture.js'
 
-import { ArraySet } from './ArraySet'
-import { GLOBAL_START_EPOCH } from './constants'
-import { EMPTY_ARRAY, equals, haveParentsChanged } from './helpers'
-import { HistoryBuffer } from './HistoryBuffer'
-import { globalEpoch } from './transactions'
+import { ArraySet } from './ArraySet.js'
+import { GLOBAL_START_EPOCH } from './constants.js'
+import { EMPTY_ARRAY, equals, haveParentsChanged } from './helpers.js'
+import { HistoryBuffer } from './HistoryBuffer.js'
+import { globalEpoch } from './transactions.js'
 
 const UNINITIALIZED = Symbol('UNINITIALIZED')
 /**

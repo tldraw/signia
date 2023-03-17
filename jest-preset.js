@@ -21,6 +21,10 @@ module.exports = {
 	setupFilesAfterEnv: [__dirname + '/jest-setup.js'],
 	testRegex: '.*.test.(ts|tsx)$',
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+	// Resolve issue where imports contain ".js" extension for Node compatible resolution
+	moduleNameMapper: {
+		'^(\\.{1,2}/.*)\\.js$': '$1',
+	},
 	modulePathIgnorePatterns: [
 		'<rootDir>/test/__fixtures__',
 		'<rootDir>/node_modules',

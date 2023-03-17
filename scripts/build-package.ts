@@ -46,12 +46,22 @@ async function buildEsm({
 }) {
 	const res = await build({
 		entryPoints: sourceFiles,
-		outdir: path.join(sourcePackageDir, 'dist'),
-		bundle: false,
+		outdir: path.join(sourcePackageDir, 'dist/esm'),
+		bundle: true,
 		platform: 'neutral',
 		sourcemap: true,
 		format: 'esm',
 		outExtension: { '.js': '.mjs' },
+		plugins: [
+			{
+				name: 'add-mjs',
+				setup(build) {
+					build.onResolve({ filter: /.*/ }, (args) => {
+						if (args.importer) return { path: args.path.replace(/\.js$/, '.mjs'), external: true }
+					})
+				},
+			},
+		],
 	})
 
 	if (res.errors.length) {
@@ -71,11 +81,22 @@ async function buildCjs({
 }) {
 	const res = await build({
 		entryPoints: sourceFiles,
-		outdir: path.join(sourcePackageDir, 'dist'),
-		bundle: false,
+		outdir: path.join(sourcePackageDir, 'dist/cjs'),
+		bundle: true,
 		platform: 'neutral',
 		sourcemap: true,
 		format: 'cjs',
+		outExtension: { '.js': '.cjs' },
+		plugins: [
+			{
+				name: 'add-cjs',
+				setup(build) {
+					build.onResolve({ filter: /.*/ }, (args) => {
+						if (args.importer) return { path: args.path.replace(/\.js$/, '.cjs'), external: true }
+					})
+				},
+			},
+		],
 	})
 
 	if (res.errors.length) {

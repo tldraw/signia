@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import ReactTestRenderer from 'react-test-renderer'
 import { Atom, Computed } from 'signia'
-import { useAtom } from './useAtom'
-import { useComputed } from './useComputed'
-import { useValue } from './useValue'
+import { useAtom } from './useAtom.js'
+import { useComputed } from './useComputed.js'
+import { useValue } from './useValue.js'
 
 test('useComputed returns a computed value', async () => {
 	let theComputed = null as null | Computed<number>

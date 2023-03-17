@@ -1,5 +1,5 @@
-import { attach, detach } from './helpers'
-import { Child, Signal } from './types'
+import { attach, detach } from './helpers.js'
+import { Child, Signal } from './types.js'
 
 const signiaKey = Symbol.for('__signia__')
 const global = globalThis as { [signiaKey]?: true }

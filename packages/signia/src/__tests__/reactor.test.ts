@@ -1,6 +1,6 @@
-import { atom } from '../Atom'
-import { react, reactor } from '../EffectScheduler'
-import { advanceGlobalEpoch, transact } from '../transactions'
+import { atom } from '../Atom.js'
+import { react, reactor } from '../EffectScheduler.js'
+import { advanceGlobalEpoch, transact } from '../transactions.js'
 
 describe('reactors', () => {
 	it('can be started and stopped ', () => {

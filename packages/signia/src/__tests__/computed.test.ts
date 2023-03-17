@@ -1,9 +1,9 @@
-import { atom } from '../Atom'
-import { computed, Computed, getComputedInstance, isUninitialized, _Computed } from '../Computed'
-import { reactor } from '../EffectScheduler'
-import { assertNever } from '../helpers'
-import { advanceGlobalEpoch, globalEpoch, transact, transaction } from '../transactions'
-import { RESET_VALUE, Signal } from '../types'
+import { atom } from '../Atom.js'
+import { computed, Computed, getComputedInstance, isUninitialized, _Computed } from '../Computed.js'
+import { reactor } from '../EffectScheduler.js'
+import { assertNever } from '../helpers.js'
+import { advanceGlobalEpoch, globalEpoch, transact, transaction } from '../transactions.js'
+import { RESET_VALUE, Signal } from '../types.js'
 
 function getLastCheckedEpoch(derivation: Computed<any>): number {
 	return (derivation as any).lastCheckedEpoch

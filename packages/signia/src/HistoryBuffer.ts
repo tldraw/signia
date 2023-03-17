@@ -1,4 +1,4 @@
-import { RESET_VALUE } from './types'
+import { RESET_VALUE } from './types.js'
 
 type RangeTuple<Diff> = [fromEpoch: number, toEpoch: number, diff: Diff]
 
