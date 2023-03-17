@@ -6,6 +6,6 @@
  * @packageDocumentation
  */
 
-export * from './api'
-import * as signia from './api'
+export * from './api.js'
+import * as signia from './api.js'
 export default signia
