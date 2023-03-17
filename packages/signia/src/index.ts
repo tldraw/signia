@@ -10,6 +10,25 @@ export type { Atom, AtomOptions } from './Atom.js'
 export type { Computed, ComputedOptions } from './Computed.js'
 export type { Reactor } from './EffectScheduler.js'
 export type { Signal } from './types.js'
+export {
+	signia as default,
+	atom,
+	isAtom,
+	unsafe__withoutCapture,
+	whyAmIRunning,
+	computed,
+	getComputedInstance,
+	isUninitialized,
+	withDiff,
+	EffectScheduler,
+	react,
+	reactor,
+	EMPTY_ARRAY,
+	isSignal,
+	transact,
+	transaction,
+	RESET_VALUE,
+}
 
 import { atom, isAtom } from './Atom.js'
 import { unsafe__withoutCapture, whyAmIRunning } from './capture.js'
@@ -24,54 +43,27 @@ import { RESET_VALUE } from './types.js'
  * @public
  */
 const signia: any = {
-  atom,
-  isAtom,
+	atom,
+	isAtom,
 
-  unsafe__withoutCapture,
-  whyAmIRunning,
+	unsafe__withoutCapture,
+	whyAmIRunning,
 
-  computed,
-  getComputedInstance,
-  isUninitialized,
-  withDiff,
+	computed,
+	getComputedInstance,
+	isUninitialized,
+	withDiff,
 
-  EffectScheduler,
-  react,
-  reactor,
+	EffectScheduler,
+	react,
+	reactor,
 
-  EMPTY_ARRAY,
+	EMPTY_ARRAY,
 
-  isSignal,
+	isSignal,
 
-  transact,
-  transaction,
+	transact,
+	transaction,
 
-  RESET_VALUE,
-};
-
-export {
-  signia as default,
-  atom,
-  isAtom,
-
-  unsafe__withoutCapture,
-  whyAmIRunning,
-
-  computed,
-  getComputedInstance,
-  isUninitialized,
-  withDiff,
-
-  EffectScheduler,
-  react,
-  reactor,
-
-  EMPTY_ARRAY,
-
-  isSignal,
-
-  transact,
-  transaction,
-
-  RESET_VALUE,
-};
+	RESET_VALUE,
+}

@@ -40,7 +40,9 @@ export async function preparePackage({ sourcePackageDir }: { sourcePackageDir: s
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const newManifest = structuredClone({
 		// filter out comments and `types`
-		...Object.fromEntries(Object.entries(manifest).filter(([key]) => !key.startsWith('/*') && key !== 'types')),
+		...Object.fromEntries(
+			Object.entries(manifest).filter(([key]) => !key.startsWith('/*') && key !== 'types')
+		),
 		main: 'dist/cjs/index.cjs',
 		module: 'dist/esm/index.mjs',
 		source: 'src/index.ts',
