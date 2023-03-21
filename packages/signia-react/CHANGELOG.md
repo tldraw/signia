@@ -1,3 +1,16 @@
+# v0.1.0 (Fri Mar 17 2023)
+
+#### 🚀 Enhancement
+
+- fix cjs/esm resolution [#66](https://github.com/tldraw/signia/pull/66) ([@tomi-bigpi](https://github.com/tomi-bigpi) [@ds300](https://github.com/ds300))
+
+#### Authors: 2
+
+- [@tomi-bigpi](https://github.com/tomi-bigpi)
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.11 (Wed Mar 15 2023)
 
 #### 🐛 Bug Fix

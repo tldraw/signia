@@ -1,3 +1,33 @@
+# v0.1.0 (Fri Mar 17 2023)
+
+#### 🚀 Enhancement
+
+- `signia-react-jsx`, `signia-react`, `signia`
+  - fix cjs/esm resolution [#66](https://github.com/tldraw/signia/pull/66) ([@tomi-bigpi](https://github.com/tomi-bigpi) [@ds300](https://github.com/ds300))
+
+#### 🐛 Bug Fix
+
+- fix canary deploy script [#62](https://github.com/tldraw/signia/pull/62) ([@ds300](https://github.com/ds300))
+- `signia`
+  - [docs] fix typos in packages/signia [#64](https://github.com/tldraw/signia/pull/64) ([@ds300](https://github.com/ds300))
+
+#### ⚠️ Pushed to `main`
+
+- use pnpm to publish instead on npm ([@ds300](https://github.com/ds300))
+
+#### 🏠 Internal
+
+- fix canary script again [#65](https://github.com/tldraw/signia/pull/65) ([@ds300](https://github.com/ds300))
+- set auth token in canary script [#63](https://github.com/tldraw/signia/pull/63) ([@ds300](https://github.com/ds300))
+- [infra] add canary deploys on push to main [#61](https://github.com/tldraw/signia/pull/61) ([@ds300](https://github.com/ds300))
+
+#### Authors: 2
+
+- [@tomi-bigpi](https://github.com/tomi-bigpi)
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.0.12 (Wed Mar 15 2023)
 
 #### 🐛 Bug Fix
