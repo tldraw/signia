@@ -79,7 +79,7 @@ const config = {
 						position: 'right',
 					},
 					{
-						href: 'https://discord.gg/3GJTuqay',
+						href: 'https://discord.gg/D3YePTB45S',
 						label: 'Discord',
 						position: 'right',
 					},
@@ -106,7 +106,7 @@ const config = {
 						items: [
 							{
 								label: 'Discord',
-								href: 'https://discord.gg/3GJTuqay',
+								href: 'https://discord.gg/D3YePTB45S',
 							},
 							{
 								label: 'Twitter',
