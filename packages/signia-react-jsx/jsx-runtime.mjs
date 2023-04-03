@@ -1,8 +1,6 @@
-const { wrapJsx } = require('signia-react')
-const { Fragment, jsx, jsxs } = require('react/jsx-runtime')
+import { wrapJsx } from 'signia-react'
+import { Fragment, jsx as _jsx, jsxs as _jsxs } from 'react/jsx-runtime'
 
-module.exports = {
-	Fragment,
-	jsx: wrapJsx(jsx),
-	jsxs: wrapJsx(jsxs),
-}
+export { Fragment }
+export const jsx = wrapJsx(_jsx)
+export const jsxs = wrapJsx(_jsxs)
