@@ -1,3 +1,15 @@
+# v0.1.1 (Mon Apr 03 2023)
+
+#### 🐛 Bug Fix
+
+- [fix] make jsx-runtime file esm [#70](https://github.com/tldraw/signia/pull/70) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.1.0 (Fri Mar 17 2023)
 
 #### 🚀 Enhancement
