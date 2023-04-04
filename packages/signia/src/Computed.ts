@@ -146,7 +146,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 
 	private computeDiff?: ComputeDiff<Value, Diff>
 
-	private readonly isEqual: null | ((a: any, b: any) => boolean)
+	private readonly isEqual: (a: any, b: any) => boolean
 
 	constructor(
 		/**
@@ -166,7 +166,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 			this.historyBuffer = new HistoryBuffer(options.historyLength)
 		}
 		this.computeDiff = options?.computeDiff
-		this.isEqual = options?.isEqual ?? null
+		this.isEqual = options?.isEqual ?? equals
 	}
 
 	__unsafe__getWithoutCapture(): Value {
@@ -181,7 +181,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 			startCapturingParents(this)
 			const result = this.derive(this.state, this.lastCheckedEpoch)
 			const newState = result instanceof WithDiff ? result.value : result
-			if (!(this.isEqual?.(newState, this.state) ?? equals(newState, this.state))) {
+			if (!this.isEqual(newState, this.state)) {
 				if (this.historyBuffer && !isNew) {
 					const diff = result instanceof WithDiff ? result.diff : undefined
 					this.historyBuffer.pushEntry(
