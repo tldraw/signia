@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { useMemo, useSyncExternalStore } from 'react'
+import { useMemo, useRef, useSyncExternalStore } from 'react'
 import { computed, react, Signal } from 'signia'
 
 /**
@@ -48,24 +48,51 @@ export function useValue() {
 	// deps will be either the computed or the deps array
 	const deps = args.length === 3 ? args[2] : [args[0]]
 	const name = args.length === 3 ? args[0] : `useValue(${args[0].name})`
+
+	const isInRender = useRef(true)
+	isInRender.current = true
+
 	const $val = useMemo(() => {
 		if (args.length === 1) {
 			return args[0]
 		}
-		return computed(name, args[1])
+		return computed(name, () => {
+			if (isInRender.current) {
+				return args[1]()
+			} else {
+				try {
+					return args[1]()
+				} catch {
+					// when getSnapshot is called outside of the render phase &
+					// subsequently throws an error, it might be because we're
+					// in a zombie-child state. in that case, we suppress the
+					// error and instead return a new dummy value to trigger a
+					// react re-render. if we were in a zombie child, react will
+					// unmount us instead of re-rendering so the error is
+					// irrelevant. if we're not in a zombie-child, react will
+					// call `getSnapshot` again in the render phase, and the
+					// error will be thrown as expected.å
+					return {}
+				}
+			}
+		})
 	}, deps)
 
-	const { subscribe, getSnapshot } = useMemo(() => {
-		return {
-			subscribe: (listen: () => void) => {
-				return react(`useValue(${name})`, () => {
-					$val.value
-					listen()
-				})
-			},
-			getSnapshot: () => $val.value,
-		}
-	}, [$val])
+	try {
+		const { subscribe, getSnapshot } = useMemo(() => {
+			return {
+				subscribe: (listen: () => void) => {
+					return react(`useValue(${name})`, () => {
+						$val.value
+						listen()
+					})
+				},
+				getSnapshot: () => $val.value,
+			}
+		}, [$val])
 
-	return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+		return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+	} finally {
+		isInRender.current = false
+	}
 }
