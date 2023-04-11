@@ -111,5 +111,8 @@
 	},
 	"typedoc": {
 		"displayName": "API"
+	},
+	"dependencies": {
+		"lazyrepo": "0.0.0-alpha.6"
 	}
 }
