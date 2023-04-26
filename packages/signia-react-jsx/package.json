@@ -6,6 +6,7 @@
 	"author": "tldraw GB Ltd.",
 	"license": "MIT",
 	"homepage": "https://tldraw.dev",
+	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/tldraw/signia"
@@ -14,9 +15,9 @@
 		"url": "https://github.com/tldraw/signia/issues"
 	},
 	"files": [
-		"jsx-dev-runtime.mjs",
+		"jsx-dev-runtime.js",
 		"jsx-dev-runtime.d.ts",
-		"jsx-runtime.mjs",
+		"jsx-runtime.js",
 		"jsx-runtime.d.ts"
 	],
 	"dependencies": {
