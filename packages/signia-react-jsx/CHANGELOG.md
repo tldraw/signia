@@ -1,3 +1,15 @@
+# v0.1.3 (Wed Apr 26 2023)
+
+#### 🐛 Bug Fix
+
+- Make signia-react-jsx a proper esm module [#76](https://github.com/tldraw/signia/pull/76) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.1.1 (Mon Apr 03 2023)
 
 #### 🐛 Bug Fix
