@@ -1,3 +1,22 @@
+# v0.1.2 (Wed Apr 26 2023)
+
+#### 🐛 Bug Fix
+
+- `signia-react`
+  - prevent useValue from throwing when used in a zombie-child [#72](https://github.com/tldraw/signia/pull/72) ([@SomeHats](https://github.com/SomeHats))
+
+#### 🏎 Performance
+
+- `signia`
+  - [perf] remove conditional in __unsafe__getWithoutCapture [#71](https://github.com/tldraw/signia/pull/71) ([@ds300](https://github.com/ds300))
+
+#### Authors: 2
+
+- alex ([@SomeHats](https://github.com/SomeHats))
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.1.1 (Mon Apr 03 2023)
 
 #### 🐛 Bug Fix

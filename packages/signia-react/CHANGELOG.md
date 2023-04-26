@@ -1,3 +1,15 @@
+# v0.1.2 (Wed Apr 26 2023)
+
+#### 🐛 Bug Fix
+
+- prevent useValue from throwing when used in a zombie-child [#72](https://github.com/tldraw/signia/pull/72) ([@SomeHats](https://github.com/SomeHats))
+
+#### Authors: 1
+
+- alex ([@SomeHats](https://github.com/SomeHats))
+
+---
+
 # v0.1.0 (Fri Mar 17 2023)
 
 #### 🚀 Enhancement
