@@ -587,3 +587,24 @@ describe(getComputedInstance, () => {
 		expect(bInst).toBeInstanceOf(_Computed)
 	})
 })
+
+describe('computed isEqual', () => {
+	it('does not get called for the initialization', () => {
+		const isEqual = jest.fn((a, b) => a === b)
+
+		const a = atom('a', 1)
+		const b = computed('b', () => a.value * 2, { isEqual })
+
+		expect(b.value).toBe(2)
+		expect(isEqual).not.toHaveBeenCalled()
+		expect(b.value).toBe(2)
+		expect(isEqual).not.toHaveBeenCalled()
+
+		a.set(2)
+
+		expect(b.value).toBe(4)
+		expect(isEqual).toHaveBeenCalledTimes(1)
+		expect(b.value).toBe(4)
+		expect(isEqual).toHaveBeenCalledTimes(1)
+	})
+})
