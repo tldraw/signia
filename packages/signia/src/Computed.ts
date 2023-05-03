@@ -181,7 +181,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 			startCapturingParents(this)
 			const result = this.derive(this.state, this.lastCheckedEpoch)
 			const newState = result instanceof WithDiff ? result.value : result
-			if (!this.isEqual(newState, this.state)) {
+			if (this.state === UNINITIALIZED || !this.isEqual(newState, this.state)) {
 				if (this.historyBuffer && !isNew) {
 					const diff = result instanceof WithDiff ? result.diff : undefined
 					this.historyBuffer.pushEntry(
