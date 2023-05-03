@@ -1,3 +1,15 @@
+# v0.1.4 (Wed May 03 2023)
+
+#### 🐛 Bug Fix
+
+- [fix] isEqual usage in computed [#77](https://github.com/tldraw/signia/pull/77) ([@ds300](https://github.com/ds300))
+
+#### Authors: 1
+
+- David Sheldrick ([@ds300](https://github.com/ds300))
+
+---
+
 # v0.1.2 (Wed Apr 26 2023)
 
 #### 🏎 Performance
