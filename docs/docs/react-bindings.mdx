@@ -31,7 +31,7 @@ Before reading this section, make sure you have read the [Using Signals](using-s
 ### Writing reactive components
 
 :::tip
-If you are using `signia-react-jsx`, feel free to skip this section. Your components are already reactive! ✨
+If you are using `signia-react-jsx`, feel free to skip this section unless you're using Remix. Your components are already reactive! ✨
 :::
 
 We recommend using `track` to wrap all components that use signals following this pattern:
@@ -64,6 +64,59 @@ const MyComponent: React.FC<MyComponentProps> = (props: MyComponentProps) => {
 	// ...
 }
 ```
+
+:::tip Remix
+Using `jsxImportSource` to set up reactivity may take some extra care with Remix.
+
+1. Add the following settings to your `tsconfig.json` file:
+
+```json
+"jsxImportSource": "signia-react-jsx",
+"emitDecoratorMetadata": true,
+"experimentalDecorators": true,
+```
+
+The first modifies the JSX pragma to add Signia's `track` function to all your components. The second two allow you to use the `@computed` decorator when building classes around Signia's `atoms`.
+
+2. Add the following setting to your `remix.config.js` file to prevent your build from failing:
+```json
+serverDependenciesToBundle: ["signia-react-jsx/jsx-dev-runtime"],
+```
+
+3. At present, the updated pragma won't affect the components you export from your route modules via `export default`, but it will affect their children.
+
+You have several options.
+
+A. Rely on the 	`useValue` hook in your export default components and the pragma (`signia-react-jsx`) in their children.
+B. Wrap each of your route's export default components in `track`, then rely on the pragma in their children.
+C. Rely on the pragma by abstracting your export default component logic into a new component:
+
+This:
+```jsx
+export default function MyRoute() {
+  return <AllMyRouteLogicAndComponents />;
+}
+```
+
+Instead of this:
+```jsx
+export default function MyRoute() {
+	const data = useLoaderData<typeof loader>();
+
+	const signiaState = SigniaClass.useSigniaState(data);
+	const stringArray = signiaState.myStringsDataArray;
+
+	return (
+		<Layout>
+			{stringArray.map((str) => {
+				return <p key={str}>{str}</p>;
+			})}
+		</Layout>
+	);
+}
+```
+
+:::
 
 ### Managing shared state
 
