@@ -1,18 +1,27 @@
-import { atom } from '../Atom.js'
-import { computed, Computed, getComputedInstance, isUninitialized, _Computed } from '../Computed.js'
-import { reactor } from '../EffectScheduler.js'
+import { Computed, getComputedInstance, _Computed } from '../Computed.js'
 import { assertNever } from '../helpers.js'
-import { advanceGlobalEpoch, globalEpoch, transact, transaction } from '../transactions.js'
+import { Signia } from '../Signia.js'
 import { RESET_VALUE, Signal } from '../types.js'
 
 function getLastCheckedEpoch(derivation: Computed<any>): number {
 	return (derivation as any).lastCheckedEpoch
 }
 
+const {
+	computed,
+	atom,
+	effect,
+	transact,
+	transaction,
+	isUninitialized,
+	// @ts-expect-error
+	ctx,
+} = new Signia()
+
 describe('derivations', () => {
 	it('will cache a value forever if it has no parents', () => {
 		const derive = jest.fn(() => 1)
-		const startEpoch = globalEpoch
+		const startEpoch = ctx.globalEpoch
 		const derivation = computed('', derive)
 
 		expect(derive).toHaveBeenCalledTimes(0)
@@ -23,16 +32,16 @@ describe('derivations', () => {
 
 		expect(derive).toHaveBeenCalledTimes(1)
 
-		advanceGlobalEpoch()
-		advanceGlobalEpoch()
-		advanceGlobalEpoch()
-		advanceGlobalEpoch()
+		ctx.globalEpoch++
+		ctx.globalEpoch++
+		ctx.globalEpoch++
+		ctx.globalEpoch++
 
 		expect(derivation.value).toBe(1)
 		expect(derivation.value).toBe(1)
 		expect(derivation.value).toBe(1)
-		advanceGlobalEpoch()
-		advanceGlobalEpoch()
+		ctx.globalEpoch++
+		ctx.globalEpoch++
 		expect(derivation.value).toBe(1)
 		expect(derivation.value).toBe(1)
 
@@ -47,7 +56,7 @@ describe('derivations', () => {
 		const a = atom('', 1)
 		const double = jest.fn(() => a.value * 2)
 		const derivation = computed('', double)
-		const startEpoch = globalEpoch
+		const startEpoch = ctx.globalEpoch
 		expect(double).toHaveBeenCalledTimes(0)
 
 		expect(derivation.value).toBe(2)
@@ -61,7 +70,7 @@ describe('derivations', () => {
 		expect(derivation.lastChangedEpoch).toBe(startEpoch)
 
 		a.set(2)
-		const nextEpoch = globalEpoch
+		const nextEpoch = ctx.globalEpoch
 		expect(nextEpoch > startEpoch).toBe(true)
 
 		expect(double).toHaveBeenCalledTimes(1)
@@ -87,7 +96,7 @@ describe('derivations', () => {
 	})
 
 	it('supports history', () => {
-		const startEpoch = globalEpoch
+		const startEpoch = ctx.globalEpoch
 		const a = atom('', 1)
 
 		const derivation = computed('', () => a.value * 2, {
@@ -114,12 +123,12 @@ describe('derivations', () => {
 		expect(derivation.getDiffSince(startEpoch)).toEqual([+2, +2, +4])
 
 		a.set(6)
-		// should fail now because we don't have enough hisstory
+		// should fail now because we don't have enough history
 		expect(derivation.getDiffSince(startEpoch)).toEqual(RESET_VALUE)
 	})
 
-	it('doesnt update history if it doesnt change', () => {
-		const startEpoch = globalEpoch
+	it("doesn't update history if it doesn't change", () => {
+		const startEpoch = ctx.globalEpoch
 		const a = atom('', 1)
 
 		const floor = jest.fn((n: number) => Math.floor(n))
@@ -158,8 +167,8 @@ describe('derivations', () => {
 		expect(floor).toHaveBeenCalledTimes(5)
 	})
 
-	it('updates the lastCheckedEpoch whenever the globalEpoch advances', () => {
-		const startEpoch = globalEpoch
+	it('updates the lastCheckedEpoch whenever the ctx.globalEpoch advances', () => {
+		const startEpoch = ctx.globalEpoch
 		const a = atom('', 1)
 
 		const double = jest.fn(() => a.value * 2)
@@ -169,7 +178,7 @@ describe('derivations', () => {
 
 		expect(getLastCheckedEpoch(derivation)).toEqual(startEpoch)
 
-		advanceGlobalEpoch()
+		ctx.globalEpoch++
 		derivation.value
 
 		expect(getLastCheckedEpoch(derivation)).toBeGreaterThan(startEpoch)
@@ -203,7 +212,7 @@ describe('derivations', () => {
 
 		expect(derivation.value).toBe(2)
 
-		const startEpoch = globalEpoch
+		const startEpoch = ctx.globalEpoch
 
 		a.set(2)
 
@@ -226,7 +235,7 @@ describe('derivations', () => {
 
 		let numTimesReacted = 0
 		let name = ''
-		const r = reactor('', () => {
+		const r = effect('', () => {
 			name = fullName.value
 			numTimesReacted++
 		})
@@ -275,7 +284,7 @@ describe('derivations', () => {
 		expect(name).toBe('Wilbur Jones')
 	})
 
-	it('will roll back to their initial value if a transaciton is aborted', () => {
+	it('will roll back to their initial value if a transaction is aborted', () => {
 		const firstName = atom('', 'John')
 		const lastName = atom('', 'Doe')
 
@@ -300,7 +309,7 @@ describe('derivations', () => {
 			computeDiff: (a, b) => b - a,
 		})
 
-		const startEpoch = globalEpoch
+		const startEpoch = ctx.globalEpoch
 
 		transaction((rollback) => {
 			expect(c.getDiffSince(startEpoch)).toEqual([])
@@ -322,7 +331,7 @@ describe('derivations', () => {
 			computeDiff: (a, b) => b - a,
 		})
 
-		expect(c.getDiffSince(globalEpoch - 1)).toEqual(RESET_VALUE)
+		expect(c.getDiffSince(ctx.globalEpoch - 1)).toEqual(RESET_VALUE)
 	})
 })
 

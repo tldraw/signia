@@ -1,9 +1,10 @@
 import { times } from 'lodash'
-import { atom, Atom, isAtom } from '../Atom.js'
-import { computed, Computed, isComputed } from '../Computed.js'
-import { Reactor, reactor } from '../EffectScheduler.js'
-import { transact } from '../transactions.js'
+import { Atom } from '../Atom.js'
+import { Computed } from '../Computed.js'
+import { Effect } from '../EffectScheduler.js'
+import { Signia } from '../Signia.js'
 import { Signal } from '../types.js'
+const { atom, computed, effect, transact, isAtom, isComputed } = new Signia()
 
 class RandomSource {
 	private seed: number
@@ -78,7 +79,7 @@ type FuzzSystemState = {
 	derivations: Record<string, { derivation: Computed<Letter>; sneakyGet: () => Letter }>
 	derivationsInDerivations: Record<string, Computed<Computed<Letter>>>
 	atomsInDerivations: Record<string, Computed<Atom<Letter>>>
-	reactors: Record<string, { reactor: Reactor; result: string | null; dependencies: Signal<any>[] }>
+	reactors: Record<string, { reactor: Effect; result: string | null; dependencies: Signal<any>[] }>
 }
 
 type Op =
@@ -234,7 +235,7 @@ class Test {
 			})
 
 			this.systemState.reactors[reactorId] = {
-				reactor: reactor(reactorId, () => {
+				reactor: effect(reactorId, () => {
 					this.systemState.reactors[reactorId].result = dependencies.map(unpack).join(':')
 				}),
 				result: '',

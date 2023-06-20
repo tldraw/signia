@@ -1,11 +1,12 @@
-import { atom } from '../Atom.js'
 import { EffectScheduler } from '../EffectScheduler.js'
+import { Signia } from '../Signia.js'
+const { atom, effectScheduler } = new Signia()
 
 describe(EffectScheduler, () => {
-	test('when you detatch and reattach, it retains the parents without rerunning', () => {
+	test('when you detach and reattach, it retains the parents without rerunning', () => {
 		const a = atom('a', 1)
 		let numReactions = 0
-		const scheduler = new EffectScheduler('test', () => {
+		const scheduler = effectScheduler('test', () => {
 			a.value
 			numReactions++
 		})
@@ -22,10 +23,10 @@ describe(EffectScheduler, () => {
 		expect(numReactions).toBe(3)
 	})
 
-	test('when you detatch and reattach, it retains the parents while rerunning if the parent has changed', () => {
+	test('when you detach and reattach, it retains the parents while rerunning if the parent has changed', () => {
 		const a = atom('a', 1)
 		let numReactions = 0
-		const scheduler = new EffectScheduler('test', () => {
+		const scheduler = effectScheduler('test', () => {
 			a.value
 			numReactions++
 		})
@@ -48,7 +49,7 @@ describe(EffectScheduler, () => {
 		const a = atom('a', 1)
 		let numReactions = 0
 		let numSchedules = 0
-		const scheduler = new EffectScheduler(
+		const scheduler = effectScheduler(
 			'test',
 			() => {
 				a.value

@@ -1,10 +1,9 @@
-import { startCapturingParents, stopCapturingParents } from './capture.js'
 import { GLOBAL_START_EPOCH } from './constants.js'
 import { attach, detach, haveParentsChanged } from './helpers.js'
-import { globalEpoch } from './transactions.js'
+import { SigniaContext } from './SigniaContext.js'
 import { Signal } from './types.js'
 
-interface EffectSchedulerOptions {
+export interface EffectSchedulerOptions {
 	/**
 	 * scheduleEffect is a function that will be called when the effect is scheduled.
 	 *
@@ -83,6 +82,7 @@ export class EffectScheduler<Result> {
 	parents: Signal<any, any>[] = []
 	private readonly _scheduleEffect?: (execute: () => void) => void
 	constructor(
+		private readonly ctx: SigniaContext,
 		public readonly name: string,
 		private readonly runEffect: (lastReactedEpoch: number) => Result,
 		options?: EffectSchedulerOptions
@@ -95,11 +95,11 @@ export class EffectScheduler<Result> {
 		// bail out if we have been cancelled by another effect
 		if (!this._isActivelyListening) return
 		// bail out if no atoms have changed since the last time we ran this effect
-		if (this.lastReactedEpoch === globalEpoch) return
+		if (this.lastReactedEpoch === this.ctx.globalEpoch) return
 
 		// bail out if we have parents and they have not changed since last time
 		if (this.parents.length && !haveParentsChanged(this)) {
-			this.lastReactedEpoch = globalEpoch
+			this.lastReactedEpoch = this.ctx.globalEpoch
 			return
 		}
 		// if we don't have parents it's probably the first time this is running.
@@ -154,56 +154,13 @@ export class EffectScheduler<Result> {
 	 */
 	execute(): Result {
 		try {
-			startCapturingParents(this)
+			this.ctx.startCapturingParents(this)
 			const result = this.runEffect(this.lastReactedEpoch)
-			this.lastReactedEpoch = globalEpoch
+			this.lastReactedEpoch = this.ctx.globalEpoch
 			return result
 		} finally {
-			stopCapturingParents()
+			this.ctx.stopCapturingParents()
 		}
-	}
-}
-
-/**
- * Starts a new effect scheduler, scheduling the effect immediately.
- *
- * Returns a function that can be called to stop the scheduler.
- *
- * @example
- * ```ts
- * const color = atom('color', 'red')
- * const stop = react('set style', () => {
- *   divElem.style.color = color.value
- * })
- * color.set('blue')
- * // divElem.style.color === 'blue'
- * stop()
- * color.set('green')
- * // divElem.style.color === 'blue'
- * ```
- *
- *
- * Also useful in React applications for running effects outside of the render cycle.
- *
- * @example
- * ```ts
- * useEffect(() => react('set style', () => {
- *   divRef.current.style.color = color.value
- * }), [])
- * ```
- *
- * @public
- */
-export function react(
-	name: string,
-	fn: (lastReactedEpoch: number) => any,
-	options?: EffectSchedulerOptions
-) {
-	const scheduler = new EffectScheduler(name, fn, options)
-	scheduler.attach()
-	scheduler.scheduleEffect()
-	return () => {
-		scheduler.detach()
 	}
 }
 
@@ -217,7 +174,7 @@ export function react(
  * You can create a reactor with [[reactor]].
  * @public
  */
-export interface Reactor<T = unknown> {
+export interface Effect<T = unknown> {
 	/**
 	 * The underlying effect scheduler.
 	 * @public
@@ -237,32 +194,4 @@ export interface Reactor<T = unknown> {
 	 * @public
 	 */
 	stop(): void
-}
-
-/**
- * Creates a [[Reactor]], which is a thin wrapper around an [[EffectScheduler]].
- *
- * @public
- */
-export function reactor<Result>(
-	name: string,
-	fn: (lastReactedEpoch: number) => Result,
-	options?: EffectSchedulerOptions
-): Reactor<Result> {
-	const scheduler = new EffectScheduler<Result>(name, fn, options)
-	return {
-		scheduler,
-		start: (options?: { force?: boolean }) => {
-			const force = options?.force ?? false
-			scheduler.attach()
-			if (force) {
-				scheduler.scheduleEffect()
-			} else {
-				scheduler.maybeScheduleEffect()
-			}
-		},
-		stop: () => {
-			scheduler.detach()
-		},
-	}
 }

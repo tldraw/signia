@@ -1,14 +1,14 @@
-import { atom } from '../Atom.js'
-import {
-	maybeCaptureParent,
-	startCapturingParents,
-	stopCapturingParents,
-	unsafe__withoutCapture,
-} from '../capture.js'
-import { computed } from '../Computed.js'
-import { react } from '../EffectScheduler.js'
-import { advanceGlobalEpoch, globalEpoch } from '../transactions.js'
+import { Signia } from '../Signia.js'
 import { Child } from '../types.js'
+
+const {
+	atom,
+	computed,
+	unsafe__withoutCapture,
+	runEffect,
+	// @ts-expect-error
+	ctx,
+} = new Signia()
 
 const emptyChild = (props: Partial<Child> = {}) =>
 	({
@@ -22,15 +22,15 @@ const emptyChild = (props: Partial<Child> = {}) =>
 describe('capturing parents', () => {
 	it('can be started and stopped', () => {
 		const a = atom('', 1)
-		const startEpoch = globalEpoch
+		const startEpoch = ctx.globalEpoch
 
 		const child = emptyChild()
 		const originalParentEpochs = child.parentEpochs
 		const originalParents = child.parents
 
-		startCapturingParents(child)
-		maybeCaptureParent(a)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(a)
+		ctx.stopCapturingParents()
 
 		// the parents should be kept because no sharing is possible and we don't want to reallocate
 		// when parents change
@@ -42,13 +42,13 @@ describe('capturing parents', () => {
 
 	it('can handle several parents', () => {
 		const atomA = atom('', 1)
-		const atomAEpoch = globalEpoch
-		advanceGlobalEpoch() // let's say time has passed
+		const atomAEpoch = ctx.globalEpoch
+		ctx.globalEpoch++ // let's say time has passed
 		const atomB = atom('', 1)
-		const atomBEpoch = globalEpoch
-		advanceGlobalEpoch() // let's say time has passed
+		const atomBEpoch = ctx.globalEpoch
+		ctx.globalEpoch++ // let's say time has passed
 		const atomC = atom('', 1)
-		const atomCEpoch = globalEpoch
+		const atomCEpoch = ctx.globalEpoch
 
 		expect(atomAEpoch < atomBEpoch).toBe(true)
 		expect(atomBEpoch < atomCEpoch).toBe(true)
@@ -58,11 +58,11 @@ describe('capturing parents', () => {
 		const originalParentEpochs = child.parentEpochs
 		const originalParents = child.parents
 
-		startCapturingParents(child)
-		maybeCaptureParent(atomA)
-		maybeCaptureParent(atomB)
-		maybeCaptureParent(atomC)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(atomA)
+		ctx.maybeCaptureParent(atomB)
+		ctx.maybeCaptureParent(atomC)
+		ctx.stopCapturingParents()
 
 		// the parents should be kept because no sharing is possible and we don't want to reallocate
 		// when parents change
@@ -75,82 +75,82 @@ describe('capturing parents', () => {
 
 	it('will reorder if parents are captured in different orders each time', () => {
 		const atomA = atom('', 1)
-		advanceGlobalEpoch() // let's say time has passed
+		ctx.globalEpoch++ // let's say time has passed
 		const atomB = atom('', 1)
-		advanceGlobalEpoch() // let's say time has passed
+		ctx.globalEpoch++ // let's say time has passed
 		const atomC = atom('', 1)
 
 		const child = emptyChild()
 
-		startCapturingParents(child)
-		maybeCaptureParent(atomA)
-		maybeCaptureParent(atomB)
-		maybeCaptureParent(atomC)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(atomA)
+		ctx.maybeCaptureParent(atomB)
+		ctx.maybeCaptureParent(atomC)
+		ctx.stopCapturingParents()
 
 		expect(child.parents).toEqual([atomA, atomB, atomC])
 
-		startCapturingParents(child)
-		maybeCaptureParent(atomB)
-		maybeCaptureParent(atomA)
-		maybeCaptureParent(atomC)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(atomB)
+		ctx.maybeCaptureParent(atomA)
+		ctx.maybeCaptureParent(atomC)
+		ctx.stopCapturingParents()
 
 		expect(child.parents).toEqual([atomB, atomA, atomC])
 
-		startCapturingParents(child)
-		maybeCaptureParent(atomA)
-		maybeCaptureParent(atomC)
-		maybeCaptureParent(atomB)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(atomA)
+		ctx.maybeCaptureParent(atomC)
+		ctx.maybeCaptureParent(atomB)
+		ctx.stopCapturingParents()
 
 		expect(child.parents).toEqual([atomA, atomC, atomB])
 	})
 
 	it('will shrink the parent arrays if the number of captured parents shrinks', () => {
 		const atomA = atom('', 1)
-		const atomAEpoch = globalEpoch
-		advanceGlobalEpoch() // let's say time has passed
+		const atomAEpoch = ctx.globalEpoch
+		ctx.globalEpoch++ // let's say time has passed
 		const atomB = atom('', 1)
-		const atomBEpoch = globalEpoch
-		advanceGlobalEpoch() // let's say time has passed
+		const atomBEpoch = ctx.globalEpoch
+		ctx.globalEpoch++ // let's say time has passed
 		const atomC = atom('', 1)
-		const atomCEpoch = globalEpoch
+		const atomCEpoch = ctx.globalEpoch
 
 		const child = emptyChild()
 
 		const originalParents = child.parents
 		const originalParentEpochs = child.parentEpochs
 
-		startCapturingParents(child)
-		maybeCaptureParent(atomA)
-		maybeCaptureParent(atomB)
-		maybeCaptureParent(atomC)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(atomA)
+		ctx.maybeCaptureParent(atomB)
+		ctx.maybeCaptureParent(atomC)
+		ctx.stopCapturingParents()
 
 		expect(child.parents).toEqual([atomA, atomB, atomC])
 		expect(child.parents).toBe(originalParents)
 
-		startCapturingParents(child)
-		maybeCaptureParent(atomB)
-		maybeCaptureParent(atomA)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(atomB)
+		ctx.maybeCaptureParent(atomA)
+		ctx.stopCapturingParents()
 
 		expect(child.parents).toEqual([atomB, atomA])
 		expect(child.parentEpochs).toEqual([atomBEpoch, atomAEpoch])
 		expect(child.parents).toBe(originalParents)
 
-		startCapturingParents(child)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.stopCapturingParents()
 
 		expect(child.parents).toEqual([])
 		expect(child.parentEpochs).toEqual([])
 		expect(child.parents).toBe(originalParents)
 		expect(child.parentEpochs).toBe(originalParentEpochs)
 
-		startCapturingParents(child)
-		maybeCaptureParent(atomC)
-		stopCapturingParents()
+		ctx.startCapturingParents(child)
+		ctx.maybeCaptureParent(atomC)
+		ctx.stopCapturingParents()
 
 		expect(child.parents).toEqual([atomC])
 		expect(child.parentEpochs).toEqual([atomCEpoch])
@@ -158,15 +158,15 @@ describe('capturing parents', () => {
 		expect(child.parentEpochs).toBe(originalParentEpochs)
 	})
 
-	it('doesnt do anything if you dont start capturing', () => {
+	it("doesn't do anything if you don't start capturing", () => {
 		expect(() => {
-			maybeCaptureParent(atom('', 1))
+			ctx.maybeCaptureParent(atom('', 1))
 		}).not.toThrow()
 	})
 })
 
-describe(unsafe__withoutCapture, () => {
-	it('allows executing comptuer code in a context that short-circuits the current capture frame', () => {
+describe('unsafe__withoutCapture', () => {
+	it('allows executing computed code in a context that short-circuits the current capture frame', () => {
 		const atomA = atom('a', 1)
 		const atomB = atom('b', 1)
 		const atomC = atom('c', 1)
@@ -178,7 +178,7 @@ describe(unsafe__withoutCapture, () => {
 		let lastValue: number | undefined
 		let numReactions = 0
 
-		react('', () => {
+		runEffect('', () => {
 			numReactions++
 			lastValue = child.value
 		})
@@ -211,7 +211,7 @@ describe(unsafe__withoutCapture, () => {
 		let lastValue: number | undefined
 		let numReactions = 0
 
-		react('', () => {
+		runEffect('', () => {
 			numReactions++
 			lastValue = atomA.value + atomB.value + unsafe__withoutCapture(() => atomC.value)
 		})

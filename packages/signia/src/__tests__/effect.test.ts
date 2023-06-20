@@ -1,11 +1,18 @@
-import { atom } from '../Atom.js'
-import { react, reactor } from '../EffectScheduler.js'
-import { advanceGlobalEpoch, transact } from '../transactions.js'
+import { Signia } from '../Signia.js'
 
-describe('reactors', () => {
+const {
+	atom,
+	effect,
+	runEffect,
+	transact,
+	// @ts-expect-error
+	ctx,
+} = new Signia()
+
+describe('effects', () => {
 	it('can be started and stopped ', () => {
 		const a = atom('', 1)
-		const r = reactor('', () => {
+		const r = effect('', () => {
 			a.value
 		})
 		expect(r.scheduler.isActivelyListening).toBe(false)
@@ -19,7 +26,7 @@ describe('reactors', () => {
 
 	it('can not set atom values directly yet', () => {
 		const a = atom('', 1)
-		const r = reactor('', () => {
+		const r = effect('', () => {
 			if (a.value < +Infinity) {
 				a.update((a) => a + 1)
 			}
@@ -37,7 +44,7 @@ describe('reactors', () => {
 			atomA.value
 			atomB.value
 		})
-		const r = reactor('', react)
+		const r = effect('', react)
 
 		r.start()
 		expect(react).toHaveBeenCalledTimes(1)
@@ -55,7 +62,7 @@ describe('reactors', () => {
 		const react = jest.fn(() => {
 			a.value
 		})
-		const r = reactor('', react)
+		const r = effect('', react)
 
 		r.scheduler.maybeScheduleEffect()
 
@@ -69,12 +76,12 @@ describe('reactors', () => {
 				a.value
 			})
 			.mockName('react')
-		const r = reactor('', react)
+		const r = effect('', react)
 
 		r.start()
 		expect(react).toHaveBeenCalledTimes(1)
 
-		advanceGlobalEpoch()
+		ctx.globalEpoch++
 		r.scheduler.maybeScheduleEffect()
 		expect(react).toHaveBeenCalledTimes(1)
 	})
@@ -87,7 +94,7 @@ describe('stopping', () => {
 		const rfn = jest.fn(() => {
 			a.value
 		})
-		const r = reactor('', rfn)
+		const r = effect('', rfn)
 
 		expect(a.children.isEmpty).toBe(true)
 
@@ -123,7 +130,7 @@ test('.start() by default does not trigger a reaction if nothing has changed', (
 		a.value
 	})
 
-	const r = reactor('', rfn)
+	const r = effect('', rfn)
 	r.start()
 
 	expect(rfn).toHaveBeenCalledTimes(1)
@@ -142,7 +149,7 @@ test('.start({force: true}) will trigger a reaction even if nothing has changed'
 		a.value
 	})
 
-	const r = reactor('', rfn)
+	const r = effect('', rfn)
 	r.start()
 
 	expect(rfn).toHaveBeenCalledTimes(1)
@@ -158,7 +165,7 @@ test('.start with a custom scheduler only schedules an effect, it does not execu
 	let numSchedules = 0
 	let numExecutes = 0
 
-	const r = reactor(
+	const r = effect(
 		'',
 		() => {
 			numExecutes++
@@ -175,11 +182,11 @@ test('.start with a custom scheduler only schedules an effect, it does not execu
 	expect(numExecutes).toBe(0)
 })
 
-test('react() with a custom scheduler only schedules an effect, it does not execute it immediately', () => {
+test('runEffect() with a custom scheduler only schedules an effect, it does not execute it immediately', () => {
 	let numSchedules = 0
 	let numExecutes = 0
 
-	const stop = react(
+	const stop = runEffect(
 		'',
 		() => {
 			numExecutes++

@@ -1,7 +1,11 @@
 import ReactTestRenderer from 'react-test-renderer'
-import { Atom } from 'signia'
-import { useAtom } from './useAtom.js'
-import { useValue } from './useValue.js'
+import { Atom, Signia } from 'signia'
+import { SigniaReact } from './SigniaReact'
+
+const signia = new Signia()
+const signiaReact = new SigniaReact(signia)
+
+const { useAtom, useValue } = signiaReact
 
 test('useAtom returns an atom', async () => {
 	let theAtom: null | Atom<any> = null as any

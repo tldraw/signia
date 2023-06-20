@@ -1,7 +1,6 @@
-import { atom } from '../Atom.js'
-import { computed } from '../Computed.js'
-import { react } from '../EffectScheduler.js'
-import { transact, transaction } from '../transactions.js'
+import { Signia } from '../Signia.js'
+
+const { atom, computed, runEffect, transact, transaction } = new Signia()
 
 describe('transactions', () => {
 	it('should be abortable', () => {
@@ -17,7 +16,7 @@ describe('transactions', () => {
 		let numTimesReacted = 0
 		let name = ''
 
-		react('', () => {
+		runEffect('', () => {
 			name = fullName.value
 			numTimesReacted++
 		})

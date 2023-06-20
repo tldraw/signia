@@ -1,7 +1,13 @@
 import { createRef, forwardRef, memo, useEffect, useImperativeHandle } from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
-import { atom } from 'signia'
-import { track } from './track.js'
+import { Signia } from 'signia'
+import { SigniaReact } from './SigniaReact'
+
+const signia = new Signia()
+const signiaReact = new SigniaReact(signia)
+
+const { atom } = signia
+const { track } = signiaReact
 
 test("tracked components are memo'd", async () => {
 	let numRenders = 0

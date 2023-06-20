@@ -1,73 +1,23 @@
 /* eslint-disable prefer-rest-params */
 import { Child, ComputeDiff, RESET_VALUE, Signal } from './types.js'
 
-import { maybeCaptureParent, startCapturingParents, stopCapturingParents } from './capture.js'
-
 import { ArraySet } from './ArraySet.js'
 import { GLOBAL_START_EPOCH } from './constants.js'
 import { EMPTY_ARRAY, equals, haveParentsChanged } from './helpers.js'
 import { HistoryBuffer } from './HistoryBuffer.js'
-import { globalEpoch } from './transactions.js'
+import { SigniaContext } from './SigniaContext.js'
 
-const UNINITIALIZED = Symbol('UNINITIALIZED')
+export const UNINITIALIZED = Symbol('UNINITIALIZED')
 /**
  * The type of the first value passed to a computed signal function as the 'prevValue' parameter.
  *
  * @see [[isUninitialized]].
  * @public
  */
-type UNINITIALIZED = typeof UNINITIALIZED
+export type UNINITIALIZED = typeof UNINITIALIZED
 
-/**
- * Call this inside a computed signal function to determine whether it is the first time the function is being called.
- *
- * Mainly useful for incremental signal computation.
- *
- * @example
- * ```ts
- * const count = atom('count', 0)
- * const double = computed('double', (prevValue) => {
- *   if (isUninitialized(prevValue)) {
- *     console.log('First time!')
- *   }
- *   return count.value * 2
- * })
- *
- * @param value - The value to check.
- * @public
- */
-export const isUninitialized = (value: any): value is UNINITIALIZED => {
-	return value === UNINITIALIZED
-}
-
-class WithDiff<Value, Diff> {
+export class WithDiff<Value, Diff> {
 	constructor(public value: Value, public diff: Diff) {}
-}
-
-/**
- * When writing incrementally-computed signals it is convenient (and usually more performant) to incrementally compute the diff too.
- *
- * You can use this function to wrap the return value of a computed signal function to indicate that the diff should be used instead of calculating a new one with [[AtomOptions.computeDiff]].
- *
- * @example
- * ```ts
- * const count = atom('count', 0)
- * const double = computed('double', (prevValue) => {
- *   const nextValue = count.value * 2
- *   if (isUninitialized(prevValue)) {
- *     return nextValue
- *   }
- *   return withDiff(nextValue, nextValue - prevValue)
- * }, { historyLength: 10 })
- * ```
- *
- *
- * @param value - The value.
- * @param diff - The diff.
- * @public
- */
-export function withDiff<Value, Diff>(value: Value, diff: Diff): WithDiff<Value, Diff> {
-	return new WithDiff(value, diff)
 }
 
 /**
@@ -149,6 +99,7 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 	private readonly isEqual: (a: any, b: any) => boolean
 
 	constructor(
+		public readonly ctx: SigniaContext,
 		/**
 		 * The name of the signal. This is used for debugging and performance profiling purposes. It does not need to be globally unique.
 		 */
@@ -172,13 +123,13 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 	__unsafe__getWithoutCapture(): Value {
 		const isNew = this.lastChangedEpoch === GLOBAL_START_EPOCH
 
-		if (!isNew && (this.lastCheckedEpoch === globalEpoch || !haveParentsChanged(this))) {
-			this.lastCheckedEpoch = globalEpoch
+		if (!isNew && (this.lastCheckedEpoch === this.ctx.globalEpoch || !haveParentsChanged(this))) {
+			this.lastCheckedEpoch = this.ctx.globalEpoch
 			return this.state
 		}
 
 		try {
-			startCapturingParents(this)
+			this.ctx.startCapturingParents(this)
 			const result = this.derive(this.state, this.lastCheckedEpoch)
 			const newState = result instanceof WithDiff ? result.value : result
 			if (this.state === UNINITIALIZED || !this.isEqual(newState, this.state)) {
@@ -186,26 +137,31 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 					const diff = result instanceof WithDiff ? result.diff : undefined
 					this.historyBuffer.pushEntry(
 						this.lastChangedEpoch,
-						globalEpoch,
+						this.ctx.globalEpoch,
 						diff ??
-							this.computeDiff?.(this.state, newState, this.lastCheckedEpoch, globalEpoch) ??
+							this.computeDiff?.(
+								this.state,
+								newState,
+								this.lastCheckedEpoch,
+								this.ctx.globalEpoch
+							) ??
 							RESET_VALUE
 					)
 				}
-				this.lastChangedEpoch = globalEpoch
+				this.lastChangedEpoch = this.ctx.globalEpoch
 				this.state = newState
 			}
-			this.lastCheckedEpoch = globalEpoch
+			this.lastCheckedEpoch = this.ctx.globalEpoch
 
 			return this.state
 		} finally {
-			stopCapturingParents()
+			this.ctx.stopCapturingParents()
 		}
 	}
 
 	get value(): Value {
 		const value = this.__unsafe__getWithoutCapture()
-		maybeCaptureParent(this)
+		this.ctx.maybeCaptureParent(this)
 		return value
 	}
 
@@ -222,7 +178,8 @@ export class _Computed<Value, Diff = unknown> implements Computed<Value, Diff> {
 	}
 }
 
-function computedAnnotation(
+export function computedAnnotation(
+	ctx: SigniaContext,
 	options: ComputedOptions<any, any> = {},
 	_target: any,
 	key: string,
@@ -235,7 +192,7 @@ function computedAnnotation(
 		let d = this[derivationKey] as _Computed<any> | undefined
 
 		if (!d) {
-			d = new _Computed(key, originalMethod!.bind(this) as any, options)
+			d = new _Computed(ctx, key, originalMethod!.bind(this) as any, options)
 			Object.defineProperty(this, derivationKey, {
 				enumerable: false,
 				configurable: false,
@@ -335,45 +292,21 @@ export function getComputedInstance<Obj extends object, Prop extends keyof Obj>(
  *
  * @public
  */
-export function computed<Value, Diff = unknown>(
-	name: string,
-	compute: (
-		previousValue: Value | typeof UNINITIALIZED,
-		lastComputedEpoch: number
-	) => Value | WithDiff<Value, Diff>,
-	options?: ComputedOptions<Value, Diff>
-): Computed<Value, Diff>
+export interface ComputedConstructor {
+	<Value, Diff = unknown>(
+		name: string,
+		compute: (
+			previousValue: Value | typeof UNINITIALIZED,
+			lastComputedEpoch: number
+		) => Value | WithDiff<Value, Diff>,
+		options?: ComputedOptions<Value, Diff>
+	): Computed<Value, Diff>
 
-/** @public */
-export function computed(
-	target: any,
-	key: string,
-	descriptor: PropertyDescriptor
-): PropertyDescriptor
-/** @public */
-export function computed<Value, Diff = unknown>(
-	options?: ComputedOptions<Value, Diff>
-): (target: any, key: string, descriptor: PropertyDescriptor) => PropertyDescriptor
-/** @public */
-export function computed() {
-	if (arguments.length === 1) {
-		const options = arguments[0]
-		return (target: any, key: string, descriptor: PropertyDescriptor) =>
-			computedAnnotation(options, target, key, descriptor)
-	} else if (typeof arguments[0] === 'string') {
-		return new _Computed(arguments[0], arguments[1], arguments[2])
-	} else {
-		return computedAnnotation(undefined, arguments[0], arguments[1], arguments[2])
-	}
+	(target: any, key: string, descriptor: PropertyDescriptor): PropertyDescriptor
+	<Value, Diff = unknown>(options?: ComputedOptions<Value, Diff>): (
+		target: any,
+		key: string,
+		descriptor: PropertyDescriptor
+	) => PropertyDescriptor
 }
 
-/**
- * Returns true if the given value is a computed signal.
- *
- * @param value
- * @returns {value is Computed<any>}
- * @public
- */
-export function isComputed(value: any): value is Computed<any> {
-	return value && value instanceof _Computed
-}

@@ -1,8 +1,7 @@
 import { ArraySet } from './ArraySet.js'
-import { maybeCaptureParent } from './capture.js'
 import { EMPTY_ARRAY, equals } from './helpers.js'
 import { HistoryBuffer } from './HistoryBuffer.js'
-import { advanceGlobalEpoch, atomDidChange, globalEpoch } from './transactions.js'
+import { SigniaContext } from './SigniaContext.js'
 import { Child, ComputeDiff, RESET_VALUE, Signal } from './types.js'
 
 /**
@@ -70,11 +69,13 @@ export interface Atom<Value, Diff = unknown> extends Signal<Value, Diff> {
  */
 export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 	constructor(
+		public readonly ctx: SigniaContext,
 		public readonly name: string,
 		private current: Value,
 		options?: AtomOptions<Value, Diff>
 	) {
 		this.isEqual = options?.isEqual ?? null
+		this.lastChangedEpoch = this.ctx.globalEpoch
 
 		if (!options) return
 
@@ -89,7 +90,7 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 
 	computeDiff?: ComputeDiff<Value, Diff>
 
-	lastChangedEpoch = globalEpoch
+	lastChangedEpoch: number
 
 	children = new ArraySet<Child>()
 
@@ -100,7 +101,7 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 	}
 
 	get value() {
-		maybeCaptureParent(this)
+		this.ctx.maybeCaptureParent(this)
 		return this.current
 	}
 
@@ -111,27 +112,27 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 		}
 
 		// Tick forward the global epoch
-		advanceGlobalEpoch()
+		this.ctx.globalEpoch++
 
 		// Add the diff to the history buffer.
 		if (this.historyBuffer) {
 			this.historyBuffer.pushEntry(
 				this.lastChangedEpoch,
-				globalEpoch,
+				this.ctx.globalEpoch,
 				diff ??
-					this.computeDiff?.(this.current, value, this.lastChangedEpoch, globalEpoch) ??
+					this.computeDiff?.(this.current, value, this.lastChangedEpoch, this.ctx.globalEpoch) ??
 					RESET_VALUE
 			)
 		}
 
 		// Update the atom's record of the epoch when last changed.
-		this.lastChangedEpoch = globalEpoch
+		this.lastChangedEpoch = this.ctx.globalEpoch
 
 		const oldValue = this.current
 		this.current = value
 
 		// Notify all children that this atom has changed.
-		atomDidChange(this, oldValue)
+		this.ctx.atomDidChange(this, oldValue)
 
 		return value
 	}
@@ -141,7 +142,7 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 	}
 
 	getDiffSince(epoch: number): RESET_VALUE | Diff[] {
-		maybeCaptureParent(this)
+		this.ctx.maybeCaptureParent(this)
 
 		// If no changes have occurred since the given epoch, return an empty array.
 		if (epoch >= this.lastChangedEpoch) {
@@ -150,47 +151,4 @@ export class _Atom<Value, Diff = unknown> implements Atom<Value, Diff> {
 
 		return this.historyBuffer?.getChangesSince(epoch) ?? RESET_VALUE
 	}
-}
-
-/**
- * Creates a new [[Atom]].
- *
- * An Atom is a signal that can be updated directly by calling [[Atom.set]] or [[Atom.update]].
- *
- * @example
- * ```ts
- * const name = atom('name', 'John')
- *
- * name.value // 'John'
- *
- * name.set('Jane')
- *
- * name.value // 'Jane'
- * ```
- *
- * @public
- */
-export function atom<Value, Diff = unknown>(
-	/**
-	 * A name for the signal. This is used for debugging and profiling purposes, it does not need to be unique.
-	 */
-	name: string,
-	/**
-	 * The initial value of the signal.
-	 */
-	initialValue: Value,
-	/**
-	 * The options to configure the atom. See [[AtomOptions]].
-	 */
-	options?: AtomOptions<Value, Diff>
-): Atom<Value, Diff> {
-	return new _Atom(name, initialValue, options)
-}
-
-/**
- * Returns true if the given value is an [[Atom]].
- * @public
- */
-export function isAtom(value: unknown): value is Atom<unknown> {
-	return value instanceof _Atom
 }
