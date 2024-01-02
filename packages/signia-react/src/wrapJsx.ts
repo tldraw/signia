@@ -28,6 +28,7 @@ import { track } from './track.js'
 
 const ReactMemoType = Symbol.for('react.memo') // https://github.com/facebook/react/blob/346c7d4c43a0717302d446da9e7423a8e28d8996/packages/shared/ReactSymbols.js#L30
 const ReactForwardRefType = Symbol.for('react.forward_ref')
+const ReactLazyType = Symbol.for('react.lazy')
 const ProxyInstance = new WeakMap<FunctionComponent<any>, FunctionComponent<any>>()
 
 function proxyFunctionalComponent(Component: FunctionComponent<any>) {
@@ -49,6 +50,8 @@ export function wrapJsx<T>(jsx: T): T {
 			if (type.$$typeof === ReactMemoType) {
 				type = proxyFunctionalComponent(type.type)
 			} else if (type.$$typeof === ReactForwardRefType) {
+				type = proxyFunctionalComponent(type)
+			} else if (type.$$typeof === ReactLazyType) {
 				type = proxyFunctionalComponent(type)
 			}
 		}
