@@ -255,12 +255,12 @@ describe('lazy components', () => {
 		})
 
 		expect(view!.toJSON()).toMatchInlineSnapshot(`
-		[
-		  "a",
-		  "b",
-		  "c",
-		]
-	`)
+			[
+			  "a",
+			  "b",
+			  "c",
+			]
+		`)
 
 		expect(numRenders).toBe(1)
 
@@ -285,12 +285,12 @@ describe('lazy components', () => {
 		expect(numRenders).toBe(2)
 
 		expect(view!.toJSON()).toMatchInlineSnapshot(`
-		[
-		  "a",
-		  "b",
-		  "d",
-		]
-	`)
+			[
+			  "a",
+			  "b",
+			  "d",
+			]
+		`)
 	})
 
 	test('update when the state they reference updates', async () => {
