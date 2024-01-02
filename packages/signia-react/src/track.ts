@@ -48,9 +48,6 @@ interface LazyFunctionComponent<T extends FunctionComponent<any>> extends LazyEx
  * @param baseComponent
  * @public
  */
-export function track<T extends React.LazyExoticComponent<any>>(
-	baseComponent: T
-): React.MemoExoticComponent<T>
 export function track<T extends FunctionComponent<any>>(
 	baseComponent: T
 ): T extends React.MemoExoticComponent<any> ? T : React.MemoExoticComponent<T> {
