@@ -1,4 +1,4 @@
-import React, { forwardRef, FunctionComponent, memo } from 'react'
+import React, { forwardRef, FunctionComponent, lazy, LazyExoticComponent, memo } from 'react'
 import { useStateTracking } from './useStateTracking.js'
 
 export const ProxyHandlers = {
@@ -24,6 +24,11 @@ export const ReactLazySymbol = Symbol.for('react.lazy')
 export const ReactMemoSymbol = Symbol.for('react.memo')
 export const ReactForwardRefSymbol = Symbol.for('react.forward_ref')
 
+interface LazyFunctionComponent<T extends FunctionComponent<any>> extends LazyExoticComponent<T> {
+	_init: (arg: unknown) => FunctionComponent
+	_payload: { status: number; _result: FunctionComponent }
+}
+
 /**
  * Returns a tracked version of the given component.
  * Any signals whose values are read while the component renders will be tracked.
@@ -43,6 +48,9 @@ export const ReactForwardRefSymbol = Symbol.for('react.forward_ref')
  * @param baseComponent
  * @public
  */
+export function track<T extends React.LazyExoticComponent<any>>(
+	baseComponent: T
+): React.MemoExoticComponent<T>
 export function track<T extends FunctionComponent<any>>(
 	baseComponent: T
 ): T extends React.MemoExoticComponent<any> ? T : React.MemoExoticComponent<T> {
@@ -56,21 +64,19 @@ export function track<T extends FunctionComponent<any>>(
 		return memo(forwardRef(new Proxy((baseComponent as any).render, ProxyHandlers) as any)) as any
 	}
 	if ($$typeof === ReactLazySymbol) {
-		let result: unknown
+		let result: undefined | FunctionComponent
 
-		return memo({
-			$$typeof: ReactLazySymbol,
-			_payload: (baseComponent as unknown as { _payload: unknown })._payload,
-			_init: (arg: unknown) => {
+		return memo(
+			lazy(() => {
 				if (!result) {
-					const loaded = (
-						baseComponent as unknown as { _init: (arg: unknown) => unknown } as any
-					)._init(arg)
+					const { _init: init, _payload: payload } =
+						baseComponent as unknown as LazyFunctionComponent<any>
+					const loaded = init(payload)
 					result = new Proxy(loaded, ProxyHandlers)
 				}
-				return result
-			},
-		} as unknown as React.LazyExoticComponent<any> as any) as any
+				return Promise.resolve({ default: result })
+			})
+		) as any
 	}
 
 	return memo(new Proxy(baseComponent, ProxyHandlers) as any, compare) as any
