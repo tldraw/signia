@@ -15,7 +15,10 @@ import { Computed, computed, ComputedOptions } from 'signia'
  * }
  *
  * const Greeter = track(function Greeter ({firstName, lastName}: GreeterProps) {
- *   const fullName = useComputed('fullName', () => `${firstName.value} ${lastName.value}`)
+ *   const fullName = useComputed('fullName', () => `${firstName.value} ${lastName.value}`, [
+ *     firstName,
+ *     lastName,
+ *   ])
  *   return <div>Hello {fullName.value}!</div>
  * })
  * ```
