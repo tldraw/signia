@@ -27,7 +27,7 @@ jobs:
       - uses: 8BitJonny/gh-get-current-pr@2.2.0
         id: PR
 
-      - run: pnpm run auto -- pr-check --pr $PR --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - run: pnpm auto -- pr-check --pr $PR --url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
         env:
           PR: ${{ steps.PR.outputs.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
