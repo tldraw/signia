@@ -69,7 +69,7 @@ export function track<T extends FunctionComponent<any>>(
 					const { _init: init, _payload: payload } =
 						baseComponent as unknown as LazyFunctionComponent<any>
 					const loaded = init(payload)
-					result = new Proxy(loaded, ProxyHandlers)
+					result = track(loaded)
 				}
 				return Promise.resolve({ default: result })
 			})
