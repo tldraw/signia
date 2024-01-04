@@ -1,3 +1,23 @@
+# v0.1.5 (Thu Jan 04 2024)
+
+#### 🐛 Bug Fix
+
+- `signia-react`
+  - Track lazy loaded components [#82](https://github.com/tldraw/signia/pull/82) ([@haveyaseen](https://github.com/haveyaseen))
+
+#### 📝 Documentation
+
+- `signia-react`
+  - Docs: broken links to react bindings API and [#80](https://github.com/tldraw/signia/pull/80) ([@c01nd01r](https://github.com/c01nd01r) [@ds300](https://github.com/ds300))
+
+#### Authors: 3
+
+- [@haveyaseen](https://github.com/haveyaseen)
+- David Sheldrick ([@ds300](https://github.com/ds300))
+- Stanislav ([@c01nd01r](https://github.com/c01nd01r))
+
+---
+
 # v0.1.4 (Wed May 03 2023)
 
 #### 🐛 Bug Fix
