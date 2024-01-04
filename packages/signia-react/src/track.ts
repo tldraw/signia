@@ -1,4 +1,4 @@
-import React, { forwardRef, FunctionComponent, memo } from 'react'
+import React, { forwardRef, FunctionComponent, lazy, LazyExoticComponent, memo } from 'react'
 import { useStateTracking } from './useStateTracking.js'
 
 export const ProxyHandlers = {
@@ -20,8 +20,14 @@ export const ProxyHandlers = {
 	},
 }
 
+export const ReactLazySymbol = Symbol.for('react.lazy')
 export const ReactMemoSymbol = Symbol.for('react.memo')
 export const ReactForwardRefSymbol = Symbol.for('react.forward_ref')
+
+interface LazyFunctionComponent<T extends FunctionComponent<any>> extends LazyExoticComponent<T> {
+	_init: (arg: unknown) => FunctionComponent
+	_payload: { status: number; _result: FunctionComponent }
+}
 
 /**
  * Returns a tracked version of the given component.
@@ -53,6 +59,21 @@ export function track<T extends FunctionComponent<any>>(
 	}
 	if ($$typeof === ReactForwardRefSymbol) {
 		return memo(forwardRef(new Proxy((baseComponent as any).render, ProxyHandlers) as any)) as any
+	}
+	if ($$typeof === ReactLazySymbol) {
+		let result: undefined | FunctionComponent
+
+		return memo(
+			lazy(() => {
+				if (!result) {
+					const { _init: init, _payload: payload } =
+						baseComponent as unknown as LazyFunctionComponent<any>
+					const loaded = init(payload)
+					result = track(loaded)
+				}
+				return Promise.resolve({ default: result })
+			})
+		) as any
 	}
 
 	return memo(new Proxy(baseComponent, ProxyHandlers) as any, compare) as any

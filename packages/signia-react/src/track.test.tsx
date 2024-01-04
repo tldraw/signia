@@ -1,4 +1,4 @@
-import { createRef, forwardRef, memo, useEffect, useImperativeHandle } from 'react'
+import { createRef, forwardRef, lazy, memo, Suspense, useEffect, useImperativeHandle } from 'react'
 import { act, create, ReactTestRenderer } from 'react-test-renderer'
 import { atom } from 'signia'
 import { track } from './track.js'
@@ -131,17 +131,19 @@ test('tracked components can use refs', async () => {
 	expect(ref.current?.handle).toBe('world')
 })
 
-test('tracked components update when the state they refernce updates', async () => {
+test('tracked components update when the state they reference updates', async () => {
 	const a = atom('a', 1)
 
-	const C = track(function Component() {
+	const Component = function Component() {
 		return <>{a.value}</>
-	})
+	}
+
+	const Tracked = track(Component)
 
 	let view: ReactTestRenderer
 
 	await act(() => {
-		view = create(<C />)
+		view = create(<Tracked />)
 	})
 
 	expect(view!.toJSON()).toMatchInlineSnapshot(`"1"`)
@@ -224,4 +226,99 @@ test("tracked zombie-children don't throw", async () => {
 		  "3",
 		]
 	`)
+})
+
+describe('lazy components', () => {
+	test("are memo'd when tracked", async () => {
+		let numRenders = 0
+		const Component = function Component({ a, b, c }: { a: string; b: string; c: string }) {
+			numRenders++
+			return (
+				<>
+					{a}
+					{b}
+					{c}
+				</>
+			)
+		}
+
+		const Lazy = lazy(() => Promise.resolve({ default: Component }))
+		const TrackedLazy = track(Lazy)
+
+		let view: ReactTestRenderer
+		await act(() => {
+			view = create(
+				<Suspense>
+					<TrackedLazy a="a" b="b" c="c" />
+				</Suspense>
+			)
+		})
+
+		expect(view!.toJSON()).toMatchInlineSnapshot(`
+			[
+			  "a",
+			  "b",
+			  "c",
+			]
+		`)
+
+		expect(numRenders).toBe(1)
+
+		await act(() => {
+			view!.update(
+				<Suspense>
+					<TrackedLazy a="a" b="b" c="c" />
+				</Suspense>
+			)
+		})
+
+		expect(numRenders).toBe(1)
+
+		await act(() => {
+			view!.update(
+				<Suspense>
+					<TrackedLazy a="a" b="b" c="d" />
+				</Suspense>
+			)
+		})
+
+		expect(numRenders).toBe(2)
+
+		expect(view!.toJSON()).toMatchInlineSnapshot(`
+			[
+			  "a",
+			  "b",
+			  "d",
+			]
+		`)
+	})
+
+	test('update when the state they reference updates', async () => {
+		const a = atom('a', 1)
+
+		const Component = function Component() {
+			return <>{a.value}</>
+		}
+
+		const Lazy = lazy(() => Promise.resolve({ default: Component }))
+		const TrackedLazy = track(Lazy)
+
+		let view: ReactTestRenderer
+
+		await act(() => {
+			view = create(
+				<Suspense>
+					<TrackedLazy />
+				</Suspense>
+			)
+		})
+
+		expect(view!.toJSON()).toMatchInlineSnapshot(`"1"`)
+
+		await act(() => {
+			a.set(2)
+		})
+
+		expect(view!.toJSON()).toMatchInlineSnapshot(`"2"`)
+	})
 })
