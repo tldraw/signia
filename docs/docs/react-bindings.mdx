@@ -32,6 +32,8 @@ Before reading this section, make sure you have read the [Using Signals](using-s
 
 :::tip
 If you are using `signia-react-jsx`, feel free to skip this section. Your components are already reactive! ✨
+
+(If you're using Remix, please see the below tips.)
 :::
 
 We recommend using `track` to wrap all components that use signals following this pattern:
@@ -64,6 +66,58 @@ const MyComponent: React.FC<MyComponentProps> = (props: MyComponentProps) => {
 	// ...
 }
 ```
+
+:::tip Remix
+Setting up reactivity with `jsxImportSource` may take some extra care with Remix.
+
+1. Add the following settings to your `tsconfig.json` file:
+
+	```json
+	"jsxImportSource": "signia-react-jsx",
+	"emitDecoratorMetadata": true,
+	"experimentalDecorators": true,
+	```
+
+	The first modifies the JSX pragma to add Signia's `track` function to all your components. The second two allow you to use the `@computed` decorator when building classes around Signia's `atoms`.
+
+2. Add the following setting to your `remix.config.js` file to prevent your build from failing:
+	```json
+	serverDependenciesToBundle: ["signia-react-jsx/jsx-dev-runtime"],
+	```
+
+3. At present, the updated pragma won't affect a Remix module's default component, but it will affect its children. This gives you several options. You can:
+
+	a. Wrap each module's default component in `track`, then rely on the pragma in their children.
+
+	b. Rely on the `useValue` hook in each module's default component and the pragma in their children.
+
+	c. Always rely on the pragma by using your module's default component to wrap a child. For instance, this:
+
+	```jsx
+	export default function MyRoute() {
+		return <AllMyRouteLogicAndComponents />;
+	}
+	```
+
+	instead of this:
+	```jsx
+	export default function MyRoute() {
+		const loaderData = useLoaderData<typeof loader>();
+
+		const signiaState = SigniaClass.useSigniaState(loaderData);
+		const stringArray = signiaState.myStringArrayData;
+
+		return (
+			<Layout>
+				{stringArray.map((str) => {
+					return <p key={str}>{str}</p>;
+				})}
+			</Layout>
+		);
+	}
+	```
+
+:::
 
 ### Managing shared state
 
