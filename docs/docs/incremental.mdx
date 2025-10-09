@@ -120,7 +120,7 @@ function map<T, U>(source: ImmerAtom<T[]>, fn: (value: T) => U): Computed<U[], P
 						// one of the existing items in the array has been fully replaced
 						draft[index] = fn(patch.value) as Draft<U>
 					} else if (patch.op === 'remove') {
-						next.splice(index, 1)
+						draft.splice(index, 1)
 					}
 				}
 			})
