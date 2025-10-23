@@ -60,7 +60,7 @@ type MyComponentProps = { getFoo: (n: number) => Bar }
 const MyComponent: React.FC<MyComponentProps> = (props: MyComponentProps) => {
 	// getFoo uses a signal under the hood, but we don't have direct access to that signal.
 	const n = 42
-	const foo: Bar = useValue('foo', () => props.getFoo(42), [props.getFoo, n])
+	const foo: Bar = useValue('foo', () => props.getFoo(n), [props.getFoo, n])
 	// ...
 }
 ```
